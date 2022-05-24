@@ -1,7 +1,7 @@
-// const path = require('path');
+const path = require('path');
 const express = require('express');
-// const dotenv = require('dotenv');
-// const morgan = require('morgan');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
 // const exphbs = require('express-handlebars');
 // const passport = require('passport');
 // const session = require('express-session');
@@ -10,11 +10,10 @@ const express = require('express');
 // const cookieParser = require('cookie-parser');
 // const flash = require('connect-flash');
 // const methodOverride = require('method-override');
-
 // const configPassport = require('./src/config/passport');
 
 // Config
-// dotenv.config({ path: 'config.env' });
+dotenv.config();
 const PORT = process.env.PORT || 1202;
 // connectDB();
 const app = express();
@@ -37,8 +36,11 @@ const app = express();
 //   );
 // });
 
-// // Logging
-// if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+// Logging
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+  console.log('http://localhost:1202/');
+}
 
 // // Flash
 // app.use(flash());
@@ -129,33 +131,30 @@ const app = express();
 // app.use(passport.initialize());
 // app.use(passport.session());
 
-// // Body-parser
-// app.use(
-//   express.urlencoded({
-//     extended: false,
-//   })
-// );
-// app.use(express.json());
+// Body-parser
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+app.use(express.json());
 // app.use(cookieParser());
 
 // // Method override
 // app.use(methodOverride('_method'));
 
-// // Routes
-// app.use('/', require('./src/routes'));
-// app.use('/auth', require('./src/routes/auth'));
+// Routes
+app.use('/', require('./src/routes'));
+app.use('/api', require('./src/api'));
 // app.use('/users', require('./src/routes/users'));
 // app.use('/posts', require('./src/routes/posts'));
 // app.use('/notifications', require('./src/routes/notifications'));
 // app.use('/comments', require('./src/routes/comments'));
-
-// // Static
-// app.use(express.static(path.join(__dirname, 'src/public')));
+// Static
+app.use(express.static(path.join(__dirname, 'src/public')));
 
 // Running
 app.listen(
   PORT,
   console.log(`Running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 );
-
-console.log();
