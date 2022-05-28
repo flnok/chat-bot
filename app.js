@@ -145,7 +145,6 @@ app.use(express.json());
 
 // Routes
 app.use('/', require('./src/routes'));
-app.use('/api', require('./src/api'));
 // app.use('/users', require('./src/routes/users'));
 // app.use('/posts', require('./src/routes/posts'));
 // app.use('/notifications', require('./src/routes/notifications'));
