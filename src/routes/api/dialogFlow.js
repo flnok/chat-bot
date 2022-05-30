@@ -8,15 +8,17 @@ router.get('/', (req, res) => {
 });
 
 router.post('/query-text', async (req, res) => {
-  const { queries, languageCode } = req.body;
-  console.log(req.body);
+  const { queries, languageCode, parameters } = req.body;
   if (!languageCode) languageCode = defaultLanguageCode;
-  let responses = await chatbot.queryText(queries, languageCode);
+  let responses = await chatbot.queryText(queries, parameters, languageCode);
   return res.send(responses[0].queryResult);
 });
 
-// router.post('/query-event', (req, res) => {
-//   return res.send(JSON.parse('{ "do": "thing" }'));
-// });
+router.post('/query-event', async (req, res) => {
+  const { queries, languageCode, parameters } = req.body;
+  if (!languageCode) languageCode = defaultLanguageCode;
+  let responses = await chatbot.queryEvent(queries, parameters, languageCode);
+  return res.send(responses[0].queryResult);
+});
 
 module.exports = router;
