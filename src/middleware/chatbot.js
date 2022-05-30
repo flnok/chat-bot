@@ -1,14 +1,14 @@
 const dialogflow = require('@google-cloud/dialogflow');
-const config = require('../config/dialogFlow');
+const config = require('../config/config');
 const { struct } = require('pb-util');
 
 const projectId = config.googleProjectID;
 const sessionId = config.dialogFlowSessionID;
-// const credentials = {
-//   client_email: config.googleClientEmail,
-//   private_key: config.googlePrivateKey,
-// };
-const sessionClient = new dialogflow.SessionsClient();
+const credentials = {
+  client_email: config.googleClientEmail,
+  private_key: config.googlePrivateKey,
+};
+const sessionClient = new dialogflow.SessionsClient({ projectId, credentials });
 const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 // async function detectIntent(projectId, sessionId, query, languageCode) {
 //   const request = {

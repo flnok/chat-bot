@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router(); // /dialog-flow
-const { defaultLanguageCode } = require('../../config/dialogFlow');
+const { defaultLanguageCode } = require('../../config/config');
 const chatbot = require('../../middleware/chatbot');
 
 router.get('/', (req, res) => {
