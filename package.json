@@ -8,7 +8,9 @@
     "npm": "8.10.0"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon app.js",
+    "server": "cross-env NODE_ENV=development nodemon app.js",
+    "client": "npm run start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "start": "node app.js"
   },
   "author": "",
@@ -22,6 +24,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "concurrently": "^7.2.1",
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.16"
   }
