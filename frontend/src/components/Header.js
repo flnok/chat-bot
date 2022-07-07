@@ -7,7 +7,7 @@ export default function Header() {
     textDecoration: 'none',
   };
   const brandStyle = {
-    color: 'black',
+    color: '#133C55',
     fontFamily: "'Playball', cursive",
     fontSize: '50px',
     textAlign: 'center',

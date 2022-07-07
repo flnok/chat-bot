@@ -1,6 +1,7 @@
 import Header from './Header';
 import { Outlet } from 'react-router-dom';
 import Chatbot from './chatbot/Chatbot';
+import { Col } from 'react-bootstrap';
 
 export default function Layout() {
   return (
@@ -8,14 +9,13 @@ export default function Layout() {
       <div className="header">
         <Header />
       </div>
-      <div className="content">
-        <Outlet />
-      </div>
       <div className="main">
-        <div
-          style={{ width: '400px', height: '400px', background: 'black' }}
-        ></div>
-        <Chatbot />
+        <Col xs={4} className="text-center">
+          <Outlet />
+        </Col>
+        <Col xs={8} className="d-flex justify-content-center">
+          <Chatbot />
+        </Col>
       </div>
     </div>
   );

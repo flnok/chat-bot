@@ -4,17 +4,10 @@
 :root {
   --background-color: #e7ecef;
   --hover-text-color: #6096ba;
-  --text-color: black;
+  --text-color: #133c55;
 }
 body {
   font-family: 'Montserrat', sans-serif;
-}
-
-.main {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-wrap: wrap-reverse;
 }
 
 .nav-link {
@@ -27,16 +20,30 @@ body {
   color: var(--hover-text-color);
 }
 
+.main {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap-reverse;
+}
+
 .chat-bot-container {
   height: 400px;
   width: 400px;
 }
 
-#chatbot {
+.chat-bot {
   height: 100%;
   width: 100%;
   overflow: scroll;
-  background-color: #6096ba;
+  /* background-color: #6096ba; */
+}
+
+.user-photo {
+  width: 35px;
+  border-radius: 100%;
+  overflow: hidden;
+  margin: 0 auto;
 }
 
 .noselect {
