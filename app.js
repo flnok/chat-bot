@@ -2,15 +2,6 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-// const exphbs = require('express-handlebars');
-// const passport = require('passport');
-// const session = require('express-session');
-// const MongoStore = require('connect-mongo');
-// const connectDB = require('./src/config/db');
-// const cookieParser = require('cookie-parser');
-// const flash = require('connect-flash');
-// const methodOverride = require('method-override');
-// const configPassport = require('./src/config/passport');
 
 // Config
 dotenv.config();
@@ -18,43 +9,13 @@ const PORT = process.env.PORT || 1202;
 // connectDB();
 const app = express();
 
-// Socket io
-// const server = require('http').createServer(app);
-// const io = require('socket.io')(server);
-// io.on('connection', (socket) => {
-//   console.log('New socker connected...');
-//   socket.on('disconnect', () => console.log('Socket disconnect'));
-//   socket.on('new post', () => io.emit('new post from server'));
-//   socket.on('new notification', (data) =>
-//     socket.broadcast.emit('new notification from server', data)
-//   );
-//   socket.on('edit notification', () =>
-//     socket.broadcast.emit('delete or edit notification from server')
-//   );
-//   socket.on('delete notification', () =>
-//     socket.broadcast.emit('delete or edit notification from server')
-//   );
-// });
-
 // Logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
-  console.log('http://localhost:1202/');
 }
 
 // // Flash
 // app.use(flash());
-
-// // Helpers
-// const {
-//   formatDate,
-//   getIdYoutube,
-//   showOptions,
-//   stripTags,
-//   truncate,
-//   mappingDepartmentName,
-//   getNumberByDepartmentName,
-// } = require('./src/helpers/hbs');
 
 // // Handlebars
 // app.set('views', path.join(__dirname, 'src/views'));
@@ -74,7 +35,6 @@ if (process.env.NODE_ENV === 'development') {
 //     extname: '.hbs',
 //   })
 // );
-// app.set('view engine', 'hbs');
 
 // const Handlebars = exphbs.create({});
 // Handlebars.handlebars.registerHelper(
@@ -145,10 +105,7 @@ app.use(express.json());
 
 // Routes
 app.use('/', require('./src/routes'));
-// app.use('/users', require('./src/routes/users'));
-// app.use('/posts', require('./src/routes/posts'));
-// app.use('/notifications', require('./src/routes/notifications'));
-// app.use('/comments', require('./src/routes/comments'));
+
 // Static
 app.use(express.static(path.join(__dirname, 'src/public')));
 
