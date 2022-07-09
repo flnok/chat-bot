@@ -10,10 +10,10 @@ export default function Layout() {
         <Header />
       </div>
       <div className="main">
-        <Col xs={4} className="text-center">
+        <Col xs={12} md={4} className="text-center">
           <Outlet />
         </Col>
-        <Col xs={8} className="d-flex justify-content-center">
+        <Col xs={12} md={8} className="d-flex justify-content-center">
           <Chatbot />
         </Col>
       </div>
