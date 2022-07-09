@@ -9,54 +9,13 @@ const credentials = {
   private_key: config.googlePrivateKey,
 };
 const sessionClient = new dialogflow.SessionsClient({ projectId, credentials });
-const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
-// async function detectIntent(projectId, sessionId, query, languageCode) {
-//   const request = {
-//     session: sessionPath,
-//     queryInput: {
-//       text: {
-//         text: query,
-//         languageCode: languageCode,
-//       },
-//     },
-//   };
 
-//   // if (contexts && contexts.length > 0) {
-//   //   request.queryParams = {
-//   //     contexts: contexts,
-//   //   };
-//   // }
+async function queryText(queries, parameters = {}, languageCode, userId) {
+  const sessionPath = sessionClient.projectAgentSessionPath(
+    projectId,
+    sessionId + userId
+  );
 
-//   const responses = await sessionClient.detectIntent(request);
-//   console.log(responses);
-//   return responses;
-// }
-
-// async function executeQueries(projectId, sessionId, queries, languageCode) {
-//   let context;
-//   let intentResponse;
-//   for (const query of queries) {
-//     try {
-//       console.log(`Sending Query: ${query}`);
-//       intentResponse = await detectIntent(
-//         projectId,
-//         sessionId,
-//         query,
-//         context,
-//         languageCode
-//       );
-//       console.log('Detected intent');
-//       console.log(
-//         `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
-//       );
-//       context = intentResponse.queryResult.outputContexts;
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   }
-// }
-
-async function queryText(queries, parameters = {}, languageCode) {
   const request = {
     session: sessionPath,
     queryInput: {
@@ -72,7 +31,11 @@ async function queryText(queries, parameters = {}, languageCode) {
   return responses;
 }
 
-async function queryEvent(queries, parameters = {}, languageCode) {
+async function queryEvent(queries, parameters = {}, languageCode, userId) {
+  const sessionPath = sessionClient.projectAgentSessionPath(
+    projectId,
+    sessionId + userId
+  );
   const request = {
     session: sessionPath,
     queryInput: {

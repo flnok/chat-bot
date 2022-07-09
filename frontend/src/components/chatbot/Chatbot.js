@@ -1,19 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Message from './Message';
+import Cookies from 'universal-cookie';
+import { v4 as uuidv4 } from 'uuid';
+import { text } from 'express';
+
+const cookies = new Cookies();
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
-
-  // const onChangeHandler = (event) => {
-  //   setMessage(event.target.value);
-  // };
 
   const updateMessages = (msg) => {
     setMessages((previousState) => {
       return [...previousState, msg];
     });
   };
+
+  if (cookies.get('userID') === undefined) {
+    cookies.set('userID', uuidv4(), { path: '/' });
+  }
+
   //eslint-disable-next-line
   const queryText = async (text) => {
     let info = {
@@ -22,7 +28,9 @@ export default function Chatbot() {
     };
 
     const req = {
-      text,
+      queries: text,
+      languageCode: 'vi',
+      userId: cookies.get('userID'),
     };
     updateMessages(info);
 
@@ -30,7 +38,7 @@ export default function Chatbot() {
     res.data.fulfillmentMessages.forEach((msg) => {
       info = {
         author: 'bot',
-        msg: { text: { text: msg } },
+        msg: msg,
       };
       updateMessages(info);
     });
@@ -40,13 +48,12 @@ export default function Chatbot() {
     const req = {
       queries: event,
       languageCode: 'vi',
-      parameters: '',
+      userId: cookies.get('userID'),
     };
     const res = await axios.post('/api/dialog-flow/query-event', req);
-    console.log(JSON.stringify(res, null, 2));
     res.data.fulfillmentMessages.forEach((msg) => {
       let info = {
-        author: 'me',
+        author: 'bot',
         msg: msg,
       };
       updateMessages(info);
@@ -56,6 +63,7 @@ export default function Chatbot() {
   const renderMessages = (messages) => {
     return messages
       ? messages.map((message, index) => {
+          // if (message?.msg?.text?.text) {
           return (
             <Message
               key={index}
@@ -63,6 +71,7 @@ export default function Chatbot() {
               content={message.msg.text.text}
             />
           );
+          // }
         })
       : null;
   };
@@ -75,16 +84,23 @@ export default function Chatbot() {
     // eslint-disable-next-line
   }, []);
 
+  const handleInputMessage = useCallback((event) => {
+    if (event.key === 'Enter') {
+      queryText(event.target.value);
+      event.target.value = '';
+    }
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <div className="chat-bot-container">
       <h2>Chat bot</h2>
-
       <div className="chat-bot">{renderMessages(messages)}</div>
       <input
+        autoFocus
         type="text"
-        name="message"
-        // onChange={onChangeHandler}
-        // value={messages}
+        name="inputMessage"
+        onKeyUp={handleInputMessage}
       />
     </div>
   );

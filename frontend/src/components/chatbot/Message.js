@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
+import { Row, Col, Card } from 'react-bootstrap';
 
 export default function Message(props) {
   return (
@@ -8,12 +8,8 @@ export default function Message(props) {
         <Row>
           {props.author === 'bot' && (
             <Col xs={2}>
-              <div class="user-photo shadow">
-                <img
-                  src="%PUBLIC_URL%/abc.png"
-                  class="img-fluid"
-                  alt="testimonial slider"
-                />
+              <div className="user-photo shadow">
+                <img src="images/abc.png" className="img-fluid" alt="" />
               </div>
               <div className="text-center">{props.author}</div>
             </Col>
@@ -23,7 +19,10 @@ export default function Message(props) {
           </Col>
           {props.author === 'me' && (
             <Col xs={2}>
-              <div>{props.author}</div>
+              <div className="user-photo shadow">
+                <img src="images/abc.png" className="img-fluid" alt="" />
+              </div>
+              <div className="text-center">{props.author}</div>
             </Col>
           )}
         </Row>

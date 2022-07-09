@@ -36,9 +36,11 @@ body {
   height: 100%;
   width: 100%;
   overflow: scroll;
-  /* background-color: #6096ba; */
+  background-color: #f1faee;
 }
 
+.chat-bot-message {
+}
 .user-photo {
   width: 35px;
   border-radius: 100%;
