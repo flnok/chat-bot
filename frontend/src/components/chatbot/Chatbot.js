@@ -3,7 +3,6 @@ import axios from 'axios';
 import Message from './Message';
 import Cookies from 'universal-cookie';
 import { v4 as uuidv4 } from 'uuid';
-import { text } from 'express';
 
 const cookies = new Cookies();
 
