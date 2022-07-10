@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Message from './Message';
+import Option from './Option';
 import Cookies from 'universal-cookie';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,11 +21,11 @@ export default function Chatbot(props) {
     cookies.set('userID', uuidv4(), { path: '/' });
   }
 
-  //eslint-disable-next-line
-  const queryText = async (text) => {
+  const queryText = async (text, title = '') => {
     let info = {
       author: 'me',
       msg: { text: { text: text } },
+      title,
     };
     updateMessages(info);
 
@@ -43,7 +44,7 @@ export default function Chatbot(props) {
       updateMessages(info);
     });
   };
-  //eslint-disable-next-line
+
   const queryEvent = async (event) => {
     const req = {
       queries: event,
@@ -60,18 +61,60 @@ export default function Chatbot(props) {
     });
   };
 
+  const renderOptions = (options) => {
+    return options.map((opt, index) => (
+      <Option key={index} content={opt} queryText={queryText}></Option>
+    ));
+  };
+
+  const renderMessage = (msg, index) => {
+    if (msg.msg?.text?.text) {
+      // console.log(msg);
+      return (
+        <Message
+          key={index}
+          author={msg.author}
+          content={msg.msg.text.text}
+          title={msg.title}
+        />
+      );
+    } else if (msg.msg?.payload?.fields?.richContent) {
+      return (
+        <div key={index}>
+          <div className="d-flex flex-row justify-content-start mb-4">
+            <img
+              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+              alt="avatar 1"
+              style={{
+                width: '45px',
+                height: '100%',
+              }}
+            />
+            <div
+              className="p-3 ms-3"
+              style={{
+                borderRadius: '15px',
+                backgroundColor: 'rgba(57, 192, 237,.2)',
+              }}
+            >
+              <div className="option-content">
+                {renderOptions(
+                  msg.msg.payload.fields.richContent.listValue.values[0]
+                    .listValue.values
+                )}
+                {/* <Option author={msg.author} content={msg.msg} /> */}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
+
   const renderMessages = (messages) => {
     return messages
       ? messages.map((message, index) => {
-          return message.msg?.text?.text ? (
-            <Message
-              key={index}
-              author={message.author}
-              content={message.msg.text.text}
-            />
-          ) : (
-            <h2 key={index}>Nothing</h2>
-          );
+          return renderMessage(message, index);
         })
       : null;
   };
@@ -84,19 +127,17 @@ export default function Chatbot(props) {
     // eslint-disable-next-line
   }, []);
 
-  const handleInputMessage = useCallback((event) => {
+  const handleInputMessage = (event) => {
     if (event.key === 'Enter') {
       queryText(event.target.value);
       event.target.value = '';
     }
-    // eslint-disable-next-line
-  }, []);
+  };
 
-  const handleButtonMessage = useCallback(() => {
+  const handleButtonMessage = () => {
     queryText(inputRef.current.value);
     inputRef.current.value = '';
-    // eslint-disable-next-line
-  }, []);
+  };
 
   return (
     <div

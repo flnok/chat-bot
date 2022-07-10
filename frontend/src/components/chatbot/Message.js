@@ -22,7 +22,7 @@ export default function Message(props) {
             }}
           >
             <span className="black-text small mb-0">
-              {props.content.toString()}
+              {props.title || props.content.toString()}
             </span>
           </div>
         </div>
@@ -37,7 +37,7 @@ export default function Message(props) {
             }}
           >
             <span className="black-text small mb-0">
-              {props.content.toString()}
+              {props.title || props.content.toString()}
             </span>{' '}
           </div>
           <img
