@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, createContext } from 'react';
 import axios from 'axios';
 import Message from './Message';
 import Option from './Option';
@@ -6,6 +6,7 @@ import Cookies from 'universal-cookie';
 import { v4 as uuidv4 } from 'uuid';
 
 const cookies = new Cookies();
+export const UserContext = createContext();
 
 export default function Chatbot(props) {
   const [messages, setMessages] = useState([]);
@@ -63,13 +64,18 @@ export default function Chatbot(props) {
 
   const renderOptions = (options) => {
     return options.map((opt, index) => (
-      <Option key={index} content={opt} queryText={queryText}></Option>
+      <Option
+        key={index}
+        content={opt}
+        queryText={queryText}
+        messages={messages}
+        setMessages={setMessages}
+      ></Option>
     ));
   };
 
   const renderMessage = (msg, index) => {
     if (msg.msg?.text?.text) {
-      // console.log(msg);
       return (
         <Message
           key={index}
@@ -78,7 +84,7 @@ export default function Chatbot(props) {
           title={msg.title}
         />
       );
-    } else if (msg.msg?.payload?.fields?.richContent) {
+    } else if (msg.msg?.payload) {
       return (
         <div key={index}>
           <div className="d-flex flex-row justify-content-start mb-4">
@@ -102,7 +108,6 @@ export default function Chatbot(props) {
                   msg.msg.payload.fields.richContent.listValue.values[0]
                     .listValue.values
                 )}
-                {/* <Option author={msg.author} content={msg.msg} /> */}
               </div>
             </div>
           </div>
@@ -127,50 +132,52 @@ export default function Chatbot(props) {
     // eslint-disable-next-line
   }, []);
 
-  const handleInputMessage = (event) => {
+  const handleInputMessage = async (event) => {
     if (event.key === 'Enter') {
-      queryText(event.target.value);
+      await queryText(event.target.value);
       event.target.value = '';
     }
   };
 
-  const handleButtonMessage = () => {
-    queryText(inputRef.current.value);
+  const handleButtonMessage = async () => {
+    await queryText(inputRef.current.value);
     inputRef.current.value = '';
   };
 
   return (
-    <div
-      className="card chat-bot-container"
-      style={{
-        borderRadius: '15px',
-      }}
-    >
+    <UserContext.Provider value={messages}>
       <div
-        className="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+        className="card chat-bot-container"
         style={{
-          borderTopLeftRadius: '15px',
-          borderTopRightRadius: '15px',
+          borderRadius: '15px',
         }}
       >
-        <p className="mb-0 fw-bold">ChatBot</p>
-      </div>
-      <div className="card-body chat-bot">{renderMessages(messages)}</div>
-      <div className="input-group mb-1 card-footer">
-        <input
-          type="text"
-          autoFocus
-          name="inputMessage"
-          placeholder="Chat ở đây"
-          ref={inputRef}
-          onKeyUp={handleInputMessage}
-          className="form-control"
-        />
+        <div
+          className="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+          style={{
+            borderTopLeftRadius: '15px',
+            borderTopRightRadius: '15px',
+          }}
+        >
+          <p className="mb-0 fw-bold">ChatBot</p>
+        </div>
+        <div className="card-body chat-bot">{renderMessages(messages)}</div>
+        <div className="input-group mb-1 card-footer">
+          <input
+            type="text"
+            autoFocus
+            name="inputMessage"
+            placeholder="Chat ở đây"
+            ref={inputRef}
+            onKeyUp={handleInputMessage}
+            className="form-control"
+          />
 
-        <button onClick={handleButtonMessage} className="input-group-text">
-          <i className="fas fa-paper-plane"></i>
-        </button>
+          <button onClick={handleButtonMessage} className="input-group-text">
+            <i className="fas fa-paper-plane"></i>
+          </button>
+        </div>
       </div>
-    </div>
+    </UserContext.Provider>
   );
 }
