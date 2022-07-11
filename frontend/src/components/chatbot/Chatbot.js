@@ -147,7 +147,7 @@ export default function Chatbot(props) {
   return (
     <UserContext.Provider value={messages}>
       <div
-        className="card chat-bot-container"
+        className="card chat-bot-container mx-auto"
         style={{
           borderRadius: '15px',
         }}

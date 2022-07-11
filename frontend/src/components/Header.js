@@ -7,7 +7,7 @@ export default function Header() {
     textDecoration: 'none',
   };
   const brandStyle = {
-    color: '#133C55',
+    color: '#E63946',
     fontFamily: "'Playball', cursive",
     fontSize: '50px',
     textAlign: 'center',
@@ -48,7 +48,7 @@ export default function Header() {
         </Row>
         <Row>
           <Navbar.Text href="/" style={brandStyle} className="noselect">
-            Nhà hàng lẩu Thuận Phát
+            Nhà hàng Thuận Phát
           </Navbar.Text>
           {/* <Navbar.Brand>
             <img

@@ -1,22 +1,33 @@
 import Header from './Header';
 import { Outlet } from 'react-router-dom';
 import Chatbot from './chatbot/Chatbot';
-import { Col } from 'react-bootstrap';
+import { Col, Container } from 'react-bootstrap';
+import Footer from './Footer';
 
 export default function Layout() {
   return (
-    <div>
+    <>
       <div className="header">
         <Header />
       </div>
-      <div className="main">
-        <Col xs={12} md={4} className="text-center">
-          <Outlet />
-        </Col>
-        <Col xs={12} md={8} className="d-flex justify-content-center">
-          <Chatbot />
-        </Col>
+
+      <Container fluid>
+        <div className="main row">
+          <Col xs={12} md={5} className="text-center">
+            <Container className="mx-0 mx-sm-3">
+              <Outlet />
+            </Container>
+          </Col>
+
+          <Col xs={12} md={7}>
+            <Chatbot />
+          </Col>
+        </div>
+      </Container>
+
+      <div className="footer">
+        <Footer />
       </div>
-    </div>
+    </>
   );
 }
