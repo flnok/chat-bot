@@ -1,18 +1,16 @@
-// eslint-disable-next-line
-import { Row, Col, Card } from 'react-bootstrap';
-
 export default function Message(props) {
+  const imgStyle = {
+    width: '45px',
+    height: '100%',
+  };
   return (
     <>
       {props.author === 'bot' && (
         <div className="d-flex flex-row justify-content-start mb-4">
           <img
             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-            alt="avatar 1"
-            style={{
-              width: '45px',
-              height: '100%',
-            }}
+            alt="avatar bot"
+            style={imgStyle}
           />
           <div
             className="p-3 ms-3"
@@ -38,15 +36,12 @@ export default function Message(props) {
           >
             <span className="black-text small mb-0">
               {props.title || props.content.toString()}
-            </span>{' '}
+            </span>
           </div>
           <img
             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
-            alt="avatar 1"
-            style={{
-              width: '45px',
-              height: '100%',
-            }}
+            alt="avatar user"
+            style={imgStyle}
           />
         </div>
       )}

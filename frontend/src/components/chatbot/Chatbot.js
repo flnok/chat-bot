@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, createContext } from 'react';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import Cookies from 'universal-cookie';
 import Message from './Message';
 import Option from './Option';
-import Cookies from 'universal-cookie';
-import { v4 as uuidv4 } from 'uuid';
 
 const cookies = new Cookies();
 export const UserContext = createContext();
@@ -23,12 +23,12 @@ export default function Chatbot(props) {
   }
 
   const queryText = async (text, title = '') => {
-    let info = {
+    let newMessage = {
       author: 'me',
       msg: { text: { text: text } },
       title,
     };
-    updateMessages(info);
+    updateMessages(newMessage);
 
     const req = {
       queries: text,
@@ -38,11 +38,11 @@ export default function Chatbot(props) {
 
     const res = await axios.post('/api/dialog-flow/query-text', req);
     res.data.fulfillmentMessages.forEach((msg) => {
-      info = {
+      newMessage = {
         author: 'bot',
         msg: msg,
       };
-      updateMessages(info);
+      updateMessages(newMessage);
     });
   };
 
@@ -54,24 +54,12 @@ export default function Chatbot(props) {
     };
     const res = await axios.post('/api/dialog-flow/query-event', req);
     res.data.fulfillmentMessages.forEach((msg) => {
-      let info = {
+      let newMessage = {
         author: 'bot',
         msg: msg,
       };
-      updateMessages(info);
+      updateMessages(newMessage);
     });
-  };
-
-  const renderOptions = (options) => {
-    return options.map((opt, index) => (
-      <Option
-        key={index}
-        content={opt}
-        queryText={queryText}
-        messages={messages}
-        setMessages={setMessages}
-      ></Option>
-    ));
   };
 
   const renderMessage = (msg, index) => {
@@ -86,42 +74,24 @@ export default function Chatbot(props) {
       );
     } else if (msg.msg?.payload) {
       return (
-        <div key={index}>
-          <div className="d-flex flex-row justify-content-start mb-4">
-            <img
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-              alt="avatar 1"
-              style={{
-                width: '45px',
-                height: '100%',
-              }}
-            />
-            <div
-              className="p-3 ms-3"
-              style={{
-                borderRadius: '15px',
-                backgroundColor: 'rgba(57, 192, 237,.2)',
-              }}
-            >
-              <div className="option-content">
-                {renderOptions(
-                  msg.msg.payload.fields.richContent.listValue.values[0]
-                    .listValue.values
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <Option
+          key={index}
+          author={msg.author}
+          content={msg.msg.payload}
+          queryText={queryText}
+          setMessages={setMessages}
+        />
       );
     }
   };
 
   const renderMessages = (messages) => {
-    return messages
-      ? messages.map((message, index) => {
-          return renderMessage(message, index);
-        })
-      : null;
+    if (messages) {
+      return messages.map((message, index) => {
+        return renderMessage(message, index);
+      });
+    }
+    return null;
   };
 
   useEffect(() => {
@@ -132,42 +102,39 @@ export default function Chatbot(props) {
     // eslint-disable-next-line
   }, []);
 
-  const handleInputMessage = async (event) => {
+  const handleInputMessage = (event) => {
     if (event.key === 'Enter') {
-      await queryText(event.target.value);
+      queryText(event.target.value);
       event.target.value = '';
     }
   };
 
-  const handleButtonMessage = async () => {
-    await queryText(inputRef.current.value);
+  const handleButtonMessage = () => {
+    queryText(inputRef.current.value);
     inputRef.current.value = '';
   };
 
   return (
     <UserContext.Provider value={messages}>
-      <div
-        className="card chat-bot-container mx-auto"
-        style={{
-          borderRadius: '15px',
-        }}
-      >
+      <div className="card chat-bot-container mx-auto">
         <div
-          className="card-header d-flex justify-content-between align-items-center p-3 bg-info text-white border-bottom-0"
+          className="card-header text-center p-3 border-bottom-0"
           style={{
             borderTopLeftRadius: '15px',
             borderTopRightRadius: '15px',
           }}
         >
-          <p className="mb-0 fw-bold">ChatBot</p>
+          <p className="mb-0 fw-bold">HOBO</p>
         </div>
+
         <div className="card-body chat-bot">{renderMessages(messages)}</div>
-        <div className="input-group mb-1 card-footer">
+
+        <div className="card-footer input-group">
           <input
             type="text"
             autoFocus
             name="inputMessage"
-            placeholder="Chat ở đây"
+            placeholder="Mình cần đặt bàn..."
             ref={inputRef}
             onKeyUp={handleInputMessage}
             className="form-control"
