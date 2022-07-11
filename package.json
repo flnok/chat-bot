@@ -10,7 +10,7 @@
   "scripts": {
     "server": "cross-env NODE_ENV=development nodemon app.js",
     "client": "npm run start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently --names \"SERVER,CLIENT\" -c \"bgGreen.bold,bgBlue.bold\" \"npm run server\" \"npm run client\"",
     "start": "node app.js"
   },
   "author": "",
