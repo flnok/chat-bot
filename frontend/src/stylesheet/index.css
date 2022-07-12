@@ -5,6 +5,12 @@
   --background-color: #e7ecef;
   --hover-text-color: #6096ba;
   --text-color: #133c55;
+  --chatbot-background-color: linear-gradient(
+    90deg,
+    rgba(233, 183, 206, 1) 0%,
+    rgba(211, 243, 241, 1) 100%
+  );
+  --footer-background-color: #1d3557;
 }
 body {
   font-family: 'Montserrat', sans-serif;
@@ -63,6 +69,11 @@ dt {
   margin-top: 10px;
   font-style: italic;
   font-size: large;
+  font-weight: bold;
+}
+
+.contact div {
+  line-height: 2rem;
 }
 
 .chat-bot-container {
@@ -75,7 +86,15 @@ dt {
 .chat-bot {
   height: 100%;
   width: 100%;
-  overflow: scroll;
+  overflow: auto;
+  background: rgb(235, 244, 245);
+  background: linear-gradient(
+    90deg,
+    rgba(235, 244, 245, 1) 0%,
+    rgba(181, 198, 224, 1) 100%
+  );
+  color: #1d3557;
+  /* background-color: var(--chatbot-background-color); */
 }
 
 .user-photo {
@@ -100,4 +119,9 @@ dt {
   flex-direction: column;
   align-items: stretch;
   flex-wrap: wrap;
+}
+
+.footer {
+  background-color: var(--footer-background-color);
+  color: #f1faee;
 }

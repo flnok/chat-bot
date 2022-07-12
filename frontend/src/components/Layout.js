@@ -1,7 +1,7 @@
 import Header from './Header';
 import { Outlet } from 'react-router-dom';
 import Chatbot from './chatbot/Chatbot';
-import { Col, Container } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import Footer from './Footer';
 
 export default function Layout() {
@@ -11,19 +11,17 @@ export default function Layout() {
         <Header />
       </div>
 
-      <Container fluid>
-        <div className="main row">
-          <Col xs={12} md={5} className="text-center">
-            <Container className="mx-0 mx-sm-3">
-              <Outlet />
-            </Container>
-          </Col>
+      <div className="main row mx-0">
+        <Col xs={12} md={6}>
+          <div className="px-0 px-sm-3 text-center">
+            <Outlet />
+          </div>
+        </Col>
 
-          <Col xs={12} md={7}>
-            <Chatbot />
-          </Col>
-        </div>
-      </Container>
+        <Col xs={12} md={6}>
+          <Chatbot />
+        </Col>
+      </div>
 
       <div className="footer">
         <Footer />

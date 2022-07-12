@@ -11,10 +11,11 @@ export const UserContext = createContext();
 export default function Chatbot(props) {
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
+  // const messagesEndRef = useRef(null);
 
   const updateMessages = (msg) => {
-    setMessages((previousState) => {
-      return [...previousState, msg];
+    setMessages((currentMessage) => {
+      return [...currentMessage, msg];
     });
   };
 
@@ -102,6 +103,10 @@ export default function Chatbot(props) {
     // eslint-disable-next-line
   }, []);
 
+  // useEffect(() => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // }, [messages]);
+
   const handleInputMessage = (event) => {
     if (event.key === 'Enter') {
       queryText(event.target.value);
@@ -127,7 +132,10 @@ export default function Chatbot(props) {
           <p className="mb-0 fw-bold">HOBO</p>
         </div>
 
-        <div className="card-body chat-bot">{renderMessages(messages)}</div>
+        <div className="card-body chat-bot">
+          {renderMessages(messages)}
+          <ScrollToBottom messages={messages} />
+        </div>
 
         <div className="card-footer input-group">
           <input
@@ -147,4 +155,13 @@ export default function Chatbot(props) {
       </div>
     </UserContext.Provider>
   );
+}
+
+function ScrollToBottom(props) {
+  const elementRef = useRef(null);
+  useEffect(() => {
+    console.log(elementRef.current);
+    elementRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [props.messages]);
+  return <div ref={elementRef} />;
 }

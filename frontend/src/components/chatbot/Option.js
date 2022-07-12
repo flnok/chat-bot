@@ -6,7 +6,7 @@ export default function Option(props) {
       <Button
         key={index}
         onClick={() => handleOption(opt)}
-        variant="outline-primary"
+        variant="outline-danger"
         className="rounded-pill my-1"
       >
         <span className="small">
@@ -16,13 +16,13 @@ export default function Option(props) {
     ));
   };
 
-  const handleOption = async (opt) => {
+  const handleOption = (opt) => {
     props.setMessages([]);
     console.log(JSON.stringify(opt));
     const text =
       opt.structValue.fields.event?.structValue.fields.name?.stringValue;
     const title = opt.structValue.fields.title?.stringValue;
-    await props.queryText(text, title);
+    props.queryText(text, title);
   };
 
   return (
@@ -40,10 +40,9 @@ export default function Option(props) {
       />
 
       <div
-        className="p-3 ms-3"
+        className="p-3 "
         style={{
           borderRadius: '15px',
-          backgroundColor: 'rgba(57, 192, 237,.2)',
         }}
       >
         <div className="option-content">

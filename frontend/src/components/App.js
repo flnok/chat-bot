@@ -1,7 +1,8 @@
 import Layout from './Layout';
 import Home from './pages/Home';
 import About from './pages/About';
-import Restaurant from './restaurant/Restaurant';
+import Menu from './pages/Menu';
+import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -12,7 +13,8 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route path="restaurant" element={<Restaurant />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="contact" element={<Contact />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

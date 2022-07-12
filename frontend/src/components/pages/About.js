@@ -1,8 +1,8 @@
 export default function About() {
   return (
-    <>
-      <h1 className="display-3">Về Chúng Tôi</h1>
-      <h2 className="display-6">Tầm Nhìn Và Sứ Mệnh</h2>
+    <div className="about">
+      <h1 className="display-5">Thông tin nhà hàng</h1>
+      {/* <h3>Tầm Nhìn Và Sứ Mệnh</h3> */}
       <dl>
         <dt>Sứ mệnh</dt>
         <dd>
@@ -27,6 +27,6 @@ export default function About() {
           tuyệt vời cho quý khách hàng.
         </dd>
       </dl>
-    </>
+    </div>
   );
 }

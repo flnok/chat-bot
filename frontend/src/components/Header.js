@@ -39,9 +39,17 @@ export default function Header() {
                 as={NavLink}
                 className="nav-link"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="restaurant"
+                to="menu"
               >
-                Restaurant
+                Menu
+              </Nav.Link>
+              <Nav.Link
+                as={NavLink}
+                className="nav-link"
+                style={({ isActive }) => (isActive ? activeStyle : undefined)}
+                to="contact"
+              >
+                Contact
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
@@ -50,15 +58,6 @@ export default function Header() {
           <Navbar.Text href="/" style={brandStyle} className="noselect">
             Nhà hàng Thuận Phát
           </Navbar.Text>
-          {/* <Navbar.Brand>
-            <img
-              alt=""
-              src="https://media.discordapp.net/attachments/994011424709943326/994037592674816050/logo.png"
-              width="100"
-              height="100"
-              className="d-block align-center mx-auto"
-            />
-          </Navbar.Brand> */}
         </Row>
       </Container>
     </Navbar>

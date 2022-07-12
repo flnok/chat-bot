@@ -6,7 +6,7 @@ export default function Message(props) {
   return (
     <>
       {props.author === 'bot' && (
-        <div className="d-flex flex-row justify-content-start mb-4">
+        <div className="d-flex justify-content-start mb-4">
           <img
             src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
             alt="avatar bot"
@@ -19,14 +19,14 @@ export default function Message(props) {
               backgroundColor: 'rgba(57, 192, 237,.2)',
             }}
           >
-            <span className="black-text small mb-0">
+            <span className="small mb-0">
               {props.title || props.content.toString()}
             </span>
           </div>
         </div>
       )}
       {props.author === 'me' && (
-        <div className="d-flex flex-row justify-content-end mb-4">
+        <div className="d-flex justify-content-end mb-4">
           <div
             className="p-3 me-3 border"
             style={{
@@ -34,7 +34,7 @@ export default function Message(props) {
               backgroundColor: '#fbfbfb',
             }}
           >
-            <span className="black-text small mb-0">
+            <span className="small mb-0">
               {props.title || props.content.toString()}
             </span>
           </div>
