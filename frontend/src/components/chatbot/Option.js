@@ -1,4 +1,5 @@
 import { Button } from 'react-bootstrap';
+import { config } from '../../config/config';
 
 export default function Option(props) {
   const renderOptions = (options) => {
@@ -18,7 +19,6 @@ export default function Option(props) {
 
   const handleOption = (opt) => {
     props.setMessages([]);
-    console.log(JSON.stringify(opt));
     const text =
       opt.structValue.fields.event?.structValue.fields.name?.stringValue;
     const title = opt.structValue.fields.title?.stringValue;
@@ -30,17 +30,10 @@ export default function Option(props) {
       key={props.index}
       className="d-flex flex-row justify-content-start mb-4"
     >
-      <img
-        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-        alt="avatar bot"
-        style={{
-          width: '45px',
-          height: '100%',
-        }}
-      />
+      <img src={config.botAvatar} alt="avatar bot" className="avatar-bot" />
 
       <div
-        className="p-3 "
+        className="p-3 pt-0"
         style={{
           borderRadius: '15px',
         }}

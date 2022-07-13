@@ -11,7 +11,6 @@ export const UserContext = createContext();
 export default function Chatbot(props) {
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
-  // const messagesEndRef = useRef(null);
 
   const updateMessages = (msg) => {
     setMessages((currentMessage) => {
@@ -103,10 +102,6 @@ export default function Chatbot(props) {
     // eslint-disable-next-line
   }, []);
 
-  // useEffect(() => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  // }, [messages]);
-
   const handleInputMessage = (event) => {
     if (event.key === 'Enter') {
       queryText(event.target.value);
@@ -129,7 +124,9 @@ export default function Chatbot(props) {
             borderTopRightRadius: '15px',
           }}
         >
-          <p className="mb-0 fw-bold">HOBO</p>
+          <p className="mb-0 fw-bold">
+            <span class="dot"></span> Nhà hàng Thuận Phát
+          </p>
         </div>
 
         <div className="card-body chat-bot">
@@ -137,7 +134,13 @@ export default function Chatbot(props) {
           <ScrollToBottom messages={messages} />
         </div>
 
-        <div className="card-footer input-group">
+        <div
+          className="card-footer input-group border-top-0"
+          style={{
+            borderBottomLeftRadius: '15px',
+            borderBottomRightRadius: '15px',
+          }}
+        >
           <input
             type="text"
             autoFocus
@@ -149,7 +152,7 @@ export default function Chatbot(props) {
           />
 
           <button onClick={handleButtonMessage} className="input-group-text">
-            <i className="fas fa-paper-plane"></i>
+            <i className="fas fa-paper-plane" style={{ color: '#9c191b' }}></i>
           </button>
         </div>
       </div>
@@ -160,7 +163,6 @@ export default function Chatbot(props) {
 function ScrollToBottom(props) {
   const elementRef = useRef(null);
   useEffect(() => {
-    console.log(elementRef.current);
     elementRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [props.messages]);
   return <div ref={elementRef} />;
