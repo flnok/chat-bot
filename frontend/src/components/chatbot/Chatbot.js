@@ -11,6 +11,7 @@ export const UserContext = createContext();
 export default function Chatbot(props) {
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
+  const [disabledInput, setDisabledInput] = useState(false);
 
   const updateMessages = (msg) => {
     setMessages((currentMessage) => {
@@ -124,12 +125,21 @@ export default function Chatbot(props) {
     if (event.key === 'Enter') {
       queryText(event.target.value);
       event.target.value = '';
+      handleInputDelay();
     }
   };
 
   const handleButtonMessage = () => {
     queryText(inputRef.current.value);
     inputRef.current.value = '';
+    handleInputDelay();
+  };
+
+  const handleInputDelay = () => {
+    setDisabledInput(true);
+    setTimeout(() => {
+      setDisabledInput(false);
+    }, 1500);
   };
 
   return (
@@ -142,7 +152,7 @@ export default function Chatbot(props) {
             borderTopRightRadius: '15px',
           }}
         >
-          <p className="mb-0 fw-bold">
+          <p className="mb-0 fw-bold fs-5">
             <span class="dot"></span> Nhà hàng Thuận Phát
           </p>
         </div>
@@ -167,6 +177,7 @@ export default function Chatbot(props) {
             ref={inputRef}
             onKeyUp={handleInputMessage}
             className="form-control"
+            disabled={disabledInput}
           />
 
           <button onClick={handleButtonMessage} className="input-group-text">
