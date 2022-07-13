@@ -63,6 +63,12 @@ export default function Chatbot(props) {
   };
 
   const renderMessage = (msg, index) => {
+    const isOption =
+      msg.msg?.payload?.fields?.richContent?.listValue?.values[0]?.listValue
+        ?.values[0]?.structValue?.fields?.type?.stringValue === 'list';
+    const isImage =
+      msg.msg?.payload?.fields?.richContent?.listValue?.values[0]?.listValue
+        ?.values[0]?.structValue?.fields?.type?.stringValue === 'image';
     if (msg.msg?.text?.text) {
       return (
         <Message
@@ -72,7 +78,7 @@ export default function Chatbot(props) {
           title={msg.title}
         />
       );
-    } else if (msg.msg?.payload) {
+    } else if (isOption) {
       return (
         <Option
           key={index}
@@ -82,6 +88,18 @@ export default function Chatbot(props) {
           setMessages={setMessages}
         />
       );
+    } else if (isImage) {
+      return (
+        <Message
+          key={index}
+          author={msg.author}
+          content={msg.msg.payload.fields.richContent}
+          title={msg.title}
+          isImage={true}
+        />
+      );
+    } else {
+      return null;
     }
   };
 

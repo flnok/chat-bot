@@ -8,7 +8,20 @@ export default function Message(props) {
           <img src={config.botAvatar} alt="avatar bot" className="avatar-bot" />
           <div className="p-3 ms-3 chat-bot-message-bot">
             <span className="small mb-0">
-              {props.title || props.content.toString()}
+              {props.isImage === true ? (
+                <>
+                  <img
+                    src={
+                      props.content.listValue.values[0].listValue.values[0]
+                        .structValue.fields.rawUrl.stringValue
+                    }
+                    class="img-fluid"
+                    alt="message"
+                  />
+                </>
+              ) : (
+                <> {props.title || props.content.toString()}</>
+              )}
             </span>
           </div>
         </div>
