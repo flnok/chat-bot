@@ -3,6 +3,7 @@ const express = require('express');
 const connectDB = require('./src/config/database');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const path = require('path');
 
 // Config
 dotenv.config();
@@ -41,8 +42,7 @@ app.use('/', require('./src/routes'));
 
 // Static
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('frontend/build'));
-  const path = require('path');
+  app.use(express.static('./frontend/build'));
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
