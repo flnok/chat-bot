@@ -1,7 +1,7 @@
 {
-  "name": "bot",
+  "name": "chatbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Chatbot for restaurant",
   "main": "app.js",
   "engines": {
     "node": "16.15.0",
@@ -11,9 +11,10 @@
     "server": "cross-env NODE_ENV=development nodemon app.js",
     "client": "npm run start --prefix frontend",
     "dev": "concurrently --kill-others-on-fail \"true\" --names \"SERVER,CLIENT\" -c \"bgGreen.bold,bgBlue.bold\" \"npm run server\" \"npm run client\"",
-    "start": "node app.js"
+    "start": "node app.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
-  "author": "",
+  "author": "Canh Nguyen-Huu",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/dialogflow": "^4.7.0",

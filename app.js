@@ -15,9 +15,6 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// // Flash
-// app.use(flash());
-
 // // Session
 // app.use(
 //   session({
@@ -31,10 +28,6 @@ if (process.env.NODE_ENV === 'development') {
 //   })
 // );
 
-// // Passport
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 // Body-parser
 app.use(
   express.urlencoded({
@@ -42,19 +35,18 @@ app.use(
   })
 );
 app.use(express.json());
-// app.use(cookieParser());
-
-// // Method override
-// app.use(methodOverride('_method'));
 
 // Routes
 app.use('/', require('./src/routes'));
 
 // Static
-app.use(express.static(path.join(__dirname, 'src/public')));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+  const path = require('path');
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 // Running
-app.listen(
-  PORT,
-  console.log(`Running in ${process.env.NODE_ENV} mode on port ${PORT}`)
-);
+app.listen(PORT, console.log(`${process.env.NODE_ENV} port ${PORT}`));
