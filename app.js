@@ -3,7 +3,6 @@ const express = require('express');
 const connectDB = require('./src/config/database');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const path = require('path');
 
 // Config
 dotenv.config();
