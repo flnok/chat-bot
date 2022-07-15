@@ -1,7 +1,7 @@
 const dialogflow = require('@google-cloud/dialogflow');
 const config = require('../config/config');
 const { struct } = require('pb-util');
-
+const Booking = require('../models/Booking');
 const projectId = config.googleProjectID;
 const sessionId = config.dialogFlowSessionID;
 const credentials = {
@@ -28,6 +28,31 @@ async function queryText(queries, parameters = {}, languageCode, userId) {
   };
 
   const responses = await sessionClient.detectIntent(request);
+
+  switch (responses[0].queryResult.action) {
+    case 'booking':
+      if (responses[0].queryResult.allRequiredParamsPresent) {
+        const fields = responses[0].queryResult.parameters.fields;
+        const data = {
+          person: fields.name.structValue.fields.name.stringValue,
+          date: fields.date.stringValue,
+          time: fields.time.stringValue,
+          note: fields.other.stringValue,
+          guestAmount: fields.guests.numberValue,
+        };
+        try {
+          const b = await Booking.create(data);
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+
   return responses;
 }
 

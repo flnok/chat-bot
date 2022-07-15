@@ -1,12 +1,13 @@
 const path = require('path');
 const express = require('express');
+const connectDB = require('./src/config/database');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 
 // Config
 dotenv.config();
 const PORT = process.env.PORT || 1202;
-// connectDB();
+connectDB();
 const app = express();
 
 // Logging
@@ -16,63 +17,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // // Flash
 // app.use(flash());
-
-// // Handlebars
-// app.set('views', path.join(__dirname, 'src/views'));
-// app.engine(
-//   'hbs',
-//   exphbs({
-//     helpers: {
-//       formatDate,
-//       getIdYoutube,
-//       showOptions,
-//       stripTags,
-//       truncate,
-//       mappingDepartmentName,
-//       getNumberByDepartmentName,
-//     },
-//     defaultLayout: 'main',
-//     extname: '.hbs',
-//   })
-// );
-
-// const Handlebars = exphbs.create({});
-// Handlebars.handlebars.registerHelper(
-//   'ifContentHadYoutube',
-//   function (content, options) {
-//     if (content) {
-//       if (
-//         content.includes('www.youtube.com/') ||
-//         content.includes('youtu.be/')
-//       ) {
-//         return options.fn(this);
-//       }
-//       return options.inverse(this);
-//     }
-//   }
-// );
-// Handlebars.handlebars.registerHelper(
-//   'ifYouOwnPost',
-//   function (postUser, user, postId, options) {
-//     if (postUser && user) {
-//       if (postUser._id == user._id) {
-//         return options.fn(this);
-//       } else {
-//         return options.inverse(this);
-//       }
-//     }
-//   }
-// );
-// Handlebars.handlebars.registerHelper(
-//   'ifYouAreNotDepartmentRole',
-//   function (user, options) {
-//     if (user.role === 'department') {
-//       return options.fn(this);
-//     } else {
-//       return options.inverse(this);
-//     }
-//   }
-// );
 
 // // Session
 // app.use(
