@@ -12,7 +12,7 @@
     "client": "npm run start --prefix frontend",
     "dev": "concurrently --kill-others-on-fail \"true\" --names \"SERVER,CLIENT\" -c \"bgGreen.bold,bgBlue.bold\" \"npm run server\" \"npm run client\"",
     "start": "node app.js",
-    "heroku-postbuild": "npm install --prefix frontend && npm run build --prefix frontend"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
   },
   "author": "Canh Nguyen-Huu",
   "license": "ISC",
