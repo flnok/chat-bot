@@ -140,6 +140,9 @@ export default function Chatbot(props) {
     setTimeout(() => {
       setDisabledInput(false);
     }, 1500);
+    setTimeout(() => {
+      inputRef.current.focus();
+    }, 1600);
   };
 
   return (
