@@ -2,16 +2,16 @@
   "name": "chatbot",
   "version": "1.0.0",
   "description": "Chatbot for restaurant",
-  "main": "app.js",
+  "main": "index.js",
   "engines": {
     "node": "16.15.0",
     "npm": "8.10.0"
   },
   "scripts": {
-    "server": "cross-env NODE_ENV=development nodemon app.js",
+    "server": "cross-env NODE_ENV=development nodemon index.js",
     "client": "npm run start --prefix frontend",
     "dev": "concurrently --kill-others-on-fail \"true\" --names \"SERVER,CLIENT\" -c \"bgGreen.bold,bgBlue.bold\" \"npm run server\" \"npm run client\"",
-    "start": "node app.js",
+    "start": "node index.js",
     "heroku-postbuild": "npm install --prefix frontend && npm run build --prefix frontend"
   },
   "author": "Canh Nguyen-Huu",
