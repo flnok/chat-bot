@@ -156,7 +156,7 @@ export default function Chatbot(props) {
           }}
         >
           <p className="mb-0 fw-bold fs-5">
-            <span class="dot"></span> Nhà hàng Thuận Phát
+            <span className="dot"></span> Nhà hàng Thuận Phát
           </p>
         </div>
 

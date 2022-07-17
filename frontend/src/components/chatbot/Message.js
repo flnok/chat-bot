@@ -15,7 +15,7 @@ export default function Message(props) {
                       props.content.listValue.values[0].listValue.values[0]
                         .structValue.fields.rawUrl.stringValue
                     }
-                    class="img-fluid"
+                    className="img-fluid"
                     alt="message"
                   />
                 </>
