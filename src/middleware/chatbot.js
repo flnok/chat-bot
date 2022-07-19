@@ -28,7 +28,7 @@ async function queryText(queries, parameters = {}, languageCode, userId) {
   };
 
   const responses = await sessionClient.detectIntent(request);
-  // console.log(JSON.stringify(responses[0], null, 2));
+  // console.log(JSON.stringify(responses[0]));
   await addDb(responses[0].queryResult);
 
   return responses;
@@ -60,6 +60,10 @@ async function addDb(queryResult) {
     case 'booking':
       if (queryResult.allRequiredParamsPresent) {
         const fields = queryResult.parameters.fields;
+        let isoDate = fields.date.stringValue;
+        var d = new Date(isoDate);
+        d.toLocaleDateString('en-GB');
+        console.log(d);
         const data = {
           person: fields.name.structValue.fields.name.stringValue,
           date: fields.date.stringValue,

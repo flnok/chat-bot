@@ -10,7 +10,7 @@ export default function Footer(props) {
           <div>08:00 - 22:00 (T2-CN)</div>
         </div>
         <div className="col-lg-4 col-sm-6 mb-4 mb-md-0">
-          <i className="fa-solid fa-phone"></i> 09 999 789 68
+          <i className="fa fa-phone"></i> 09 999 789 68
         </div>
       </div>
     </div>

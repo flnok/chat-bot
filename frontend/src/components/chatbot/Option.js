@@ -1,5 +1,4 @@
 import { Button } from 'react-bootstrap';
-import { config } from '../../config/config';
 
 export default function Option(props) {
   const renderOptions = (options) => {
@@ -19,19 +18,14 @@ export default function Option(props) {
 
   const handleOption = (opt) => {
     props.setMessages([]);
-    const text =
+    const event =
       opt.structValue.fields.event?.structValue.fields.name?.stringValue;
     const title = opt.structValue.fields.title?.stringValue;
-    props.queryText(text, title);
+    props.queryEvent(event, title);
   };
 
   return (
-    <div
-      key={props.index}
-      className="d-flex flex-row justify-content-start mb-4"
-    >
-      <img src={config.botAvatar} alt="avatar bot" className="avatar-bot" />
-
+    <div key={props.index} className="d-flex flex-row justify-content-end mb-4">
       <div
         className="p-3 pt-0"
         style={{

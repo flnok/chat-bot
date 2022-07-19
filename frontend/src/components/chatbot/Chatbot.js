@@ -47,7 +47,15 @@ export default function Chatbot(props) {
     });
   };
 
-  const queryEvent = async (event) => {
+  const queryEvent = async (event, hasText = null) => {
+    if (hasText) {
+      let newMessage = {
+        author: 'me',
+        msg: { text: { text: hasText } },
+      };
+      updateMessages(newMessage);
+    }
+
     const req = {
       queries: event,
       languageCode: 'vi',
@@ -86,6 +94,7 @@ export default function Chatbot(props) {
           author={msg.author}
           content={msg.msg.payload}
           queryText={queryText}
+          queryEvent={queryEvent}
           setMessages={setMessages}
         />
       );
@@ -184,7 +193,7 @@ export default function Chatbot(props) {
           />
 
           <button onClick={handleButtonMessage} className="input-group-text">
-            <i className="fas fa-paper-plane" style={{ color: '#9c191b' }}></i>
+            <i className="fa fa-paper-plane" style={{ color: '#9c191b' }}></i>
           </button>
         </div>
       </div>
