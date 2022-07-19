@@ -130,6 +130,10 @@ export default function Chatbot(props) {
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    inputRef.current.focus();
+  }, [messages]);
+
   const handleInputMessage = (event) => {
     if (event.key === 'Enter') {
       queryText(event.target.value);
@@ -148,10 +152,10 @@ export default function Chatbot(props) {
     setDisabledInput(true);
     setTimeout(() => {
       setDisabledInput(false);
-    }, 1500);
+    }, 1100);
     setTimeout(() => {
       inputRef.current.focus();
-    }, 1600);
+    }, 1200);
   };
 
   return (

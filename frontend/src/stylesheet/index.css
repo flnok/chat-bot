@@ -138,6 +138,7 @@ dd {
 .chat-bot-message-bot,
 .chat-bot-message-user {
   border-radius: 15px;
+  white-space: pre-line;
 }
 
 .chat-bot-message-bot {
