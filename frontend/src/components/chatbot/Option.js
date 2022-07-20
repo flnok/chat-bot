@@ -21,7 +21,9 @@ export default function Option(props) {
     const event =
       opt.structValue.fields.event?.structValue.fields.name?.stringValue;
     const title = opt.structValue.fields.title?.stringValue;
-    props.queryEvent(event, title);
+    const parameters =
+      opt.structValue.fields.event?.structValue.fields.parameters?.structValue;
+    props.queryEvent(event, title, parameters);
   };
 
   return (

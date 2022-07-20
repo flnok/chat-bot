@@ -47,7 +47,7 @@ export default function Chatbot(props) {
     });
   };
 
-  const queryEvent = async (event, hasText = null) => {
+  const queryEvent = async (event, hasText = null, parameters = {}) => {
     if (hasText) {
       let newMessage = {
         author: 'me',
@@ -58,6 +58,7 @@ export default function Chatbot(props) {
 
     const req = {
       queries: event,
+      parameters,
       languageCode: 'vi',
       userId: cookies.get('userID'),
     };

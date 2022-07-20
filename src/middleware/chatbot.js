@@ -28,7 +28,6 @@ async function queryText(queries, parameters = {}, languageCode, userId) {
   };
 
   const responses = await sessionClient.detectIntent(request);
-  // console.log(JSON.stringify(responses[0]));
   await addDb(responses[0].queryResult);
 
   return responses;
@@ -60,22 +59,42 @@ async function addDb(queryResult) {
     case 'booking':
       if (queryResult.allRequiredParamsPresent) {
         const fields = queryResult.parameters.fields;
-        let isoDate = fields.date.stringValue;
-        var d = new Date(isoDate);
-        d.toLocaleDateString('en-GB');
-        console.log(d);
         const data = {
           person: fields.name.structValue.fields.name.stringValue,
+          phone: fields.phone.stringValue,
           date: fields.date.stringValue,
           time: fields.time.stringValue,
-          note: fields.other.stringValue,
           guestAmount: fields.guests.numberValue,
+          note: fields.note.stringValue,
         };
         try {
-          const b = await Booking.create(data);
+          await Booking.create(data);
         } catch (error) {
           console.log(error);
-          throw error;
+        }
+      }
+      break;
+
+    case 'rate':
+      if (queryResult.allRequiredParamsPresent) {
+        let i = 0;
+        for (; i < queryResult.outputContexts; i++) {
+          if (
+            queryResult.outputContexts[i].name.search('booking-followup') != -1
+          )
+            break;
+        }
+        const parameters = queryResult.outputContexts[i].parameters.fields;
+        try {
+          const booking = await Booking.findOneAndUpdate(
+            {
+              person: parameters.name.structValue.fields.name.stringValue,
+              phone: parameters.phone.stringValue,
+            },
+            { rate: queryResult.parameters.fields.rate.numberValue }
+          );
+        } catch (error) {
+          console.log(error);
         }
       }
       break;
