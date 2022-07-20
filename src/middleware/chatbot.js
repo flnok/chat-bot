@@ -53,6 +53,7 @@ async function queryEvent(queries, parameters = {}, languageCode, userId) {
 
   const responses = await sessionClient.detectIntent(request);
   await addDb(responses[0].queryResult);
+
   return responses;
 }
 
@@ -62,7 +63,6 @@ async function addDb(queryResult) {
       if (queryResult.allRequiredParamsPresent) {
         const fields = queryResult.parameters.fields;
         const outputContexts = queryResult.outputContexts;
-
         let i = 0;
         while (outputContexts[i].name.search('prebooking-followup') === -1) {
           i++;
@@ -83,7 +83,8 @@ async function addDb(queryResult) {
           note: fields.note.stringValue,
         };
         try {
-          await Booking.create(data);
+          const booked = await Booking.create(data);
+          if (booked) console.log('Booked');
         } catch (error) {
           console.log(error);
         }
@@ -92,22 +93,21 @@ async function addDb(queryResult) {
 
     case 'rate':
       if (queryResult.allRequiredParamsPresent) {
+        const outputContexts = queryResult.outputContexts;
         let i = 0;
-        for (; i < queryResult.outputContexts; i++) {
-          if (
-            queryResult.outputContexts[i].name.search('booking-followup') != -1
-          )
-            break;
+        while (outputContexts[i].name.search('booking-followup') === -1) {
+          i++;
         }
-        const parameters = queryResult.outputContexts[i].parameters.fields;
+        const parameters = outputContexts[i].parameters.fields;
         try {
-          await Booking.findOneAndUpdate(
+          const update = await Booking.findOneAndUpdate(
             {
               person: parameters.name.structValue.fields.name.stringValue,
               phone: parameters.phone.stringValue,
             },
             { rate: queryResult.parameters.fields.rate.numberValue }
           );
+          if (update) console.log('Rated');
         } catch (error) {
           console.log(error);
         }

@@ -37,8 +37,6 @@ function handleWebhook(req, res) {
   async function dateTime(agent) {
     const inputDateTime =
       agent.parameters.dateTime['date_time'] || agent.parameters.dateTime;
-    // console.log(agent.contexts);
-    console.log(agent.contexts.length);
 
     if (
       agent.parameters.hasOwnProperty('dateTime') &&
@@ -48,11 +46,11 @@ function handleWebhook(req, res) {
         .ceil(30, 'minutes')
         .format('DD-MM-YYYY HH:mm')
         .split(' ');
-      // console.log(date, ' ', time);
       const isBooked = await Booking.findOne({
         date,
         time,
       });
+      
       if (!isBooked) {
         agent.add(
           `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhập số điện thoại vào đây để tiếp tục hoàn tất việc đặt bàn`
@@ -127,8 +125,30 @@ function handleWebhook(req, res) {
       }
     }
   }
-
   intentMap.set('Pre Booking', dateTime);
+
+  async function getRateNumber(agent) {
+    if (
+      agent.parameters.hasOwnProperty('rate') &&
+      agent.parameters.rate > 0 &&
+      agent.parameters.rate < 6
+    ) {
+      agent.consoleMessages.forEach((message) => {
+        agent.add(message);
+      });
+    } else {
+      let nocontext = agent.contexts.filter(
+        (context) => context.name === 'rate_dialog_context'
+      );
+      if (nocontext.length > 0) {
+        agent.add(agent.consoleMessages[0]);
+      } else {
+        agent.add(`^^ Chỉ đánh giá từ 1 - 5 thôi bạn nha`);
+      }
+    }
+  }
+  intentMap.set('Rate', getRateNumber);
+
   agent.handleRequest(intentMap);
 }
 
