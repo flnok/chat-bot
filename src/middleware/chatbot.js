@@ -1,4 +1,6 @@
 const dialogflow = require('@google-cloud/dialogflow');
+const moment = require('moment');
+require('moment-round');
 const config = require('../config/config');
 const { struct } = require('pb-util');
 const Booking = require('../models/Booking');
@@ -59,11 +61,24 @@ async function addDb(queryResult) {
     case 'booking':
       if (queryResult.allRequiredParamsPresent) {
         const fields = queryResult.parameters.fields;
+        const outputContexts = queryResult.outputContexts;
+
+        let i = 0;
+        while (outputContexts[i].name.search('prebooking-followup') === -1) {
+          i++;
+        }
+        const parameters = outputContexts[i].parameters.fields;
+        const [date, time] = moment(
+          parameters.dateTime.structValue.fields.date_time.stringValue
+        )
+          .ceil(30, 'minutes')
+          .format('DD-MM-YYYY HH:mm')
+          .split(' ');
         const data = {
           person: fields.name.structValue.fields.name.stringValue,
           phone: fields.phone.stringValue,
-          date: fields.date.stringValue,
-          time: fields.time.stringValue,
+          date: date,
+          time: time,
           guestAmount: fields.guests.numberValue,
           note: fields.note.stringValue,
         };
@@ -86,7 +101,7 @@ async function addDb(queryResult) {
         }
         const parameters = queryResult.outputContexts[i].parameters.fields;
         try {
-          const booking = await Booking.findOneAndUpdate(
+          await Booking.findOneAndUpdate(
             {
               person: parameters.name.structValue.fields.name.stringValue,
               phone: parameters.phone.stringValue,

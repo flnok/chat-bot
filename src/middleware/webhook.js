@@ -1,6 +1,7 @@
-const { WebhookClient } = require('dialogflow-fulfillment');
+const { WebhookClient, Payload } = require('dialogflow-fulfillment');
 const Booking = require('../models/Booking');
 const moment = require('moment');
+require('moment-round');
 
 function handleWebhook(req, res) {
   if (!req.body.queryResult.fulfillmentMessages) return;
@@ -33,6 +34,101 @@ function handleWebhook(req, res) {
   }
   intentMap.set('Information', information);
 
+  async function dateTime(agent) {
+    const inputDateTime =
+      agent.parameters.dateTime['date_time'] || agent.parameters.dateTime;
+    // console.log(agent.contexts);
+    console.log(agent.contexts.length);
+
+    if (
+      agent.parameters.hasOwnProperty('dateTime') &&
+      moment(inputDateTime).isSameOrAfter(moment(new Date()), 'minutes')
+    ) {
+      const [date, time] = moment(inputDateTime)
+        .ceil(30, 'minutes')
+        .format('DD-MM-YYYY HH:mm')
+        .split(' ');
+      // console.log(date, ' ', time);
+      const isBooked = await Booking.findOne({
+        date,
+        time,
+      });
+      if (!isBooked) {
+        agent.add(
+          `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhập số điện thoại vào đây để tiếp tục hoàn tất việc đặt bàn`
+        );
+        agent.add(
+          new Payload(
+            agent.UNSPECIFIED,
+            {
+              richContent: [
+                [
+                  {
+                    type: 'list',
+                    event: {
+                      parameters: {},
+                      languageCode: 'vi',
+                      name: 'Booking_next',
+                    },
+                    title: 'Tiếp tục',
+                  },
+                  {
+                    type: 'list',
+                    event: {
+                      parameters: {},
+                      languageCode: 'vi',
+                      name: 'Welcome_again',
+                    },
+                    title: 'Quay lại',
+                  },
+                ],
+              ],
+            },
+            {
+              rawPayload: true,
+              sendAsMessage: true,
+            }
+          )
+        );
+      } else {
+        agent.add(`Thời gian này không có bàn trống hãy chọn thời gian khác`);
+      }
+    } else {
+      let no_context = agent.contexts.filter(
+        (context) => context.name === 'pre_booking_dialog_context'
+      );
+
+      if (no_context.length > 0) {
+        agent.add(agent.consoleMessages[0]);
+        agent.add(
+          new Payload(
+            agent.UNSPECIFIED,
+            {
+              options: [
+                {
+                  text: 'Hôm nay',
+                },
+                {
+                  text: 'Ngày mai',
+                },
+              ],
+              type: 'chips',
+            },
+            {
+              rawPayload: true,
+              sendAsMessage: true,
+            }
+          )
+        );
+      } else {
+        agent.add(
+          `Vui lòng nhập ngày và giờ hợp lệ 8h-22h (vd : 18h 22-7, ngày mai 17h)`
+        );
+      }
+    }
+  }
+
+  intentMap.set('Pre Booking', dateTime);
   agent.handleRequest(intentMap);
 }
 

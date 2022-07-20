@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'universal-cookie';
 import Message from './Message';
 import Option from './Option';
+import Chips from './Chips';
 
 const cookies = new Cookies();
 export const UserContext = createContext();
@@ -79,6 +80,7 @@ export default function Chatbot(props) {
     const isImage =
       msg.msg?.payload?.fields?.richContent?.listValue?.values[0]?.listValue
         ?.values[0]?.structValue?.fields?.type?.stringValue === 'image';
+    const isChips = msg.msg?.payload?.fields?.type?.stringValue === 'chips';
     if (msg.msg?.text?.text) {
       return (
         <Message
@@ -109,6 +111,15 @@ export default function Chatbot(props) {
           isImage={true}
         />
       );
+    } else if (isChips) {
+      return (
+        <Chips
+          key={index}
+          author={msg.author}
+          content={msg.msg.payload.fields.options.listValue.values}
+          inputRef={inputRef}
+        />
+      );
     } else {
       return null;
     }
@@ -136,7 +147,7 @@ export default function Chatbot(props) {
   }, [messages]);
 
   const handleInputMessage = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && event.target.value.trim() !== '') {
       queryText(event.target.value);
       event.target.value = '';
       handleInputDelay();
@@ -144,19 +155,21 @@ export default function Chatbot(props) {
   };
 
   const handleButtonMessage = () => {
-    queryText(inputRef.current.value);
-    inputRef.current.value = '';
-    handleInputDelay();
+    if (inputRef.current.value.trim() !== '') {
+      queryText(inputRef.current.value);
+      inputRef.current.value = '';
+      handleInputDelay();
+    }
   };
 
   const handleInputDelay = () => {
     setDisabledInput(true);
     setTimeout(() => {
       setDisabledInput(false);
-    }, 1100);
+    }, 900);
     setTimeout(() => {
       inputRef.current.focus();
-    }, 1200);
+    }, 1000);
   };
 
   return (
@@ -190,7 +203,7 @@ export default function Chatbot(props) {
             type="text"
             autoFocus
             name="inputMessage"
-            placeholder="Mình cần đặt bàn..."
+            placeholder='Nhập "quay lại" nếu không muốn tiếp tục ...  '
             ref={inputRef}
             onKeyUp={handleInputMessage}
             className="form-control"

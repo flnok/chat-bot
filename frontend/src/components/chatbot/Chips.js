@@ -1,49 +1,58 @@
 import { Button } from 'react-bootstrap';
-import { config } from '../../config/config';
+import moment from 'moment';
 
 export default function Chips(props) {
-  const renderOptions = (options) => {
-    return options.map((opt, index) => (
+  const renderChips = (chips) => {
+    return chips.map((c, index) => (
       <Button
         key={index}
-        onClick={() => handleOption(opt)}
-        variant="outline-danger"
-        className="rounded-pill my-1"
+        onClick={() => handleChipClick(c)}
+        variant="outline-dark"
+        className="rounded-pill my-1 mx-2"
       >
         <span className="small">
-          {opt.structValue.fields.title?.stringValue}
+          {c.structValue?.fields?.text?.stringValue}
         </span>
       </Button>
     ));
   };
 
-  const handleOption = (opt) => {
-    props.setMessages([]);
-    const text =
-      opt.structValue.fields.event?.structValue.fields.name?.stringValue;
-    const title = opt.structValue.fields.title?.stringValue;
-    props.queryText(text, title);
+  const handleChipClick = (c) => {
+    let text = c.structValue?.fields?.text?.stringValue;
+    switch (text) {
+      case 'Hôm nay':
+        const [date, time] = moment().format('DD-MM-YYYY HH:mm').split(' ');
+        text = `${time} ${date}`;
+        props.inputRef.current.value = text;
+        break;
+
+      case 'Ngày mai':
+        const [date2, time2] = moment()
+          .add(1, 'days')
+          .format('DD-MM-YYYY HH:mm')
+          .split(' ');
+        text = `${time2} ${date2}`;
+        props.inputRef.current.value = text;
+        break;
+
+      default:
+        break;
+    }
+    props.inputRef.current.value = text;
   };
 
   return (
     <div
       key={props.index}
-      className="d-flex flex-row justify-content-start mb-4"
+      className="d-flex flex-row justify-content-center mb-4"
     >
-      <img src={config.botAvatar} alt="avatar bot" className="avatar-bot" />
-
       <div
         className="p-3 pt-0"
         style={{
           borderRadius: '15px',
         }}
       >
-        <div className="option-content">
-          {renderOptions(
-            props.content.fields.richContent.listValue.values[0].listValue
-              .values
-          )}
-        </div>
+        <div className="chip-content">{renderChips(props.content)}</div>
       </div>
     </div>
   );

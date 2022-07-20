@@ -177,6 +177,13 @@ dd {
   flex-wrap: wrap;
 }
 
+.chip-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
 .footer {
   background-color: var(--footer-background-color);
   color: #f1faee;
