@@ -32,6 +32,7 @@ function handleWebhook(req, res) {
   intentMap.set('Information', checkBookingInformation);
 
   async function dateTime(agent) {
+    const [openTime, closeTime] = ['07:59', '22:01'];
     const inputDateTime =
       agent.parameters.dateTime['date_time'] || agent.parameters.dateTime;
     const [date, time] = moment(inputDateTime) //Chỉ hiện thị chứ không ghi vào db
@@ -42,10 +43,19 @@ function handleWebhook(req, res) {
       date,
       time,
     });
+    const isOpenTime = moment(time, 'HH:mm').isBetween(
+      moment(openTime, 'HH:mm'),
+      moment(closeTime, 'HH:mm')
+    );
+    const isValidDate = moment(inputDateTime).isSameOrAfter(
+      moment(new Date()),
+      'minutes'
+    );
 
     if (
       agent.parameters.hasOwnProperty('dateTime') &&
-      moment(inputDateTime).isSameOrAfter(moment(new Date()), 'minutes') &&
+      isOpenTime &&
+      isValidDate &&
       !isBooked
     ) {
       agent.add(
@@ -117,7 +127,7 @@ function handleWebhook(req, res) {
           agent.add(`Thời gian này không có bàn trống hãy chọn thời gian khác`);
         } else {
           agent.add(
-            `Vui lòng nhập ngày và giờ hợp lệ 8h-22h (vd : 18h 22-7, ngày mai 17h)`
+            `Vui lòng nhập ngày và giờ hợp lệ 8h-22h từ lúc này trở đi (vd : 18h 22-7, ngày mai 17h)`
           );
         }
       }
