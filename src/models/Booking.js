@@ -7,7 +7,6 @@ const BookingSchema = new mongoose.Schema(
     date: String,
     time: String,
     guestAmount: Number,
-    note: String,
     rate: Number,
   },
   {

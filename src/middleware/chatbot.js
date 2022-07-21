@@ -80,7 +80,6 @@ async function addDb(queryResult) {
           date: date,
           time: time,
           guestAmount: fields.guests.numberValue,
-          note: fields.note.stringValue,
         };
         try {
           const booked = await Booking.create(data);

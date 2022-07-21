@@ -14,22 +14,19 @@ function handleWebhook(req, res) {
   let intentMap = new Map();
 
   async function information(agent) {
-    const info = await Booking.findOne({
-      person: agent.parameters.name,
-      date: agent.parameters.date,
+    const info = await Booking.find({
+      person: agent.parameters.name.name,
+      phone: agent.parameters.phone,
     });
-    let response = `Không có thông tin đặt bàn`;
-
-    if (info) {
-      response = `Thông tin đặt bàn của bạn là\nTên: ${
-        info.person
-      }\nNgày: ${moment(info.date).format('DD-MM-YYYY')} vào lúc ${moment(
-        info.time
-      ).format('hh:mm')}\nSố lượng khách: ${info.guestAmount}\nYêu cầu khác: ${
-        info.note
-      } `;
+    console.log(info);
+    if (info.length > 0) {
+      info.forEach((i) => {
+        const response = `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`;
+        agent.add(response);
+      });
+    } else {
+      agent.add(`Không có thông tin đặt bàn`);
     }
-    agent.add(response);
     agent.add(agent.consoleMessages[0]);
   }
   intentMap.set('Information', information);
@@ -50,7 +47,7 @@ function handleWebhook(req, res) {
         date,
         time,
       });
-      
+
       if (!isBooked) {
         agent.add(
           `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhập số điện thoại vào đây để tiếp tục hoàn tất việc đặt bàn`
@@ -131,7 +128,7 @@ function handleWebhook(req, res) {
     if (
       agent.parameters.hasOwnProperty('rate') &&
       agent.parameters.rate > 0 &&
-      agent.parameters.rate < 6
+      agent.parameters.rate < 11
     ) {
       agent.consoleMessages.forEach((message) => {
         agent.add(message);
@@ -143,7 +140,7 @@ function handleWebhook(req, res) {
       if (nocontext.length > 0) {
         agent.add(agent.consoleMessages[0]);
       } else {
-        agent.add(`^^ Chỉ đánh giá từ 1 - 5 thôi bạn nha`);
+        agent.add(`^^ Chỉ đánh giá từ 1 - 10 thôi bạn nha`);
       }
     }
   }
