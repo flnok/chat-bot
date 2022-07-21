@@ -24,6 +24,7 @@ export default function Option(props) {
   };
 
   const handleOption = (opt) => {
+    props.setDisabledInput(false);
     const isLink = opt.structValue.fields.link;
     if (isLink) {
       navigateClick(opt.structValue.fields.link.stringValue);

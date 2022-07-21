@@ -98,6 +98,7 @@ export default function Chatbot(props) {
           content={msg.msg.payload}
           queryEvent={queryEvent}
           setMessages={setMessages}
+          setDisabledInput={setDisabledInput}
         />
       );
     } else if (isImage) {
@@ -135,6 +136,7 @@ export default function Chatbot(props) {
   useEffect(() => {
     async function fetchData() {
       await queryEvent('Welcome');
+      setDisabledInput(true);
     }
     fetchData();
     // eslint-disable-next-line
