@@ -1,6 +1,13 @@
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 export default function Option(props) {
+  const navigate = useNavigate();
+
+  function navigateClick(link) {
+    navigate(`/${link}`);
+  }
+
   const renderOptions = (options) => {
     return options.map((opt, index) => (
       <Button
@@ -17,13 +24,19 @@ export default function Option(props) {
   };
 
   const handleOption = (opt) => {
-    props.setMessages([]);
-    const event =
-      opt.structValue.fields.event?.structValue.fields.name?.stringValue;
-    const title = opt.structValue.fields.title?.stringValue;
-    const parameters =
-      opt.structValue.fields.event?.structValue.fields.parameters?.structValue;
-    props.queryEvent(event, title, parameters);
+    const isLink = opt.structValue.fields.link;
+    if (isLink) {
+      navigateClick(opt.structValue.fields.link.stringValue);
+    } else {
+      props.setMessages([]);
+      const event =
+        opt.structValue.fields.event?.structValue.fields.name?.stringValue;
+      const title = opt.structValue.fields.title?.stringValue;
+      const parameters =
+        opt.structValue.fields.event?.structValue.fields.parameters
+          ?.structValue;
+      props.queryEvent(event, title, parameters);
+    }
   };
 
   return (

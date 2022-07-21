@@ -96,7 +96,7 @@ dd {
 
 .chat-bot-container {
   display: flex;
-  height: 500px;
+  height: 550px;
   max-width: 500px;
   border-radius: 15px;
 }
@@ -157,19 +157,6 @@ dd {
   border-radius: 50%;
 }
 
-.card-footer {
-  background: var(--chatbot-background-color);
-}
-
-.noselect {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
 .option-content {
   display: flex;
   flex-direction: column;
@@ -184,7 +171,24 @@ dd {
   flex-wrap: wrap;
 }
 
+.card-footer {
+  background: var(--chatbot-background-color);
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .footer {
   background-color: var(--footer-background-color);
   color: #f1faee;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
 }
