@@ -1,10 +1,6 @@
 const express = require('express');
-const router = express.Router(); // /api
+const router = express.Router();
 
-router.get('/', (req, res) => {
-  return res.send('Đây là trang api');
-});
-
-router.use('/dialog-flow', require('./dialogFlow'));
+router.use('/dialog-flow', require('./dialogFlow')); // /api/dialog-flow
 
 module.exports = router;

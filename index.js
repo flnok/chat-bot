@@ -1,8 +1,8 @@
 const path = require('path');
 const express = require('express');
-const connectDB = require('./src/config/database');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const connectDB = require('./src/config/database');
 
 // Config
 dotenv.config();
@@ -14,19 +14,6 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
-
-// // Session
-// app.use(
-//   session({
-//     cookie: { maxAge: 7200000 },
-//     secret: 'funky mc',
-//     resave: false,
-//     saveUninitialized: false,
-//     store: MongoStore.create({
-//       mongoUrl: process.env.MONGODB_URI,
-//     }),
-//   })
-// );
 
 // Body-parser
 app.use(

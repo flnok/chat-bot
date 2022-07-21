@@ -1,9 +1,10 @@
 const dialogflow = require('@google-cloud/dialogflow');
 const moment = require('moment');
 require('moment-round');
-const config = require('../config/config');
 const { struct } = require('pb-util');
+const config = require('../config/config');
 const Booking = require('../models/Booking');
+const { defaultLanguageCode } = require('../config/config');
 const projectId = config.googleProjectID;
 const sessionId = config.dialogFlowSessionID;
 const credentials = {
@@ -12,12 +13,16 @@ const credentials = {
 };
 const sessionClient = new dialogflow.SessionsClient({ projectId, credentials });
 
-async function queryText(queries, parameters = {}, languageCode, userId) {
+async function queryText(
+  queries,
+  parameters = {},
+  languageCode = defaultLanguageCode,
+  userId
+) {
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
     sessionId + userId
   );
-
   const request = {
     session: sessionPath,
     queryInput: {
@@ -35,7 +40,12 @@ async function queryText(queries, parameters = {}, languageCode, userId) {
   return responses;
 }
 
-async function queryEvent(queries, parameters = {}, languageCode, userId) {
+async function queryEvent(
+  queries,
+  parameters = {},
+  languageCode = defaultLanguageCode,
+  userId
+) {
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
     sessionId + userId

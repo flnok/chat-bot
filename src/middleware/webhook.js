@@ -1,7 +1,7 @@
 const { WebhookClient, Payload } = require('dialogflow-fulfillment');
-const Booking = require('../models/Booking');
 const moment = require('moment');
 require('moment-round');
+const Booking = require('../models/Booking');
 
 function handleWebhook(req, res) {
   if (!req.body.queryResult.fulfillmentMessages) return;
@@ -13,12 +13,12 @@ function handleWebhook(req, res) {
   const agent = new WebhookClient({ request: req, response: res });
   let intentMap = new Map();
 
-  async function information(agent) {
+  async function checkBookingInformation(agent) {
     const info = await Booking.find({
       person: agent.parameters.name.name,
       phone: agent.parameters.phone,
     });
-    console.log(info);
+
     if (info.length > 0) {
       info.forEach((i) => {
         const response = `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`;
@@ -27,73 +27,69 @@ function handleWebhook(req, res) {
     } else {
       agent.add(`Không có thông tin đặt bàn`);
     }
-    agent.add(agent.consoleMessages[0]);
+    agent.add(agent.consoleMessages[0]); //Navigation
   }
-  intentMap.set('Information', information);
+  intentMap.set('Information', checkBookingInformation);
 
   async function dateTime(agent) {
     const inputDateTime =
       agent.parameters.dateTime['date_time'] || agent.parameters.dateTime;
+    const [date, time] = moment(inputDateTime) //Chỉ hiện thị chứ không ghi vào db
+      .ceil(30, 'minutes')
+      .format('DD-MM-YYYY HH:mm')
+      .split(' ');
+    const isBooked = await Booking.findOne({
+      date,
+      time,
+    });
 
     if (
       agent.parameters.hasOwnProperty('dateTime') &&
-      moment(inputDateTime).isSameOrAfter(moment(new Date()), 'minutes')
+      moment(inputDateTime).isSameOrAfter(moment(new Date()), 'minutes') &&
+      !isBooked
     ) {
-      const [date, time] = moment(inputDateTime)
-        .ceil(30, 'minutes')
-        .format('DD-MM-YYYY HH:mm')
-        .split(' ');
-      const isBooked = await Booking.findOne({
-        date,
-        time,
-      });
-
-      if (!isBooked) {
-        agent.add(
-          `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhập số điện thoại vào đây để tiếp tục hoàn tất việc đặt bàn`
-        );
-        agent.add(
-          new Payload(
-            agent.UNSPECIFIED,
-            {
-              richContent: [
-                [
-                  {
-                    type: 'list',
-                    event: {
-                      parameters: {},
-                      languageCode: 'vi',
-                      name: 'Booking_next',
-                    },
-                    title: 'Tiếp tục',
+      agent.add(
+        `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhấn nút tiếp tục để hoàn tất việc đặt bàn`
+      );
+      agent.add(
+        // Navigation
+        new Payload(
+          agent.UNSPECIFIED,
+          {
+            richContent: [
+              [
+                {
+                  title: 'Tiếp tục',
+                  type: 'list',
+                  event: {
+                    languageCode: 'vi',
+                    name: 'Booking_next',
                   },
-                  {
-                    type: 'list',
-                    event: {
-                      parameters: {},
-                      languageCode: 'vi',
-                      name: 'Welcome_again',
-                    },
-                    title: 'Quay lại',
+                },
+                {
+                  title: 'Quay lại',
+                  type: 'list',
+                  event: {
+                    languageCode: 'vi',
+                    name: 'Welcome_again',
                   },
-                ],
+                },
               ],
-            },
-            {
-              rawPayload: true,
-              sendAsMessage: true,
-            }
-          )
-        );
-      } else {
-        agent.add(`Thời gian này không có bàn trống hãy chọn thời gian khác`);
-      }
+            ],
+          },
+          {
+            rawPayload: true,
+            sendAsMessage: true,
+          }
+        )
+      );
     } else {
-      let no_context = agent.contexts.filter(
+      // Slot filling request
+      let wrongInput = agent.contexts.filter(
         (context) => context.name === 'pre_booking_dialog_context'
       );
-
-      if (no_context.length > 0) {
+      if (wrongInput.length > 0) {
+        // Chưa nhập hoặc nhập sai kiểu dữ liệu
         agent.add(agent.consoleMessages[0]);
         agent.add(
           new Payload(
@@ -116,15 +112,20 @@ function handleWebhook(req, res) {
           )
         );
       } else {
-        agent.add(
-          `Vui lòng nhập ngày và giờ hợp lệ 8h-22h (vd : 18h 22-7, ngày mai 17h)`
-        );
+        // Nhập rồi nhưng không đúng
+        if (isBooked) {
+          agent.add(`Thời gian này không có bàn trống hãy chọn thời gian khác`);
+        } else {
+          agent.add(
+            `Vui lòng nhập ngày và giờ hợp lệ 8h-22h (vd : 18h 22-7, ngày mai 17h)`
+          );
+        }
       }
     }
   }
   intentMap.set('Pre Booking', dateTime);
 
-  async function getRateNumber(agent) {
+  async function verifyRateNumber(agent) {
     if (
       agent.parameters.hasOwnProperty('rate') &&
       agent.parameters.rate > 0 &&
@@ -134,17 +135,19 @@ function handleWebhook(req, res) {
         agent.add(message);
       });
     } else {
-      let nocontext = agent.contexts.filter(
+      let wrongInput = agent.contexts.filter(
         (context) => context.name === 'rate_dialog_context'
       );
-      if (nocontext.length > 0) {
+      if (wrongInput.length > 0) {
+        // Chưa nhập hoặc nhập sai kiểu dữ liệu
         agent.add(agent.consoleMessages[0]);
       } else {
+        // Nhập rồi nhưng không đúng
         agent.add(`^^ Chỉ đánh giá từ 1 - 10 thôi bạn nha`);
       }
     }
   }
-  intentMap.set('Rate', getRateNumber);
+  intentMap.set('Rate', verifyRateNumber);
 
   agent.handleRequest(intentMap);
 }
