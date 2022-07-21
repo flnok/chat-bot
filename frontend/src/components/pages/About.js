@@ -2,7 +2,6 @@ export default function About() {
   return (
     <div className="about">
       <h1 className="display-5">Thông tin nhà hàng</h1>
-      {/* <h3>Tầm Nhìn Và Sứ Mệnh</h3> */}
       <dl>
         <dt>Sứ mệnh</dt>
         <dd>

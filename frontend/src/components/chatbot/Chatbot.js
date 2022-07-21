@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createContext } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'universal-cookie';
@@ -7,12 +7,14 @@ import Option from './Option';
 import Chips from './Chips';
 
 const cookies = new Cookies();
-export const UserContext = createContext();
 
 export default function Chatbot(props) {
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
   const [disabledInput, setDisabledInput] = useState(false);
+  if (cookies.get('userID') === undefined) {
+    cookies.set('userID', uuidv4(), { path: '/' });
+  }
 
   const updateMessages = (msg) => {
     setMessages((currentMessage) => {
@@ -20,25 +22,22 @@ export default function Chatbot(props) {
     });
   };
 
-  if (cookies.get('userID') === undefined) {
-    cookies.set('userID', uuidv4(), { path: '/' });
-  }
-
-  const queryText = async (text, title = '') => {
+  const queryText = async (value, title = '') => {
     let newMessage = {
       author: 'me',
-      msg: { text: { text: text } },
+      msg: { text: { text: value } },
       title,
     };
     updateMessages(newMessage);
 
     const req = {
-      queries: text,
+      queries: value,
       languageCode: 'vi',
       userId: cookies.get('userID'),
     };
 
     const res = await axios.post('/api/dialog-flow/query-text', req);
+
     res.data.fulfillmentMessages.forEach((msg) => {
       newMessage = {
         author: 'bot',
@@ -74,6 +73,7 @@ export default function Chatbot(props) {
   };
 
   const renderMessage = (msg, index) => {
+    const isText = msg.msg?.text?.text;
     const isOption =
       msg.msg?.payload?.fields?.richContent?.listValue?.values[0]?.listValue
         ?.values[0]?.structValue?.fields?.type?.stringValue === 'list';
@@ -81,7 +81,8 @@ export default function Chatbot(props) {
       msg.msg?.payload?.fields?.richContent?.listValue?.values[0]?.listValue
         ?.values[0]?.structValue?.fields?.type?.stringValue === 'image';
     const isChips = msg.msg?.payload?.fields?.type?.stringValue === 'chips';
-    if (msg.msg?.text?.text) {
+
+    if (isText) {
       return (
         <Message
           key={index}
@@ -94,9 +95,7 @@ export default function Chatbot(props) {
       return (
         <Option
           key={index}
-          author={msg.author}
           content={msg.msg.payload}
-          queryText={queryText}
           queryEvent={queryEvent}
           setMessages={setMessages}
         />
@@ -115,7 +114,6 @@ export default function Chatbot(props) {
       return (
         <Chips
           key={index}
-          author={msg.author}
           content={msg.msg.payload.fields.options.listValue.values}
           inputRef={inputRef}
         />
@@ -173,49 +171,47 @@ export default function Chatbot(props) {
   };
 
   return (
-    <UserContext.Provider value={messages}>
-      <div className="card chat-bot-container mx-auto">
-        <div
-          className="card-header text-center p-3 border-bottom-0"
-          style={{
-            borderTopLeftRadius: '15px',
-            borderTopRightRadius: '15px',
-          }}
-        >
-          <p className="mb-0 fw-bold fs-5">
-            <span className="dot"></span> Nhà hàng Thuận Phát
-          </p>
-        </div>
-
-        <div className="card-body chat-bot">
-          {renderMessages(messages)}
-          <ScrollToBottom messages={messages} />
-        </div>
-
-        <div
-          className="card-footer input-group border-top-0"
-          style={{
-            borderBottomLeftRadius: '15px',
-            borderBottomRightRadius: '15px',
-          }}
-        >
-          <input
-            type="text"
-            autoFocus
-            name="inputMessage"
-            placeholder='Nhập "quay lại" nếu không muốn tiếp tục ...  '
-            ref={inputRef}
-            onKeyUp={handleInputMessage}
-            className="form-control"
-            disabled={disabledInput}
-          />
-
-          <button onClick={handleButtonMessage} className="input-group-text">
-            <i className="fa fa-paper-plane" style={{ color: '#9c191b' }}></i>
-          </button>
-        </div>
+    <div className="card chat-bot-container mx-auto">
+      <div
+        className="card-header text-center p-3 border-bottom-0"
+        style={{
+          borderTopLeftRadius: '15px',
+          borderTopRightRadius: '15px',
+        }}
+      >
+        <p className="mb-0 fw-bold fs-5">
+          <span className="dot"></span> Nhà hàng Thuận Phát
+        </p>
       </div>
-    </UserContext.Provider>
+
+      <div className="card-body chat-bot">
+        {renderMessages(messages)}
+        <ScrollToBottom messages={messages} />
+      </div>
+
+      <div
+        className="card-footer input-group border-top-0"
+        style={{
+          borderBottomLeftRadius: '15px',
+          borderBottomRightRadius: '15px',
+        }}
+      >
+        <input
+          type="text"
+          autoFocus
+          name="inputMessage"
+          placeholder='Nhập "quay lại" nếu không muốn tiếp tục ...  '
+          ref={inputRef}
+          onKeyUp={handleInputMessage}
+          className="form-control"
+          disabled={disabledInput}
+        />
+
+        <button onClick={handleButtonMessage} className="input-group-text">
+          <i className="fa fa-paper-plane" style={{ color: '#9c191b' }}></i>
+        </button>
+      </div>
+    </div>
   );
 }
 

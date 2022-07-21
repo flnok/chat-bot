@@ -19,11 +19,11 @@ export default function Chips(props) {
 
   const handleChipClick = (c) => {
     let text = c.structValue?.fields?.text?.stringValue;
+    // hard set
     switch (text) {
       case 'Hôm nay':
         const [date, time] = moment().format('DD-MM-YYYY HH:mm').split(' ');
         text = `${time} ${date}`;
-        props.inputRef.current.value = text;
         break;
 
       case 'Ngày mai':
@@ -32,7 +32,6 @@ export default function Chips(props) {
           .format('DD-MM-YYYY HH:mm')
           .split(' ');
         text = `${time2} ${date2}`;
-        props.inputRef.current.value = text;
         break;
 
       default:
