@@ -18,7 +18,7 @@ export default function Header() {
         <Row>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="m-auto">
+            <Nav className="m-auto text-center">
               <Nav.Link
                 as={NavLink}
                 className="nav-link"

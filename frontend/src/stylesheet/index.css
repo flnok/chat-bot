@@ -26,8 +26,9 @@ body {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  flex-wrap: wrap-reverse;
+  flex-wrap: wrap;
   min-height: 650px;
+  margin: 10px 0;
 }
 
 .home {
@@ -64,7 +65,7 @@ body {
   -webkit-text-fill-color: transparent;
   animation: welcome 2s linear infinite;
   display: inline-block;
-  font-size: 69px;
+  font-size: 3rem;
 }
 
 @keyframes welcome {
@@ -187,9 +188,16 @@ dd {
 .footer {
   background-color: var(--footer-background-color);
   color: #f1faee;
-  position: fixed;
-  left: 0;
-  bottom: 0;
+  /* position: relative; */
   width: 100%;
-  z-index: 10;
+}
+
+@media only screen and (min-width: 768px) {
+  .footer {
+    position: fixed;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+  }
 }
