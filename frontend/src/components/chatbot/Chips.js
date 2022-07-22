@@ -34,6 +34,23 @@ export default function Chips(props) {
         text = `${time2} ${date2}`;
         break;
 
+      case '😍':
+        text = `10`;
+
+        break;
+
+      case '👍':
+        text = `8`;
+        break;
+
+      case '😊':
+        text = `5`;
+        break;
+
+      case '👎':
+        text = `0`;
+        break;
+
       default:
         break;
     }

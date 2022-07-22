@@ -138,7 +138,7 @@ function handleWebhook(req, res) {
   async function verifyRateNumber(agent) {
     if (
       agent.parameters.hasOwnProperty('rate') &&
-      agent.parameters.rate > 0 &&
+      agent.parameters.rate >= 0 &&
       agent.parameters.rate < 11
     ) {
       agent.consoleMessages.forEach((message) => {
@@ -151,6 +151,31 @@ function handleWebhook(req, res) {
       if (wrongInput.length > 0) {
         // Chưa nhập hoặc nhập sai kiểu dữ liệu
         agent.add(agent.consoleMessages[0]);
+        const queryInput = new Payload(
+          agent.UNSPECIFIED,
+          {
+            type: 'chips',
+            options: [
+              {
+                text: '😍',
+              },
+              {
+                text: '👍',
+              },
+              {
+                text: '😊',
+              },
+              {
+                text: '👎',
+              },
+            ],
+          },
+          {
+            rawPayload: true,
+            sendAsMessage: true,
+          }
+        );
+        agent.add(queryInput);
       } else {
         // Nhập rồi nhưng không đúng
         agent.add(`^^ Chỉ đánh giá từ 1 - 10 thôi bạn nha`);
