@@ -35,6 +35,10 @@ function handleWebhook(req, res) {
     const [openTime, closeTime] = ['07:59', '22:01'];
     const inputDateTime =
       agent.parameters.dateTime['date_time'] || agent.parameters.dateTime;
+    console.log(
+      '🚀 ~ file: webhook.js ~ line 37 ~ dateTime ~ inputDateTime',
+      inputDateTime
+    );
     const [date, time] = moment(inputDateTime) //Chỉ hiện thị chứ không ghi vào db
       .ceil(30, 'minutes')
       .format('DD-MM-YYYY HH:mm')
@@ -52,6 +56,14 @@ function handleWebhook(req, res) {
       'minutes'
     );
 
+    console.log(
+      'isBooked: ',
+      isBooked,
+      'isOpenTime: ',
+      isOpenTime,
+      'isValidDate: ',
+      isValidDate
+    );
     if (
       agent.parameters.hasOwnProperty('dateTime') &&
       isOpenTime &&
