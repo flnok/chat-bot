@@ -47,6 +47,9 @@ function handleWebhook(req, res) {
       date,
       time,
     });
+    console.log('🚀 ~ file: webhook.js ~ line 50 ~ dateTime ~ date', date);
+    console.log('🚀 ~ file: webhook.js ~ line 50 ~ dateTime ~ time', time);
+    console.log(moment(time, 'HH:mm'), moment(openTime, 'HH:mm'));
     const isOpenTime = moment(time, 'HH:mm').isBetween(
       moment(openTime, 'HH:mm'),
       moment(closeTime, 'HH:mm')
