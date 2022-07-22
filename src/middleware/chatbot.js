@@ -79,7 +79,7 @@ async function addDb(queryResult) {
         }
         const parameters = outputContexts[i].parameters.fields;
         const [date, time] = moment(
-          parameters.dateTime.structValue.fields.date_time.stringValue
+          parameters.dateTime?.structValue?.fields?.date_time?.stringValue
         )
           .ceil(30, 'minutes')
           .format('DD-MM-YYYY HH:mm')
