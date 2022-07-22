@@ -81,6 +81,7 @@ async function addDb(queryResult) {
         const [date, time] = moment(
           parameters.dateTime?.structValue?.fields?.date_time?.stringValue
         )
+          .utcOffset('+0700')
           .ceil(30, 'minutes')
           .format('DD-MM-YYYY HH:mm')
           .split(' ');
