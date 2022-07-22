@@ -39,7 +39,8 @@ function handleWebhook(req, res) {
       '🚀 ~ file: webhook.js ~ line 37 ~ dateTime ~ inputDateTime',
       inputDateTime
     );
-    const [date, time] = moment(inputDateTime) //Chỉ hiện thị chứ không ghi vào db
+    const [date, time] = moment(inputDateTime)
+      .utcOffset('+0700') //Chỉ hiện thị chứ không ghi vào db
       .ceil(30, 'minutes')
       .format('DD-MM-YYYY HH:mm')
       .split(' ');
