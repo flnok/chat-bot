@@ -97,7 +97,7 @@ dd {
 
 .chat-bot-container {
   display: flex;
-  height: 550px;
+  height: 570px;
   max-width: 500px;
   border-radius: 15px;
 }
