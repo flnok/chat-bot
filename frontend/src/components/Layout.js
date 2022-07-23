@@ -23,9 +23,9 @@ export default function Layout() {
         </Col>
       </div>
 
-      <div className="footer">
+      {/* <div className="footer">
         <Footer />
-      </div>
+      </div> */}
     </>
   );
 }
