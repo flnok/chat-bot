@@ -20,10 +20,21 @@ function handleWebhook(req, res) {
     });
 
     if (info.length > 0) {
+      let count = 0;
       info.forEach((i) => {
-        const response = `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`;
-        agent.add(response);
+        if (
+          moment(i.date, 'DD-MM-YYYY').isSameOrAfter(
+            moment(new Date(), 'DD-MM-YYYY'),
+            'minutes'
+          )
+        ) {
+          agent.add(
+            `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`
+          );
+          count++;
+        }
       });
+      if (count === 0) agent.add(`Không có thông tin đặt bàn`);
     } else {
       agent.add(`Không có thông tin đặt bàn`);
     }
