@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth';
 
 export default function Login() {
@@ -9,8 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [validate, setValidate] = useState(true);
   const auth = useAuth();
-  let navigate = useNavigate();
-  let location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    checkInformation(validate);
+  }, [validate]);
 
   const handleSubmit = async (event) => {
     const from = location.state?.from?.pathname || '/dashboard';
@@ -35,10 +38,6 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    checkInformation(validate);
-  }, [validate]);
-
   function checkInformation(validate) {
     return (
       !validate && (
@@ -48,7 +47,7 @@ export default function Login() {
       )
     );
   }
-  console.log(auth.loggedIn);
+
   if (auth.loggedIn) {
     return <Navigate to="/dashboard" />;
   } else

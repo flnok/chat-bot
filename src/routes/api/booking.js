@@ -18,8 +18,8 @@ router.delete('/:id', async (req, res) => {
   if (!req.session.user) return;
   const { id } = req.params;
   try {
-    await Booking.findByIdAndDelete(new ObjectId(id));
-    console.log('Deleted');
+    const deletedBooking = await Booking.findByIdAndDelete(new ObjectId(id));
+    if (deletedBooking) console.log('Deleted');
     return res.sendStatus(200);
   } catch (error) {
     throw error;

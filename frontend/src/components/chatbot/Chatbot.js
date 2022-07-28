@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useRef, useState } from 'react';
 import Cookies from 'universal-cookie';
+import { v4 as uuidv4 } from 'uuid';
+import Chips from './Chips';
 import Message from './Message';
 import Option from './Option';
-import Chips from './Chips';
 
 const cookies = new Cookies();
 
@@ -15,6 +15,19 @@ export default function Chatbot(props) {
   if (cookies.get('userID') === undefined) {
     cookies.set('userID', uuidv4(), { path: '/' });
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      await queryEvent('Welcome');
+      setDisabledInput(true);
+    }
+    fetchData();
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, [messages]);
 
   const updateMessages = (msg) => {
     setMessages((currentMessage) => {
@@ -132,19 +145,6 @@ export default function Chatbot(props) {
     }
     return null;
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      await queryEvent('Welcome');
-      setDisabledInput(true);
-    }
-    fetchData();
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    inputRef.current.focus();
-  }, [messages]);
 
   const handleInputMessage = (event) => {
     if (event.key === 'Enter' && event.target.value.trim() !== '') {

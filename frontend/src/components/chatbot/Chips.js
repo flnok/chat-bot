@@ -1,5 +1,5 @@
-import { Button } from 'react-bootstrap';
 import moment from 'moment';
+import { Button } from 'react-bootstrap';
 
 export default function Chips(props) {
   const renderChips = (chips) => {
@@ -18,7 +18,7 @@ export default function Chips(props) {
   };
 
   const handleChipClick = (c) => {
-    let input = c.structValue?.fields?.text?.stringValue;
+    const input = c.structValue?.fields?.text?.stringValue;
     let text;
     // hard set
     switch (input) {

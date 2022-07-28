@@ -20,9 +20,9 @@ function handleWebhook(req, res) {
     });
 
     if (info.length > 0) {
-      console.log('Had Info');
       let count = 0;
       info.forEach((i) => {
+        if (!i.sortDate) console.log(i);
         if (
           moment(i.sortDate).isSameOrAfter(
             moment(new Date(), 'DD-MM-YYYY'),
@@ -62,7 +62,6 @@ function handleWebhook(req, res) {
     });
     console.log('🚀 ~ file: webhook.js ~ line 50 ~ dateTime ~ date', date);
     console.log('🚀 ~ file: webhook.js ~ line 50 ~ dateTime ~ time', time);
-    console.log(moment(time, 'HH:mm'), moment(openTime, 'HH:mm'));
     const isOpenTime = moment(time, 'HH:mm').isBetween(
       moment(openTime, 'HH:mm'),
       moment(closeTime, 'HH:mm')
@@ -123,7 +122,7 @@ function handleWebhook(req, res) {
       );
     } else {
       // Slot filling request
-      let wrongInput = agent.contexts.filter(
+      const wrongInput = agent.contexts.filter(
         (context) => context.name === 'pre_booking_dialog_context'
       );
       if (wrongInput.length > 0) {
@@ -173,7 +172,7 @@ function handleWebhook(req, res) {
         agent.add(message);
       });
     } else {
-      let wrongInput = agent.contexts.filter(
+      const wrongInput = agent.contexts.filter(
         (context) => context.name === 'rate_dialog_context'
       );
       if (wrongInput.length > 0) {

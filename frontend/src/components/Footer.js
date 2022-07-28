@@ -1,4 +1,4 @@
-export default function Footer(props) {
+export default function Footer() {
   return (
     <div className="container-fluid text-center p-2">
       <div className="row align-items-center justify-content-evenly mx-0">

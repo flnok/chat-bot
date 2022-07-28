@@ -8,7 +8,7 @@ router.post('/update-db', async (req, res) => {
     const bookings = await Booking.find({});
     const promisesToAwait = [];
     for (let b of bookings) {
-      let sortDate = moment(`${b.date}`, 'DD-MM-YYYY')
+      const sortDate = moment(`${b.date}`, 'DD-MM-YYYY')
         .add(`${b.time}`, 'hours')
         .format();
       promisesToAwait.push(

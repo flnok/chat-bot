@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom';
 import { Container, Nav, Navbar, Row } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../hooks/auth';
 
 export default function Header() {

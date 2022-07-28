@@ -1,7 +1,7 @@
-import Header from './Header';
+import { Col } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
 import Chatbot from './chatbot/Chatbot';
-import { Col } from 'react-bootstrap';
+import Header from './Header';
 // import Footer from './Footer';
 
 export default function Layout() {

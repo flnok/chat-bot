@@ -1,21 +1,21 @@
-import Layout from './Layout';
-import Home from './pages/Home';
-import About from './pages/About';
-import Menu from './pages/Menu';
-import Contact from './pages/Contact';
-import NotFound from './pages/NotFound';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import axios from 'axios';
+import { createContext, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { RequireAuth } from '../hooks/auth';
-import { createContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import Layout from './Layout';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Menu from './pages/Menu';
+import NotFound from './pages/NotFound';
 
 export const AuthContext = createContext();
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(null);
-  let value = {
+  const value = {
     loggedIn,
     login: (cb) => {
       setLoggedIn(true);
@@ -30,7 +30,7 @@ export default function App() {
 
   useEffect(() => {
     axios.get('api/auth/login').then((res) => {
-      console.log(res);
+      console.log(res.data);
       if (res.data.loggedIn) setLoggedIn(true);
       else setLoggedIn(false);
     });

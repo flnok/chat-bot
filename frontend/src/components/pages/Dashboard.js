@@ -1,16 +1,14 @@
-import { Col } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
-import { Container, Nav, Navbar, Row } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth';
 
 import axios from 'axios';
 
 export default function Dashboard() {
   const [bookings, setBookings] = useState('');
-  let auth = useAuth();
-  let navigate = useNavigate();
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -21,7 +19,7 @@ export default function Dashboard() {
   }, []);
 
   if (!auth.loggedIn) {
-    console.log(`You are not logged in`);
+    console.log('Chưa đăng nhập');
   }
 
   const removeBooking = (id) => {
