@@ -80,7 +80,7 @@ export default function Login() {
             />
             <label htmlFor="inputPassword">Password</label>
           </div>
-          <button type="submit" className="btn btn-primary my-2">
+          <button type="submit" className="btn btn-danger my-2">
             Submit
           </button>
           {checkInformation(validate)}
