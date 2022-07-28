@@ -71,6 +71,7 @@ export default function Dashboard() {
             <td>{booking.person}</td>
             <td>{booking.phone}</td>
             <td>{booking.guestAmount}</td>
+            <td>{booking.rate}</td>
             <td>{renderButton(booking._id)}</td>
           </tr>
         );
@@ -123,6 +124,7 @@ export default function Dashboard() {
                 <th scope="col">Tên</th>
                 <th scope="col">Số điện thoại</th>
                 <th scope="col">Số kượng khách</th>
+                <th scope="col">Đánh giá chatbot</th>
                 <th scope="col"></th>
               </tr>
             </thead>
