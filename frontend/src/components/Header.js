@@ -1,7 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { Container, Nav, Navbar, Row } from 'react-bootstrap';
+import { useAuth } from '../hooks/auth';
 
 export default function Header() {
+  const auth = useAuth();
   const activeStyle = {
     color: '#8B8C89',
     textDecoration: 'none',
@@ -51,6 +53,25 @@ export default function Header() {
               >
                 Contact
               </Nav.Link>
+              {!auth.loggedIn ? (
+                <Nav.Link
+                  as={NavLink}
+                  className="nav-link"
+                  style={({ isActive }) => (isActive ? activeStyle : undefined)}
+                  to="login"
+                >
+                  Login
+                </Nav.Link>
+              ) : (
+                <Nav.Link
+                  as={NavLink}
+                  className="nav-link"
+                  style={({ isActive }) => (isActive ? activeStyle : undefined)}
+                  to="dashboard"
+                >
+                  Dashboard
+                </Nav.Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Row>

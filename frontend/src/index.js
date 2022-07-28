@@ -4,7 +4,12 @@ import App from './components/App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './stylesheet/index.css';
 import registerServiceWorker from './registerServiceWorker';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
 registerServiceWorker();

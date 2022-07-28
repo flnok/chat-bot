@@ -8,6 +8,7 @@ const BookingSchema = new mongoose.Schema(
     time: String,
     guestAmount: Number,
     rate: Number,
+    sortDate: String,
   },
   {
     timestamps: true,
