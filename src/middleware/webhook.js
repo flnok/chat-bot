@@ -20,10 +20,11 @@ function handleWebhook(req, res) {
     });
 
     if (info.length > 0) {
+      console.log('Had Info');
       let count = 0;
       info.forEach((i) => {
         if (
-          moment(i.date, 'DD-MM-YYYY').isSameOrAfter(
+          moment(i.sortDate).isSameOrAfter(
             moment(new Date(), 'DD-MM-YYYY'),
             'minutes'
           )

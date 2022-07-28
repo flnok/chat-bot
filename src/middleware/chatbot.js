@@ -85,12 +85,18 @@ async function addDb(queryResult) {
           .ceil(30, 'minutes')
           .format('DD-MM-YYYY HH:mm')
           .split(' ');
+
+        const sortDate = moment(`${date}`, 'DD-MM-YYYY')
+          .add(`${time}`, 'hours')
+          .format();
+
         const data = {
           person: fields.name.structValue.fields.name.stringValue,
           phone: fields.phone.stringValue,
           date: date,
           time: time,
           guestAmount: fields.guests.numberValue,
+          sortDate: sortDate,
         };
         try {
           const booked = await Booking.create(data);
