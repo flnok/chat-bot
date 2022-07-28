@@ -14,7 +14,7 @@ import axios from 'axios';
 export const AuthContext = createContext();
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState();
+  const [loggedIn, setLoggedIn] = useState(null);
   let value = {
     loggedIn,
     login: (cb) => {

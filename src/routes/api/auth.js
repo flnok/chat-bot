@@ -26,10 +26,11 @@ router.post('/login', async (req, res) => {
       return res.send({ message: 'Mật khẩu không đúng', code: 400 });
     }
   } catch (error) {
-    res.send(error);
+    throw error;
   }
 });
 
+// api/auth/logout
 router.post('/logout', async (req, res) => {
   req.session.destroy();
   return res.send({ loggedIn: false });

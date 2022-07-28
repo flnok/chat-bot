@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 
 import axios from 'axios';
 import { useAuth } from '../../hooks/auth';
@@ -13,7 +13,7 @@ export default function Login() {
   let location = useLocation();
 
   const handleSubmit = async (event) => {
-    const from = location.state?.from?.pathname || '/';
+    const from = location.state?.from?.pathname || '/dashboard';
     event.preventDefault();
     try {
       const response = await axios({
@@ -48,44 +48,47 @@ export default function Login() {
       )
     );
   }
-
-  return (
-    <>
-      <div className="login mb-3 mb-sm-0">
-        <h1 className="display-5 text-center mb-5">Đăng nhập</h1>
-        <form onSubmit={handleSubmit} className="container">
-          <div className="mb-3 form-floating">
-            <input
-              type="text"
-              name="username"
-              className="form-control"
-              id="inputUsername"
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              placeholder="something"
-            />
-            <label htmlFor="inputUsername">Username</label>
-          </div>
-          <div className="mb-3 form-floating">
-            <input
-              type="password"
-              name="password"
-              className="form-control"
-              id="inputPassword"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              placeholder="something"
-            />
-            <label htmlFor="inputPassword">Password</label>
-          </div>
-          <button type="submit" className="btn btn-danger my-2">
-            Submit
-          </button>
-          {checkInformation(validate)}
-        </form>
-      </div>
-    </>
-  );
+  console.log(auth.loggedIn);
+  if (auth.loggedIn) {
+    return <Navigate to="/dashboard" />;
+  } else
+    return (
+      <>
+        <div className="login mb-3 mb-sm-0">
+          <h1 className="display-5 text-center mb-5">Đăng nhập</h1>
+          <form onSubmit={handleSubmit} className="container">
+            <div className="mb-3 form-floating">
+              <input
+                type="text"
+                name="username"
+                className="form-control"
+                id="inputUsername"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                placeholder="something"
+              />
+              <label htmlFor="inputUsername">Username</label>
+            </div>
+            <div className="mb-3 form-floating">
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                id="inputPassword"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                placeholder="something"
+              />
+              <label htmlFor="inputPassword">Password</label>
+            </div>
+            <button type="submit" className="btn btn-danger my-2">
+              Submit
+            </button>
+            {checkInformation(validate)}
+          </form>
+        </div>
+      </>
+    );
 }
