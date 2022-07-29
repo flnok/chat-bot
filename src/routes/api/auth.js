@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
     const match = password == user.password;
     if (match) {
       req.session.user = user;
-      return res.send({ message: 'Đăng nhập thành công', code: 200 });
+      return res.send({ message: 'Đăng nhập thành công', code: 200, user });
     } else {
       return res.send({ message: 'Mật khẩu không đúng', code: 400 });
     }

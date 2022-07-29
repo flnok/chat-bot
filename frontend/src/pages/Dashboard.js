@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/auth';
+import { useAuth } from '../hooks/auth';
 
 import axios from 'axios';
 
@@ -18,7 +18,7 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  if (!auth.loggedIn) {
+  if (!auth.isLogIn) {
     console.log('Chưa đăng nhập');
   }
 

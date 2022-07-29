@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/auth';
+import { useAuth } from '../hooks/auth';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -29,7 +29,7 @@ export default function Login() {
         setValidate(false);
       } else {
         setValidate(true);
-        auth.login(() => {
+        auth.login(response.data.user, () => {
           navigate(from, { replace: true });
         });
       }
@@ -48,7 +48,7 @@ export default function Login() {
     );
   }
 
-  if (auth.loggedIn) {
+  if (auth.isLogIn) {
     return <Navigate to="/dashboard" />;
   } else
     return (

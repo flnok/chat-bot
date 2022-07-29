@@ -53,7 +53,7 @@ export default function Header() {
               >
                 Contact
               </Nav.Link>
-              {!auth.loggedIn ? (
+              {!auth.isLogIn ? (
                 <Nav.Link
                   as={NavLink}
                   className="nav-link"
