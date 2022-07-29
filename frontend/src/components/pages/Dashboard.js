@@ -123,7 +123,7 @@ export default function Dashboard() {
                 <th scope="col">Ngày giờ</th>
                 <th scope="col">Tên</th>
                 <th scope="col">Số điện thoại</th>
-                <th scope="col">Số kượng khách</th>
+                <th scope="col">Số lượng khách</th>
                 <th scope="col">Đánh giá chatbot</th>
                 <th scope="col"></th>
               </tr>

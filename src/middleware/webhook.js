@@ -17,6 +17,8 @@ function handleWebhook(req, res) {
     const info = await Booking.find({
       person: agent.parameters.name.name,
       phone: agent.parameters.phone,
+    }).sort({
+      sortDate: 'asc',
     });
 
     if (info.length > 0) {
@@ -171,6 +173,7 @@ function handleWebhook(req, res) {
       agent.consoleMessages.forEach((message) => {
         agent.add(message);
       });
+      console.log(agent.parameters.rate);
     } else {
       const wrongInput = agent.contexts.filter(
         (context) => context.name === 'rate_dialog_context'

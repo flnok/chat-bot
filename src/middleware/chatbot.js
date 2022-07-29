@@ -79,7 +79,8 @@ async function addDb(queryResult) {
         }
         const parameters = outputContexts[i].parameters.fields;
         const [date, time] = moment(
-          parameters.dateTime?.structValue?.fields?.date_time?.stringValue
+          parameters.dateTime?.structValue?.fields?.date_time?.stringValue ||
+            parameters.dateTime?.stringValue
         )
           .utcOffset('+0700')
           .ceil(30, 'minutes')
@@ -111,15 +112,26 @@ async function addDb(queryResult) {
       if (queryResult.allRequiredParamsPresent) {
         const outputContexts = queryResult.outputContexts;
         let i = 0;
-        while (outputContexts[i].name.search('booking-followup') === -1) {
+        while (outputContexts[i].name.search('prebooking-followup') === -1) {
           i++;
         }
         const parameters = outputContexts[i].parameters.fields;
+        const [date, time] = moment(
+          parameters.dateTime?.structValue?.fields?.date_time?.stringValue ||
+            parameters.dateTime?.stringValue
+        )
+          .utcOffset('+0700')
+          .ceil(30, 'minutes')
+          .format('DD-MM-YYYY HH:mm')
+          .split(' ');
+
         try {
-          const update = await Booking.findOneAndUpdate(
+          const update = await Booking.updateOne(
             {
               person: parameters.name.structValue.fields.name.stringValue,
               phone: parameters.phone.stringValue,
+              date,
+              time,
             },
             { rate: queryResult.parameters.fields.rate.numberValue }
           );
