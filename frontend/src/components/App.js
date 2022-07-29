@@ -3,13 +3,13 @@ import { createContext, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { RequireAuth } from '../hooks/auth';
 import Layout from './Layout';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Menu from './pages/Menu';
-import NotFound from './pages/NotFound';
+import About from '../pages/About';
+import Contact from '../pages/Contact';
+import Dashboard from '../pages/Dashboard';
+import Home from '../pages/Home';
+import Login from '../pages/Login';
+import Menu from '../pages/Menu';
+import NotFound from '../pages/NotFound';
 
 export const AuthContext = createContext();
 
