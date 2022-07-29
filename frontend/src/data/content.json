@@ -1,0 +1,19 @@
+{
+  "about": {
+    "title": "Thông tin nhà hàng",
+    "content": {
+      "Sứ mệnh": "Luôn mang đến cho khách hàng sự trãi nghiệm mới mẻ, tuyệt vời và đúng nghĩa nhất về ẩm thực Hoài Nhơn (Bình Định). Nổi bật nhất là sự kết hợp sáng tạo và hài hòa giữa nguyên liệu truyền thống và đặc sản ẩm thực Hoài Nhơn – nơi nhà hàng đang tọa lạc.",
+      "Tầm nhìn": "Trở thành nhà hàng Việt uy tín, chất lượng trong lòng thực khách Hoài Nhơn nói riêng và Bình Định nói chung.",
+      "Giá trị cốt lõi": "An toàn và chất lượng nhà hàng luôn đề cao vấn đề vệ sinh an toàn thực phẩm ở mọi công đoạn từ nhập hàng, bảo quản, chế biến đến thành phẩm.\nKinh doanh bằng sự tâm huyết với nghề, chúng tôi hi vọng nhà hàng Thuận Phát sẽ được đón nhận bởi thực khách và trở thành sự lựa chọn tuyệt vời cho quý khách hàng."
+    }
+  },
+  "contact": {
+    "title": "Liên hệ",
+    "content": {
+      "address": "30 Tô Hiến Thành, thị trấn Liên Nghĩa, huyện Đức Trọng, tỉnh Lâm Đồng",
+      "email": "thuanphat@gmail.com",
+      "phone": " 09 999 789 68",
+      "open": " 08:00 - 22:00 (T2-CN)"
+    }
+  }
+}
