@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '../context/auth';
 
 import axios from 'axios';
 

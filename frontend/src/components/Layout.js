@@ -1,4 +1,4 @@
-import { Col } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
 import Chatbot from './chatbot/Chatbot';
 import Header from './Header';
@@ -11,17 +11,17 @@ export default function Layout() {
         <Header />
       </div>
 
-      <div className="main row mx-0">
-        <Col xs={12} md={6}>
+      <Row xs={1} md={2} className="main">
+        <Col>
           <div className="px-0 px-sm-3 text-center">
             <Outlet />
           </div>
         </Col>
 
-        <Col xs={12} md={6}>
+        <Col>
           <Chatbot />
         </Col>
-      </div>
+      </Row>
 
       {/* <div className="footer">
         <Footer />

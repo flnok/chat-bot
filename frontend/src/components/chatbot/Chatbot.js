@@ -8,7 +8,7 @@ import Option from './Option';
 
 const cookies = new Cookies();
 
-export default function Chatbot(props) {
+export default function Chatbot() {
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
   const [disabledInput, setDisabledInput] = useState(false);

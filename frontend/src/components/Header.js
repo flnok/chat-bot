@@ -1,6 +1,6 @@
 import { Container, Nav, Navbar, Row } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '../context/auth';
 
 export default function Header() {
   const auth = useAuth();
@@ -23,7 +23,6 @@ export default function Header() {
             <Nav className="m-auto text-center">
               <Nav.Link
                 as={NavLink}
-                className="nav-link"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="/"
               >
@@ -31,7 +30,6 @@ export default function Header() {
               </Nav.Link>
               <Nav.Link
                 as={NavLink}
-                className="nav-link"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="about"
               >
@@ -39,7 +37,6 @@ export default function Header() {
               </Nav.Link>
               <Nav.Link
                 as={NavLink}
-                className="nav-link"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="menu"
               >
@@ -47,7 +44,6 @@ export default function Header() {
               </Nav.Link>
               <Nav.Link
                 as={NavLink}
-                className="nav-link"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="contact"
               >
@@ -56,7 +52,6 @@ export default function Header() {
               {!auth.isLogIn ? (
                 <Nav.Link
                   as={NavLink}
-                  className="nav-link"
                   style={({ isActive }) => (isActive ? activeStyle : undefined)}
                   to="login"
                 >
@@ -65,7 +60,6 @@ export default function Header() {
               ) : (
                 <Nav.Link
                   as={NavLink}
-                  className="nav-link"
                   style={({ isActive }) => (isActive ? activeStyle : undefined)}
                   to="dashboard"
                 >

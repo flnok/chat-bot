@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { AuthProvider, RequireAuth } from '../hooks/auth';
+import { AuthProvider, RequireAuth } from '../context/auth';
 import About from '../pages/About';
 import Dashboard from '../pages/Dashboard';
 import Home from '../pages/Home';

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '../context/auth';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -83,7 +83,7 @@ export default function Login() {
               <label htmlFor="inputPassword">Password</label>
             </div>
             <button type="submit" className="btn btn-danger my-2">
-              Submit
+              Login
             </button>
             {checkInformation(validate)}
           </form>
