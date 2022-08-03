@@ -1,7 +1,7 @@
 const Intent = require('../models/chatbot/Intent');
 const mongoose = require('mongoose');
 const Context = require('../models/chatbot/Context');
-var _ = require('lodash');
+const _ = require('lodash');
 
 async function getAllIntents() {
   try {
@@ -54,10 +54,18 @@ async function createIntent({
 
 async function updateIntent(
   name,
-  { contexts, trainingPhrases, action, followUp, parameters, responses }
+  {
+    updateName,
+    contexts,
+    trainingPhrases,
+    action,
+    followUp,
+    parameters,
+    responses,
+  }
 ) {
   const update = {};
-  if (!_.isEmpty(name)) update.name = name;
+  if (!_.isEmpty(updateName)) update.name = updateName;
   if (!_.isEmpty(contexts)) update.contexts = contexts;
   if (!_.isEmpty(trainingPhrases)) update.trainingPhrases = trainingPhrases;
   if (!_.isEmpty(action)) update.action = action;
