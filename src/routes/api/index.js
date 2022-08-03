@@ -34,5 +34,6 @@ router.post('/update-db', async (req, res) => {
 router.use('/dialog-flow', require('./dialogFlow')); // /api/dialog-flow
 router.use('/auth', require('./auth')); // /api/auth
 router.use('/bookings', require('./booking')); // /api/bookings
+router.use('/chatbot', require('./chatbot')); // /api/chatbot
 
 module.exports = router;
