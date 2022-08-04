@@ -2,7 +2,13 @@ const mongoose = require('mongoose');
 
 const ContextSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true },
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
     lifeSpan: Number,
     parameters: [{ key: String, value: String }],
   },

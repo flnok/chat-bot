@@ -10,19 +10,18 @@ router.post('/query-text', async (req, res) => {
     inContext || null,
     parameters || []
   );
-
   return res.json(responses);
 });
 
-// router.post('/query-event', async (req, res) => {
-//   const { queries, parameters, languageCode, userId } = req.body;
-//   const responses = await chatbot.queryEvent(
-//     queries,
-//     parameters,
-//     languageCode,
-//     userId
-//   );
-//   return res.send(responses[0].queryResult);
-// });
+router.post('/query-event', async (req, res) => {
+  const { event, intent, inContext, parameters } = req.body;
+  const responses = await chatbot.queryEvent(
+    event,
+    intent || null,
+    inContext || null,
+    parameters || []
+  );
+  return res.json(responses);
+});
 
 module.exports = router;
