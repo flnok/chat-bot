@@ -186,8 +186,8 @@ dd {
 }
 
 .footer {
-  background-color: var(--footer-background-color);
-  color: #f1faee;
+  /* background-color: var(--footer-background-color); */
+  /* color: #f1faee; */
   /* position: relative; */
   width: 100%;
 }

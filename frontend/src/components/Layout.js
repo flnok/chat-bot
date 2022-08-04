@@ -1,10 +1,14 @@
-import { Col, Row } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import Chatbot from './chatbot/Chatbot';
+import ChatbotV2 from './chatbotv2/Chatbot';
 import Header from './Header';
 // import Footer from './Footer';
 
 export default function Layout() {
+  const [version, setVersion] = useState('v1');
+
   return (
     <>
       <div className="header">
@@ -18,14 +22,22 @@ export default function Layout() {
           </div>
         </Col>
 
-        <Col>
-          <Chatbot />
-        </Col>
+        <Col>{version === 'v1' ? <Chatbot /> : <ChatbotV2 />}</Col>
       </Row>
 
-      {/* <div className="footer">
-        <Footer />
-      </div> */}
+      <div className="footer text-end">
+        <Button
+          variant="outline-dark"
+          onClick={(e) => {
+            if (version === 'v1') setVersion('v2');
+            else {
+              setVersion('v1');
+            }
+          }}
+        >
+          Đổi chatbot
+        </Button>
+      </div>
     </>
   );
 }
