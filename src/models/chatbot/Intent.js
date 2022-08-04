@@ -4,6 +4,7 @@ const IntentSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     contexts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Context' }],
+    event: String,
     trainingPhrases: [String],
     action: String,
     followUp: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Intent' }],

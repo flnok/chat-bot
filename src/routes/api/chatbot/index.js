@@ -32,6 +32,7 @@ router.post('/intent', isAuth, async (req, res) => {
   const {
     name,
     contexts,
+    event,
     trainingPhrases,
     action,
     followUp,
@@ -42,6 +43,7 @@ router.post('/intent', isAuth, async (req, res) => {
   const result = await createIntent({
     name,
     contexts: contexts || [],
+    event: event || '',
     trainingPhrases: trainingPhrases || [],
     action: action || '',
     followUp: followUp || [],
@@ -57,6 +59,7 @@ router.put('/intent/:name', isAuth, async (req, res) => {
   const {
     updateName,
     contexts,
+    event,
     trainingPhrases,
     action,
     followUp,
@@ -66,6 +69,7 @@ router.put('/intent/:name', isAuth, async (req, res) => {
   const result = await updateIntent(name, {
     updateName: updateName || null,
     contexts: contexts || [],
+    event: event || '',
     trainingPhrases: trainingPhrases || [],
     action: action || null,
     followUp: followUp || [],

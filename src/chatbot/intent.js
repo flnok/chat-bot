@@ -11,6 +11,7 @@ async function getAllIntents() {
     console.error(error.message);
   }
 }
+
 async function getIntentByName(name) {
   try {
     const intents = await Intent.findOne({ name: name })
@@ -25,6 +26,7 @@ async function getIntentByName(name) {
 async function createIntent({
   name,
   contexts,
+  event,
   trainingPhrases,
   action,
   followUp,
@@ -36,6 +38,7 @@ async function createIntent({
     _id,
     name,
     contexts,
+    event,
     trainingPhrases,
     action,
     followUp,
@@ -71,6 +74,7 @@ async function updateIntent(
   {
     updateName,
     contexts,
+    event,
     trainingPhrases,
     action,
     followUp,
@@ -81,6 +85,7 @@ async function updateIntent(
   const update = {};
   if (!_.isEmpty(updateName)) update.name = updateName;
   if (!_.isEmpty(contexts)) update.contexts = contexts;
+  if (!_.isEmpty(event)) update.event = event;
   if (!_.isEmpty(trainingPhrases)) update.trainingPhrases = trainingPhrases;
   if (!_.isEmpty(action)) update.action = action;
   if (!_.isEmpty(followUp)) update.followUp = followUp;
