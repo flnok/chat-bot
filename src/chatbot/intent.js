@@ -13,7 +13,7 @@ async function getAllIntents() {
 }
 async function getIntentByName(name) {
   try {
-    const intents = await Intent.find({ name: name })
+    const intents = await Intent.findOne({ name: name })
       .populate('contexts')
       .populate('followUp');
     return intents;
@@ -44,7 +44,21 @@ async function createIntent({
   };
 
   try {
-    if (data.contexts) data.contexts = await Context.create(data.contexts);
+    if (data.contexts) {
+      const duplicateContexts = await Context.find({
+        name: { $in: data.contexts.map((c) => c.name) },
+      }).select('name -_id');
+      const newContexts = _.differenceBy(
+        data.contexts,
+        duplicateContexts,
+        'name'
+      );
+      if (!_.isEmpty(newContexts)) {
+        data.contexts = await Context.create(newContexts);
+      } else {
+        data.contexts = null;
+      }
+    }
     const intent = await Intent.create(data);
     return { message: 'Tạo thành công', intent };
   } catch (error) {

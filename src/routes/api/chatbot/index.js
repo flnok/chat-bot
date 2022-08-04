@@ -14,7 +14,7 @@ const {
   getIntentByName,
 } = require('../../../chatbot/intent');
 const { isAuth } = require('../../../middleware/auth');
-const router = express.Router();
+const router = express.Router(); // api/chatbot
 
 router.get('/intent', isAuth, async (req, res) => {
   const result = await getAllIntents();
@@ -24,7 +24,7 @@ router.get('/intent', isAuth, async (req, res) => {
 router.get('/intent/:name', isAuth, async (req, res) => {
   const { name } = req.params;
   const result = await getIntentByName(name);
-  if (result.length > 0) return res.status(200).json(result);
+  if (result) return res.status(200).json(result);
   else return res.status(500).send('Không có intent tên này');
 });
 
@@ -91,7 +91,7 @@ router.get('/context', isAuth, async (req, res) => {
 router.get('/context/:name', isAuth, async (req, res) => {
   const { name } = req.params;
   const result = await getContextByName(name);
-  if (result.length > 0) return res.status(200).json(result);
+  if (result) return res.status(200).json(result);
   else return res.status(500).send('Không có context tên này');
 });
 
@@ -125,5 +125,7 @@ router.delete('/context/:name', isAuth, async (req, res) => {
   if (result?.context) return res.status(200).json(result);
   else return res.status(500);
 });
+
+router.use('/', require('./query'));
 
 module.exports = router;

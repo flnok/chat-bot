@@ -12,7 +12,7 @@ async function getAllContexts() {
 }
 async function getContextByName(name) {
   try {
-    const context = await Context.find({ name: name });
+    const context = await Context.findOne({ name: name });
     return context;
   } catch (error) {
     console.error(error.message);
