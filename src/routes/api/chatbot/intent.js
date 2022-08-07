@@ -47,6 +47,8 @@ router.post('/intent', isAuth, async (req, res) => {
     responses: responses || [],
   });
   if (result?.intent) return res.status(200).json(result);
+  else if (result?.status === 'DUPLICATE_NAME')
+    return res.status(501).send('Bị trùng tên');
   else return res.status(500);
 });
 

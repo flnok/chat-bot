@@ -6,13 +6,13 @@ const IntentSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
+      uppercase: true,
       trim: true,
     },
     contexts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Context' }],
     event: {
       type: String,
-      lowercase: true,
+      uppercase: true,
       trim: true,
     },
     trainingPhrases: [
@@ -28,7 +28,20 @@ const IntentSchema = new mongoose.Schema(
       trim: true,
     },
     followUp: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Intent' }],
-    parameters: [{ key: String, value: String }],
+    parameters: [
+      {
+        key: {
+          type: String,
+          lowercase: true,
+          trim: true,
+        },
+        value: {
+          type: String,
+          lowercase: true,
+          trim: true,
+        },
+      },
+    ],
     responses: [{ type: String, value: String }],
   },
   {

@@ -15,7 +15,6 @@ async function getAllIntents() {
 
 async function getIntentById(id) {
   try {
-    console.log('id ', id);
     const intents = await Intent.findOne({ _id: new ObjectId(id) })
       .populate('contexts')
       .populate('followUp');
@@ -67,6 +66,9 @@ async function createIntent({
     const intent = await Intent.create(data);
     return { message: 'Tạo thành công', intent };
   } catch (error) {
+    if (error.code == '11000' && error.keyValue?.name) {
+      return { message: 'Bị trùng tên', status: 'DUPLICATE_NAME' };
+    }
     console.error(error.message);
   }
 }
