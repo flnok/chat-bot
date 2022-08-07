@@ -1,16 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
+import { useAuth } from '../../context/auth';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Dashboard() {
+  const auth = useAuth();
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState('');
 
   useEffect(() => {
     async function fetchData() {
-      const res = await axios.get('/api/bookings');
-      setBookings(res.data.bookings);
+      try {
+        const res = await axios.get('/api/bookings');
+        setBookings(res.data.bookings);
+      } catch (error) {
+        if (error.response.status === 401) {
+          auth.logout(() => {
+            navigate('/login');
+          });
+        }
+      }
     }
     fetchData();
+    // eslint-disable-next-line
   }, []);
 
   const removeBooking = (id) => {

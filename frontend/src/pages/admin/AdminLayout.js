@@ -13,6 +13,7 @@ export default function AdminLayout() {
 
   if (!auth.isLogIn) {
     console.log('Chưa đăng nhập');
+    navigate('/login');
   }
 
   return (
