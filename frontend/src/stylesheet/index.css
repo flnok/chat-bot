@@ -205,3 +205,8 @@ dd {
 .login {
   min-width: 350px;
 }
+
+.required:after {
+  content: ' *';
+  color: red;
+}
