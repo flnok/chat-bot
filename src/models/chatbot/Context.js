@@ -9,7 +9,6 @@ const ContextSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    lifeSpan: Number,
     parameters: [{ key: String, value: String }],
   },
   {

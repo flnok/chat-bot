@@ -22,11 +22,10 @@ router.get('/context/:name', isAuth, async (req, res) => {
 });
 
 router.post('/context', isAuth, async (req, res) => {
-  const { name, lifeSpan, parameters } = req.body;
+  const { name, parameters } = req.body;
   if (!name) return res.status(403).send('Cần nhập tên context');
   const result = await createContext({
     name,
-    lifeSpan: lifeSpan || 1,
     parameters: parameters || [],
   });
   if (result?.context) return res.status(200).json(result);
@@ -35,10 +34,9 @@ router.post('/context', isAuth, async (req, res) => {
 
 router.put('/context/:name', isAuth, async (req, res) => {
   const { name } = req.params;
-  const { updateName, lifeSpan, parameters } = req.body;
+  const { updateName, parameters } = req.body;
   const result = await updateContext(name, {
     updateName: updateName || null,
-    lifeSpan: lifeSpan || 1,
     parameters: parameters || [],
   });
   if (result?.context) return res.status(200).json(result);

@@ -19,12 +19,11 @@ async function getContextByName(name) {
   }
 }
 
-async function createContext({ name, lifeSpan, parameters }) {
+async function createContext({ name, parameters }) {
   const _id = new mongoose.Types.ObjectId();
   const data = {
     _id,
     name,
-    lifeSpan,
     parameters,
   };
   try {
@@ -35,8 +34,8 @@ async function createContext({ name, lifeSpan, parameters }) {
   }
 }
 
-async function updateContext(name, { updateName, lifeSpan = 1, parameters }) {
-  const update = { name, lifeSpan };
+async function updateContext(name, { updateName, parameters }) {
+  const update = { name };
   if (!_.isEmpty(updateName)) update.parameters = updateName;
   if (!_.isEmpty(parameters)) update.parameters = parameters;
   try {
