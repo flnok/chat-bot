@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/auth';
-
+import { Col } from 'react-bootstrap';
 import axios from 'axios';
 
 export default function Dashboard() {
   const [bookings, setBookings] = useState('');
-  const auth = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -17,10 +12,6 @@ export default function Dashboard() {
     }
     fetchData();
   }, []);
-
-  if (!auth.isLogIn) {
-    console.log('Chưa đăng nhập');
-  }
 
   const removeBooking = (id) => {
     setBookings((current) =>
@@ -82,37 +73,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="header">
-        <Navbar expand="lg" sticky="top">
-          <Container fluid className="flex-column">
-            <Row>
-              <Navbar.Toggle aria-controls="basic-navbar-nav" />
-              <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="m-auto text-center">
-                  <Nav.Link as={NavLink} className="nav-link" to="/">
-                    Home
-                  </Nav.Link>
-                  <Nav.Link
-                    as="a"
-                    className="nav-link"
-                    style={{
-                      color: '#8B8C89',
-                      textDecoration: 'none',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                      auth.logout(() => navigate('/'));
-                    }}
-                  >
-                    Logout
-                  </Nav.Link>
-                </Nav>
-              </Navbar.Collapse>
-            </Row>
-          </Container>
-        </Navbar>
-      </div>
-
       <div>
         <div className="display-5 text-center">Thông tin đặt bàn</div>
         <Col className="text-center container table-responsive">
