@@ -1,6 +1,7 @@
 const Intent = require('../models/chatbot/Intent');
 const mongoose = require('mongoose');
 const Context = require('../models/chatbot/Context');
+const ObjectId = require('mongoose').Types.ObjectId;
 const _ = require('lodash');
 
 async function getAllIntents() {
@@ -12,9 +13,10 @@ async function getAllIntents() {
   }
 }
 
-async function getIntentByName(name) {
+async function getIntentById(id) {
   try {
-    const intents = await Intent.findOne({ name: name })
+    console.log('id ', id);
+    const intents = await Intent.findOne({ _id: new ObjectId(id) })
       .populate('contexts')
       .populate('followUp');
     return intents;
@@ -70,7 +72,7 @@ async function createIntent({
 }
 
 async function updateIntent(
-  name,
+  id,
   {
     updateName,
     contexts,
@@ -107,18 +109,22 @@ async function updateIntent(
       }
     }
 
-    const intent = await Intent.findOneAndUpdate({ name: name }, update, {
-      new: true,
-    });
+    const intent = await Intent.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      update,
+      {
+        new: true,
+      }
+    );
     return { message: 'Cập nhật thành công', intent };
   } catch (error) {
     console.error(error.message);
   }
 }
 
-async function deleteIntent(name) {
+async function deleteIntent(id) {
   try {
-    const intent = await Intent.findOneAndDelete({ name: name });
+    const intent = await Intent.findOneAndDelete({ _id: new ObjectId(id) });
     return { message: 'Xóa thành công', intent };
   } catch (error) {
     console.error(error.message);
@@ -130,5 +136,5 @@ module.exports = {
   getAllIntents,
   updateIntent,
   deleteIntent,
-  getIntentByName,
+  getIntentById,
 };
