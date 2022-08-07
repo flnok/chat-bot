@@ -15,10 +15,10 @@ async function getAllIntents() {
 
 async function getIntentById(id) {
   try {
-    const intents = await Intent.findOne({ _id: new ObjectId(id) })
-      .populate('contexts')
-      .populate('followUp');
-    return intents;
+    const intent = await Intent.findOne({ _id: new ObjectId(id) }).populate(
+      'contexts'
+    );
+    return intent;
   } catch (error) {
     console.error(error.message);
   }
@@ -30,7 +30,6 @@ async function createIntent({
   event,
   trainingPhrases,
   action,
-  followUp,
   parameters,
   responses,
 }) {
@@ -42,7 +41,6 @@ async function createIntent({
     event,
     trainingPhrases,
     action,
-    followUp,
     parameters,
     responses,
   };
@@ -81,7 +79,6 @@ async function updateIntent(
     event,
     trainingPhrases,
     action,
-    followUp,
     parameters,
     responses,
   }
@@ -92,7 +89,6 @@ async function updateIntent(
   if (!_.isEmpty(event)) update.event = event;
   if (!_.isEmpty(trainingPhrases)) update.trainingPhrases = trainingPhrases;
   if (!_.isEmpty(action)) update.action = action;
-  if (!_.isEmpty(followUp)) update.followUp = followUp;
   if (!_.isEmpty(parameters)) update.parameters = parameters;
   if (!_.isEmpty(responses)) update.responses = responses;
   try {

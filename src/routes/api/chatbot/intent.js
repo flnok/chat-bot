@@ -9,6 +9,29 @@ const {
 const { isAuth } = require('../../../middleware/auth');
 const router = express.Router(); // api/chatbot
 
+const mappingPayload = (str) => {
+  if (str.length < 1) return null;
+  if (str.length === 1) return str;
+  const result = str.map((r) => {
+    switch (r.type) {
+      case 'text':
+        return r.value;
+      case 'options':
+        r.list?.forEach((opt) => {
+          JSON.stringify(opt, null, 2);
+        });
+        return r.list;
+      case 'image':
+        break;
+      case 'chip':
+        break;
+      default:
+        break;
+    }
+  });
+  return result;
+};
+
 router.get('/intent', isAuth, async (req, res) => {
   const result = await getAllIntents();
   return res.status(200).json(result);
@@ -17,8 +40,9 @@ router.get('/intent', isAuth, async (req, res) => {
 router.get('/intent/:id', isAuth, async (req, res) => {
   if (req.params.id != 'favicon.ico') {
     const { id } = req.params;
-    const result = await getIntentById(id);
-    if (result) return res.status(200).json(result);
+    const intent = await getIntentById(id);
+    const responses = mappingPayload(intent.responses);
+    if (intent) return res.status(200).json({ intent, responses });
     else return res.status(500).send('Không có intent tên này');
   }
   return;
@@ -31,7 +55,6 @@ router.post('/intent', isAuth, async (req, res) => {
     event,
     trainingPhrases,
     action,
-    followUp,
     parameters,
     responses,
   } = req.body;
@@ -42,7 +65,6 @@ router.post('/intent', isAuth, async (req, res) => {
     event: event || '',
     trainingPhrases: trainingPhrases || [],
     action: action || '',
-    followUp: followUp || [],
     parameters: parameters || [],
     responses: responses || [],
   });
@@ -60,7 +82,6 @@ router.put('/intent/:id', isAuth, async (req, res) => {
     event,
     trainingPhrases,
     action,
-    followUp,
     parameters,
     responses,
   } = req.body;
@@ -70,7 +91,6 @@ router.put('/intent/:id', isAuth, async (req, res) => {
     event: event || '',
     trainingPhrases: trainingPhrases || [],
     action: action || null,
-    followUp: followUp || [],
     parameters: parameters || [],
     responses: responses || [],
   });

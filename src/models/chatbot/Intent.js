@@ -27,7 +27,6 @@ const IntentSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    followUp: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Intent' }],
     parameters: [
       {
         key: {
@@ -42,7 +41,15 @@ const IntentSchema = new mongoose.Schema(
         },
       },
     ],
-    responses: [{ type: String, value: String }],
+    responses: [
+      {
+        type: { type: String },
+        value: String,
+        list: [{}],
+        image: {},
+        chip: [String],
+      },
+    ],
   },
   {
     timestamps: true,

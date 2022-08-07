@@ -21,7 +21,31 @@ router.post('/query-event', async (req, res) => {
     inContext || null,
     parameters || []
   );
-  return res.json(result);
+
+  return res.json([
+    { intent: result, msg: mappingResponses(result.responses) },
+  ]);
 });
+
+function mappingResponses(responses) {
+  let result;
+  responses.map((res) => {
+    switch (res.type) {
+      case 'text':
+        result = { text: { text: res.value } };
+        break;
+      case 'options':
+        result = { payload: res.payload };
+        break;
+      case 'image':
+        break;
+      case 'chips':
+        break;
+      default:
+        break;
+    }
+  });
+  return result;
+}
 
 module.exports = router;

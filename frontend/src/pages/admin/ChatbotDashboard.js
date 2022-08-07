@@ -24,9 +24,9 @@ export default function ChatbotDashboard() {
     event: '',
     trainingPhrases: '',
     action: '',
-    followUp: '',
     parameters: '',
     responses: '',
+    payload: '',
   };
   const [formData, setFormData] = useState(initialState);
   const [validate, setValidate] = useState(null);
@@ -66,7 +66,11 @@ export default function ChatbotDashboard() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     formData.trainingPhrases = formatTrainingPhrases(formData.trainingPhrases);
-    console.log(formData.trainingPhrases);
+    if (formData.payload)
+      formData.responses = [
+        ...formData.responses,
+        JSON.parse(formData.payload),
+      ];
     try {
       const response = await axios({
         method: 'post',
@@ -191,21 +195,7 @@ export default function ChatbotDashboard() {
                   type="text"
                   placeholder="vd: Booking, Information"
                 />
-                <Form.Text className="text-muted">Hành odn965</Form.Text>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Context</Form.Label>
-                <Form.Control
-                  onChange={(e) =>
-                    setFormData({ ...formData, followUp: e.target.value })
-                  }
-                  value={formData.followUp}
-                  type="text"
-                  placeholder="vd: Booking, Information"
-                />
-                <Form.Text className="text-muted">
-                  Ngữ cảnh của mẫu này
-                </Form.Text>
+                <Form.Text className="text-muted">Hành động</Form.Text>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Parameters</Form.Label>
@@ -227,6 +217,15 @@ export default function ChatbotDashboard() {
                   value={formData.responses}
                   type="text"
                   placeholder="vd: Bạn muốn đặt bàn lúc nào?, Chào mừng bạn tới ... "
+                />
+                <Form.Control
+                  as="textarea"
+                  placeholder="Custom payload"
+                  style={{ height: '100px' }}
+                  onChange={(e) =>
+                    setFormData({ ...formData, payload: e.target.value })
+                  }
+                  value={formData.payload}
                 />
                 <Form.Text className="text-muted">
                   Câu trả lời của chatbot

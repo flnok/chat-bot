@@ -31,14 +31,14 @@ async function queryEvent(
   parameters = null
 ) {
   if (_.isEmpty(event)) return;
-  const query = { event: event.trim().toLowerCase() };
+  const query = { event: event.trim().toUpperCase() };
   if (!_.isEmpty(parameters)) query.parameters = parameters;
   try {
     if (intent) query.name = intent;
     if (inContext) query.contexts = await Context.findOne({ name: inContext });
     let result = await Intent.findOne(query);
     if (_.isEmpty(result)) {
-      result = await Intent.findOne({ name: 'default fallback' });
+      result = await Intent.findOne({ name: 'DEFAULT FALLBACK' });
     }
     return result;
   } catch (error) {

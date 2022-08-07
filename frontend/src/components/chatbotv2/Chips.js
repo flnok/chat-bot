@@ -57,7 +57,7 @@ export default function Chips(props) {
 
   return (
     <div
-      key={props.key}
+      key={props.index}
       className="d-flex flex-row justify-content-center mb-4"
     >
       <div

@@ -12,13 +12,19 @@ export default function Chatbot() {
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
   const [disabledInput, setDisabledInput] = useState(false);
+  const elementRef = useRef(null);
+
   if (cookies.get('userID') === undefined) {
     cookies.set('userID', uuidv4(), { path: '/' });
   }
 
   useEffect(() => {
+    elementRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  useEffect(() => {
     async function fetchData() {
-      await queryEvent('Welcome');
+      await queryEvent('welcome');
       setDisabledInput(true);
     }
     fetchData();
@@ -79,10 +85,11 @@ export default function Chatbot() {
       parameters,
     };
     const result = await axios.post('/api/chatbot/query-event', req);
-    result.responses.forEach((msg) => {
+    console.log('🚀 ~ file: Chatbot.js ~ line 88 ~ Chatbot ~ result', result);
+    result.data?.forEach((data) => {
       let newMessage = {
         author: 'bot',
-        msg: msg,
+        msg: data.msg,
       };
       updateMessages(newMessage);
     });
@@ -94,6 +101,7 @@ export default function Chatbot() {
       return (
         <Message
           key={index}
+          index={index}
           author={msg.author}
           content={msg.msg.text.text}
           title={msg.title}
@@ -105,6 +113,7 @@ export default function Chatbot() {
         return (
           <Option
             key={index}
+            index={index}
             content={msg.msg.payload}
             queryEvent={queryEvent}
             setMessages={setMessages}
@@ -116,6 +125,7 @@ export default function Chatbot() {
         return (
           <Message
             key={index}
+            index={index}
             author={msg.author}
             content={msg.msg.payload}
             title={msg.title}
@@ -125,7 +135,12 @@ export default function Chatbot() {
 
       case 'chips':
         return (
-          <Chips key={index} content={msg.msg.payload} inputRef={inputRef} />
+          <Chips
+            key={index}
+            index={index}
+            content={msg.msg.payload}
+            inputRef={inputRef}
+          />
         );
 
       default:
@@ -184,7 +199,7 @@ export default function Chatbot() {
 
       <div className="card-body chat-bot">
         {renderMessages(messages)}
-        <ScrollToBottom messages={messages} />
+        <div ref={elementRef} />
       </div>
 
       <div
@@ -211,12 +226,4 @@ export default function Chatbot() {
       </div>
     </div>
   );
-}
-
-function ScrollToBottom(props) {
-  const elementRef = useRef(null);
-  useEffect(() => {
-    elementRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [props.messages]);
-  return <div ref={elementRef} />;
 }

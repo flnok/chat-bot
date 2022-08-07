@@ -38,7 +38,7 @@ export default function Option(props) {
   };
 
   return (
-    <div key={props.key} className="d-flex flex-row justify-content-end mb-4">
+    <div key={props.index} className="d-flex flex-row justify-content-end mb-4">
       <div
         className="p-3 pt-0"
         style={{
