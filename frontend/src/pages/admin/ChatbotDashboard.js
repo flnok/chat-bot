@@ -74,7 +74,7 @@ export default function ChatbotDashboard() {
     const data = {
       name: formData.name,
       event: formData.event?.trim()?.toUpperCase(),
-      action: formData.event?.trim()?.toLocaleLowerCase(),
+      action: formData.event?.trim()?.toLowerCase(),
       responses: [],
     };
     data.inContexts = formatArray(formData.inContexts);
