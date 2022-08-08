@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../../context/auth';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import {
-  Nav,
-  Button,
-  Offcanvas,
-  Form,
-  Container,
   Alert,
+  Button,
+  Container,
+  Form,
+  Nav,
+  Offcanvas,
 } from 'react-bootstrap';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/auth';
+import { formatArray, formatPayload } from '../../util/format';
 
 export default function ChatbotDashboard() {
   const auth = useAuth();
@@ -49,33 +50,42 @@ export default function ChatbotDashboard() {
   }, []);
 
   function renderIntents(intent) {
-    if (intent) {
-      return intent.map((intent, index) => {
-        return (
-          <li key={index} className="list-group-item">
-            <Nav.Link as={NavLink} to={`intent/${intent._id}`}>
-              <span className="text-uppercase text-dark">{intent.name}</span>
-            </Nav.Link>
-          </li>
-        );
-      });
-    }
-    return null;
+    return intent
+      ? intent.map((intent, index) => {
+          return (
+            <li key={index} className="list-group-item">
+              <Nav.Link as={NavLink} to={`intent/${intent._id}`}>
+                <span className="text-uppercase text-dark">{intent.name}</span>
+              </Nav.Link>
+            </li>
+          );
+        })
+      : null;
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    formData.trainingPhrases = formatTrainingPhrases(formData.trainingPhrases);
-    if (formData.payload)
-      formData.responses = [
-        ...formData.responses,
-        JSON.parse(formData.payload),
-      ];
+    const data = {
+      name: formData.name,
+      event: formData.event?.trim()?.toUpperCase(),
+      action: formData.event?.trim()?.toLocaleLowerCase(),
+    };
+    data.contexts = formatArray(formData.contexts);
+    data.trainingPhrases = formatArray(formData.trainingPhrases);
+    data.parameters = formatArray(formData.parameters);
+    if (formData.responses) {
+      data.responses = [];
+      data.responses.push({ type: 'text', text: formData.responses });
+    }
+    if (formData.payload) {
+      if (!Array.isArray(formData.responses)) data.responses = [];
+      formatPayload(formData.payload)?.map((data) => data.responses.push(data));
+    }
     try {
       const response = await axios({
         method: 'post',
         url: '/api/chatbot/intent',
-        data: formData,
+        data,
       });
       notifyCreate('success');
       setIntent([...intent, response.data.intent]);
@@ -104,11 +114,6 @@ export default function ChatbotDashboard() {
     return validate === true ? (
       <Alert variant="danger">Bị trùng tên</Alert>
     ) : null;
-  };
-
-  const formatTrainingPhrases = (str) => {
-    const result = str.trim().toLowerCase().split(',');
-    return result;
   };
 
   return (

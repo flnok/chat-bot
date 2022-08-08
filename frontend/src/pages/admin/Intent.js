@@ -20,6 +20,7 @@ export default function Intent() {
         const intent = await axios.get(`/api/chatbot/intent/${params.id}`);
         setIntent(intent.data.intent);
         setResponses(intent.data.responses);
+        console.log(intent.data);
       } catch (error) {
         if (error.response.status === 401)
           auth.logout(() => navigate('/login'));
@@ -39,6 +40,7 @@ export default function Intent() {
   };
 
   const handleEdit = async (formData) => {
+    if (!formData) return;
     try {
       const update = {
         updateName: formData.name?.trim().toUpperCase(),
@@ -59,7 +61,7 @@ export default function Intent() {
         Array.isArray(formData.parameters) && formData.parameters.length > 0
           ? formData.parameters
           : formatArray(formData.parameters);
-      if (Array.isArray(formData.responses) && formData.responses.length > 0) {
+      if (Array.isArray(formData.responses) && formData.responses?.length > 0) {
         formData.responses?.map((data) =>
           update.responses?.push({
             type: 'text',
@@ -69,7 +71,7 @@ export default function Intent() {
       } else if (typeof formData.responses === 'string') {
         update.responses.push({ type: 'text', text: formData.responses });
       }
-      if (Array.isArray(formData.payload) && formData.payload.length > 0) {
+      if (Array.isArray(formData.payload) && formData.payload?.length > 0) {
         formData.payload?.map((data) =>
           update.responses.push(JSON.parse(data))
         );
@@ -150,7 +152,7 @@ export default function Intent() {
           <div className="form-group row">
             <label className="col-4 col-form-label">Responses</label>
             <div className="col-8">
-              {responses.text?.map((text, index) => {
+              {responses?.text?.map((text, index) => {
                 return <div key={index}>{text}</div>;
               })}
             </div>
@@ -159,7 +161,7 @@ export default function Intent() {
             <label className="col-4 col-form-label">Payload</label>
             <div className="col-8">
               <div style={{ whiteSpace: 'break-spaces' }}>
-                {responses.payload?.map((value, index) => {
+                {responses?.payload?.map((value, index) => {
                   return (
                     <div key={index}>
                       {JSON.stringify(JSON.parse(value), null, 4)}
@@ -224,14 +226,14 @@ function ConfirmDelete(props) {
 
 function EditModal(props) {
   const initialState = {
-    name: props.intent.name || '',
-    contexts: props.intent.contexts?.map(({ name }) => name) || '',
-    event: props.intent.event || '',
-    trainingPhrases: props.intent.trainingPhrases?.map((tp) => tp) || '',
-    action: props.intent.action || '',
-    parameters: props.intent.parameters?.map(({ key }) => key) || '',
-    responses: props.responses.text || '',
-    payload: props.responses.payload || '',
+    name: props.intent?.name || '',
+    contexts: props.intent?.contexts?.map(({ name }) => name) || '',
+    event: props.intent?.event || '',
+    trainingPhrases: props.intent?.trainingPhrases?.map((tp) => tp) || '',
+    action: props.intent?.action || '',
+    parameters: props.intent?.parameters?.map(({ key }) => key) || '',
+    responses: props.responses?.text || '',
+    payload: props.responses?.payload || '',
   };
   const [formData, setFormData] = useState(initialState);
   const [validate, setValidate] = useState(null);

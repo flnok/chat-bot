@@ -9,6 +9,7 @@ const IntentSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
+    inContexts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Context' }],
     contexts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Context' }],
     event: {
       type: String,
@@ -46,7 +47,11 @@ const IntentSchema = new mongoose.Schema(
           type: [{ title: String, link: String, event: String }],
           default: undefined,
         },
-        image: { _id: false, rawUrl: String, text: String },
+        image: {
+          _id: false,
+          type: [{ rawUrl: String, text: String }],
+          default: undefined,
+        },
         chips: { _id: false, type: [{ text: String }], default: undefined },
       },
     ],
