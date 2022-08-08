@@ -85,7 +85,7 @@ export default function ChatbotDashboard() {
       data.responses.push({ type: 'text', text: formData.responses });
     }
     if (formData.payload) {
-      formatPayload(formData.payload)?.map((pl) => {
+      formatPayload(formData.payload)?.forEach((pl) => {
         data.responses.push(pl);
       });
     }
