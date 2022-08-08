@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import Chips from './Chips';
 import Message from './Message';
 import Option from './Option';
-
+import { mapParams } from '../../util/format';
 // const cookies = new Cookies();
 
 export default function Chatbot() {
@@ -67,13 +67,16 @@ export default function Chatbot() {
       title,
     });
     const { contexts, action, parameters } = getSessionIntent();
-    console.log({ contexts, action, parameters });
-    const result = await axios.post('/api/chatbot/query-text', {
+    const request = {
       text,
       inContext: contexts,
       action,
       parameters,
-    });
+    };
+    if (parameters.length > 0) {
+      request.parameters = mapParams(parameters, text);
+    }
+    const result = await axios.post('/api/chatbot/query-text', request);
     setSessionIntent(result?.data?.intent);
     result?.data?.msg?.forEach((data) => {
       updateMessages({

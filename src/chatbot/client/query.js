@@ -1,32 +1,45 @@
 const Intent = require('../../models/chatbot/Intent');
 const Context = require('../../models/chatbot/Context');
+const { handleAction } = require('./hook');
 const _ = require('lodash');
 
 async function queryText(text, inContext = [], action = '', parameters = []) {
   if (_.isEmpty(text)) return;
   const query = { trainingPhrases: text.trim().toLowerCase() };
-  // if (!_.isEmpty(parameters)) query.parameters = parameters;
-  if (action) query.action = action;
   try {
-    if (!_.isEmpty(inContext)) {
-      query.inContext = await Context.find({
-        name: { $in: inContext.map((name) => name) },
-      });
+    let result;
+    if (!action) {
+      if (!_.isEmpty(inContext)) {
+        query.inContext = await Context.find({
+          name: { $in: inContext.map((name) => name) },
+        });
+      }
+      result = await Intent.findOne({
+        trainingPhrases: query.trainingPhrases,
+        $or: [
+          { inContexts: { $in: query.inContext } },
+          { inContexts: { $in: [null] } },
+          { inContexts: { $exists: false } },
+          { inContexts: { $eq: [] } },
+        ],
+      })
+        .populate({ path: 'inContexts' })
+        .populate({ path: 'contexts' })
+        .lean();
     }
-    let result = await Intent.findOne({
-      trainingPhrases: query.trainingPhrases,
-      $or: [
-        { inContexts: { $in: query.inContext } },
-        { inContexts: { $in: [null] } },
-        { inContexts: { $exists: false } },
-        { inContexts: { $eq: [] } },
-      ],
-    })
-      .populate({ path: 'inContexts' })
-      .populate({ path: 'contexts' })
-      .lean();
+    if (action) {
+      const responsesFromAction = await handleAction(action, parameters);
+      result = await Intent.findOne({
+        action: `${action}_output`,
+      })
+        .populate({ path: 'inContexts' })
+        .populate({ path: 'contexts' })
+        .lean();
+      if (result)
+        result.responses = responsesFromAction?.concat(result?.responses);
+    }
     if (_.isEmpty(result)) {
-      result = await Intent.findOne({ name: 'default fallback' }).populate(
+      result = await Intent.findOne({ name: 'DEFAULT FALLBACK' }).populate(
         'contexts'
       );
     }

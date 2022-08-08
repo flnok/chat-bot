@@ -22,7 +22,7 @@ export default function Chips(props) {
     switch (input) {
       case 'Hôm nay':
         const [date, time] = moment().format('DD-MM-YYYY HH:mm').split(' ');
-        text = `${time} ${date}`;
+        text = `${time}, ${date}, Tên, SĐT, SốLượngKhách`;
         break;
 
       case 'Ngày mai':
@@ -30,7 +30,7 @@ export default function Chips(props) {
           .add(1, 'days')
           .format('DD-MM-YYYY HH:mm')
           .split(' ');
-        text = `${time2} ${date2}`;
+        text = `${time2}, ${date2}, Tên, SĐT, SốLượngKhách`;
         break;
 
       case '😍':

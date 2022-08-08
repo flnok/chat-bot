@@ -103,7 +103,7 @@ export default function Intent() {
         <div className="display-5 text-center mb-3">
           <span className="text-uppercase">{intent.name}</span>
         </div>
-        <form className="container fs-5">
+        <form className="container fs-5" style={{ wordBreak: 'break-word' }}>
           <div className="form-group row">
             <label className="col-4 col-form-label">Intent name</label>
             <div className="col-8">
@@ -393,7 +393,7 @@ function EditModal(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="info" onClick={(e) => props.handleEdit(formData)}>
+        <Button variant="success" onClick={(e) => props.handleEdit(formData)}>
           Cập nhật
         </Button>
         <Button variant="secondary" onClick={props.onHide}>
