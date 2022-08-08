@@ -52,7 +52,6 @@ export default function Chatbot() {
   };
 
   const getSessionIntent = () => {
-    console.log({ sessionIntent });
     return {
       contexts: sessionIntent?.contexts?.map(({ name }) => name) || null,
       action: sessionIntent?.action || null,
@@ -93,7 +92,6 @@ export default function Chatbot() {
         msg: { text: { text: hasText } },
       });
     const { contexts, action, parameters } = getSessionIntent();
-    console.log({ contexts, action, parameters });
     const req = {
       event,
       inContext: contexts,

@@ -20,7 +20,6 @@ export default function Intent() {
         const intent = await axios.get(`/api/chatbot/intent/${params.id}`);
         setIntent(intent.data.intent);
         setResponses(intent.data.responses);
-        console.log(intent.data);
       } catch (error) {
         if (error.response.status === 401)
           auth.logout(() => navigate('/login'));
