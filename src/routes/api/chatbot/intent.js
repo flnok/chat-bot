@@ -12,20 +12,14 @@ const router = express.Router(); // api/chatbot
 const mappingPayload = (str) => {
   if (str.length < 1) return null;
   if (str.length === 1) return str;
-  const result = str.map((r) => {
+  const result = { text: [], payload: [] };
+  str.forEach((r) => {
     switch (r.type) {
       case 'text':
-        return r.value;
-      case 'options':
-        r.list?.forEach((opt) => {
-          JSON.stringify(opt, null, 2);
-        });
-        return r.list;
-      case 'image':
-        break;
-      case 'chip':
+        result.text = [...result.text, r.text];
         break;
       default:
+        result.payload = [...result.payload, JSON.stringify(r)];
         break;
     }
   });

@@ -46,19 +46,15 @@ async function createIntent({
   };
 
   try {
-    if (data.contexts) {
-      const duplicateContexts = await Context.find({
+    if (data.contexts.length > 0) {
+      const contextsInDB = await Context.find({
         name: { $in: data.contexts.map((c) => c.name) },
-      }).select('name -_id');
-      const newContexts = _.differenceBy(
-        data.contexts,
-        duplicateContexts,
-        'name'
-      );
+      });
+      const newContexts = _.differenceBy(data.contexts, contextsInDB, 'name');
       if (!_.isEmpty(newContexts)) {
         data.contexts = await Context.create(newContexts);
       } else {
-        data.contexts = null;
+        data.contexts = contextsInDB;
       }
     }
     const intent = await Intent.create(data);
@@ -93,18 +89,30 @@ async function updateIntent(
   if (!_.isEmpty(responses)) update.responses = responses;
   try {
     if (update.contexts) {
+      update.contexts = update.contexts.map((ct) => {
+        return { name: ct };
+      });
       const duplicateContexts = await Context.find({
         name: { $in: update.contexts.map((c) => c.name) },
-      }).select('name -_id');
+      });
       const newContexts = _.differenceBy(
         update.contexts,
         duplicateContexts,
         'name'
       );
       if (!_.isEmpty(newContexts)) {
-        const updateContexts = await Context.create(newContexts);
-        update.contexts = updateContexts;
+        await Context.create(newContexts);
+        update.contexts = await Context.find({
+          name: { $in: update.contexts.map((c) => c.name) },
+        });
+      } else {
+        update.contexts = duplicateContexts;
       }
+    }
+    if (update.parameters) {
+      update.parameters = update.parameters.map((p) => {
+        return { key: p };
+      });
     }
 
     const intent = await Intent.findOneAndUpdate(
@@ -113,7 +121,7 @@ async function updateIntent(
       {
         new: true,
       }
-    );
+    ).populate('contexts');
     return { message: 'Cập nhật thành công', intent };
   } catch (error) {
     console.error(error.message);
