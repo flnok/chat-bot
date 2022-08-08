@@ -52,6 +52,10 @@ export default function Intent() {
         Array.isArray(formData.contexts) && formData.contexts.length > 0
           ? formData.contexts
           : formatArray(formData.contexts);
+      update.inContexts =
+        Array.isArray(formData.inContexts) && formData.inContexts.length > 0
+          ? formData.inContexts
+          : formatArray(formData.inContexts);
       update.trainingPhrases =
         Array.isArray(formData.trainingPhrases) &&
         formData.trainingPhrases.length > 0
@@ -80,6 +84,7 @@ export default function Intent() {
           update.responses.push(data)
         );
       }
+      console.table({ update });
       const intent = await axios.put(
         `/api/chatbot/intent/${params.id}`,
         update
@@ -98,11 +103,23 @@ export default function Intent() {
         <div className="display-5 text-center mb-3">
           <span className="text-uppercase">{intent.name}</span>
         </div>
-        <form className="container">
+        <form className="container fs-5">
           <div className="form-group row">
             <label className="col-4 col-form-label">Intent name</label>
             <div className="col-8">
               <div>{intent.name}</div>
+            </div>
+          </div>
+          <div className="form-group row">
+            <label className="col-4 col-form-label">inContexts</label>
+            <div className="col-8">
+              {intent.inContexts?.map(({ name }, index) => {
+                return (
+                  <span key={index} className="me-3 bg-warning">
+                    {name}
+                  </span>
+                );
+              })}
             </div>
           </div>
           <div className="form-group row">
@@ -227,6 +244,7 @@ function ConfirmDelete(props) {
 function EditModal(props) {
   const initialState = {
     name: props.intent?.name || '',
+    inContexts: props.intent?.inContexts?.map(({ name }) => name) || '',
     contexts: props.intent?.contexts?.map(({ name }) => name) || '',
     event: props.intent?.event || '',
     trainingPhrases: props.intent?.trainingPhrases?.map((tp) => tp) || '',
@@ -266,6 +284,20 @@ function EditModal(props) {
               type="text"
               required
             />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>InContexts</Form.Label>
+            <Form.Control
+              onChange={(e) =>
+                setFormData({ ...formData, inContexts: e.target.value })
+              }
+              value={formData.inContexts}
+              type="text"
+              placeholder="vd: Booking, Information"
+            />
+            <Form.Text className="text-muted">
+              Cách nhau bằng dấu phẩy
+            </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Context</Form.Label>

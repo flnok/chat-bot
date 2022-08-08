@@ -21,6 +21,7 @@ export default function ChatbotDashboard() {
   const navigate = useNavigate();
   const initialState = {
     name: '',
+    inContexts: '',
     contexts: '',
     event: '',
     trainingPhrases: '',
@@ -70,6 +71,7 @@ export default function ChatbotDashboard() {
       event: formData.event?.trim()?.toUpperCase(),
       action: formData.event?.trim()?.toLocaleLowerCase(),
     };
+    data.inContexts = formatArray(formData.inContexts);
     data.contexts = formatArray(formData.contexts);
     data.trainingPhrases = formatArray(formData.trainingPhrases);
     data.parameters = formatArray(formData.parameters);
@@ -146,6 +148,18 @@ export default function ChatbotDashboard() {
                   placeholder="vd: Đặt bàn, xem thông tin"
                   required
                 />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>InContexts</Form.Label>
+                <Form.Control
+                  onChange={(e) =>
+                    setFormData({ ...formData, inContexts: e.target.value })
+                  }
+                  value={formData.inContexts}
+                  type="text"
+                  placeholder="vd: Booking, Information"
+                />
+                <Form.Text className="text-muted">Nhận vào ngữ cảnh</Form.Text>
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Context</Form.Label>

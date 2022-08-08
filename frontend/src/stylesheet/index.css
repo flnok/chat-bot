@@ -10,6 +10,7 @@
 }
 body {
   font-family: 'Montserrat', sans-serif;
+  background-color: whitesmoke;
 }
 
 .nav-link {
@@ -209,4 +210,9 @@ dd {
 .required:after {
   content: ' *';
   color: red;
+}
+
+.col-form-label {
+  font-weight: bolder;
+  text-transform: capitalize;
 }

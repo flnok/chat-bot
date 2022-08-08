@@ -10,6 +10,7 @@ const cookies = new Cookies();
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
+  const [sessionIntent, setSessionIntent] = useState(null);
   const inputRef = useRef(null);
   const [disabledInput, setDisabledInput] = useState(false);
   const elementRef = useRef(null);
@@ -40,21 +41,34 @@ export default function Chatbot() {
     });
   };
 
-  const queryText = async (text, title = '', intent, inContext, parameters) => {
+  const getSessionIntent = () => {
+    console.log({ sessionIntent });
+    const si = {
+      contexts: sessionIntent?.contexts?.map(({ name }) => name) || null,
+      action: sessionIntent?.action || null,
+      parameters: sessionIntent?.parameters?.map(({ key }) => key),
+    };
+    return si;
+  };
+
+  const queryText = async (text, title = '') => {
     let newMessage = {
       author: 'me',
       msg: { text: { text: text } },
       title,
     };
     updateMessages(newMessage);
+    const { contexts, action, parameters } = getSessionIntent();
+    console.log({ contexts, action, parameters });
     const req = {
       text,
-      intent,
-      inContext,
+      inContext: contexts,
+      // action,
       parameters,
     };
     const result = await axios.post('/api/chatbot/query-text', req);
-    result?.data[0]?.msg?.forEach((data) => {
+    setSessionIntent(result?.data?.intent);
+    result?.data?.msg?.forEach((data) => {
       newMessage = {
         author: 'bot',
         msg: data,
@@ -63,13 +77,7 @@ export default function Chatbot() {
     });
   };
 
-  const queryEvent = async (
-    event,
-    hasText = null,
-    intent = null,
-    inContext = null,
-    parameters = []
-  ) => {
+  const queryEvent = async (event, hasText = null) => {
     if (hasText) {
       let newMessage = {
         author: 'me',
@@ -77,14 +85,16 @@ export default function Chatbot() {
       };
       updateMessages(newMessage);
     }
+    const { contexts, action, parameters } = getSessionIntent();
     const req = {
       event,
-      intent,
-      inContext,
+      inContext: contexts,
       parameters,
+      action,
     };
     const result = await axios.post('/api/chatbot/query-event', req);
-    result?.data[0]?.msg?.forEach((data) => {
+    setSessionIntent(result?.data?.intent);
+    result?.data?.msg?.forEach((data) => {
       let newMessage = {
         author: 'bot',
         msg: data,
@@ -94,7 +104,6 @@ export default function Chatbot() {
   };
 
   const renderMessage = (msg, index) => {
-    console.log(msg);
     const isText = msg.msg?.text?.text;
     if (isText)
       return (

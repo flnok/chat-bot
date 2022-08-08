@@ -3,7 +3,7 @@ const router = express.Router();
 const chatbot = require('../../../chatbot/client/query');
 
 router.post('/query-text', async (req, res) => {
-  const { text, intent, inContext, parameters } = req.body;
+  const { text, intent, inContext, parameters, action } = req.body;
   const result = await chatbot.queryText(
     text,
     intent || null,
@@ -11,26 +11,22 @@ router.post('/query-text', async (req, res) => {
     parameters || []
   );
 
-  return res.json([
-    { intent: result, msg: mappingResponses(result.responses) },
-  ]);
+  return res.json({ intent: result, msg: mappingResponses(result?.responses) });
 });
 
 router.post('/query-event', async (req, res) => {
-  const { event, intent, inContext, parameters } = req.body;
+  const { event, inContext, parameters } = req.body;
   const result = await chatbot.queryEvent(
     event,
-    intent || null,
     inContext || null,
     parameters || []
   );
 
-  return res.json([
-    { intent: result, msg: mappingResponses(result.responses) },
-  ]);
+  return res.json({ intent: result, msg: mappingResponses(result?.responses) });
 });
 
 function mappingResponses(responses) {
+  if (!responses) return null;
   const result = [];
   responses.map((res) => {
     switch (res.type) {

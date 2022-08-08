@@ -6,7 +6,9 @@ const _ = require('lodash');
 
 async function getAllIntents() {
   try {
-    const intents = await Intent.find({}).populate('contexts');
+    const intents = await Intent.find({})
+      .populate('inContexts')
+      .populate('contexts');
     return { total: intents.length, intents };
   } catch (error) {
     console.error(error.message);
@@ -15,9 +17,9 @@ async function getAllIntents() {
 
 async function getIntentById(id) {
   try {
-    const intent = await Intent.findOne({ _id: new ObjectId(id) }).populate(
-      'contexts'
-    );
+    const intent = await Intent.findOne({ _id: new ObjectId(id) })
+      .populate('inContexts')
+      .populate('contexts');
     return intent;
   } catch (error) {
     console.error(error.message);
@@ -26,6 +28,7 @@ async function getIntentById(id) {
 
 async function createIntent({
   name,
+  inContexts,
   contexts,
   event,
   trainingPhrases,
@@ -37,6 +40,7 @@ async function createIntent({
   const data = {
     _id,
     name,
+    inContexts,
     contexts,
     event,
     trainingPhrases,
@@ -67,6 +71,27 @@ async function createIntent({
         data.contexts = duplicateContexts;
       }
     }
+    if (data.inContexts?.length > 0) {
+      data.inContexts = data.inContexts.map((ct) => {
+        return { name: ct.trim() };
+      });
+      const duplicateContexts = await Context.find({
+        name: { $in: data.inContexts.map((c) => c.name) },
+      });
+      const newContexts = _.differenceBy(
+        data.inContexts,
+        duplicateContexts,
+        'name'
+      );
+      if (!_.isEmpty(newContexts)) {
+        await Context.create(newContexts);
+        data.inContexts = await Context.find({
+          name: { $in: data.inContexts.map((c) => c.name) },
+        });
+      } else {
+        data.inContexts = duplicateContexts;
+      }
+    }
     if (data.parameters) {
       data.parameters = data.parameters.map((p) => {
         return { key: p.trim() };
@@ -86,6 +111,7 @@ async function updateIntent(
   id,
   {
     updateName,
+    inContexts,
     contexts,
     event,
     trainingPhrases,
@@ -96,11 +122,11 @@ async function updateIntent(
 ) {
   const update = {};
   if (!_.isEmpty(updateName)) update.name = updateName;
-  if (!_.isEmpty(contexts)) update.contexts = contexts;
+  update.contexts = contexts;
   if (!_.isEmpty(event)) update.event = event;
-  if (!_.isEmpty(trainingPhrases)) update.trainingPhrases = trainingPhrases;
+  update.trainingPhrases = trainingPhrases;
   if (!_.isEmpty(action)) update.action = action;
-  if (!_.isEmpty(parameters)) update.parameters = parameters;
+  update.parameters = parameters;
   if (!_.isEmpty(responses)) update.responses = responses;
   try {
     if (update.contexts?.length > 0) {
@@ -124,6 +150,27 @@ async function updateIntent(
         update.contexts = duplicateContexts;
       }
     }
+    if (update.inContexts?.length > 0) {
+      update.inContexts = update.inContexts.map((ct) => {
+        return { name: ct.trim() };
+      });
+      const duplicateContexts = await Context.find({
+        name: { $in: update.inContexts.map((c) => c.name) },
+      });
+      const newContexts = _.differenceBy(
+        update.inContexts,
+        duplicateContexts,
+        'name'
+      );
+      if (!_.isEmpty(newContexts)) {
+        await Context.create(newContexts);
+        update.inContexts = await Context.find({
+          name: { $in: update.inContexts.map((c) => c.name) },
+        });
+      } else {
+        update.inContexts = duplicateContexts;
+      }
+    }
     if (update.parameters?.length > 0) {
       update.parameters = update.parameters?.map((p) => {
         return { key: p.trim() };
@@ -135,7 +182,9 @@ async function updateIntent(
       {
         new: true,
       }
-    ).populate('contexts');
+    )
+      .populate('contexts')
+      .populate('inContexts');
     return { message: 'Cập nhật thành công', intent };
   } catch (error) {
     console.error(error.message);
