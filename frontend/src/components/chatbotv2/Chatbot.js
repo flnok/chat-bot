@@ -1,23 +1,16 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-// import Cookies from 'universal-cookie';
-// import { v4 as uuidv4 } from 'uuid';
+import { mapParams } from '../../util/format';
 import Chips from './Chips';
 import Message from './Message';
 import Option from './Option';
-import { mapParams } from '../../util/format';
-// const cookies = new Cookies();
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [sessionIntent, setSessionIntent] = useState(null);
-  const inputRef = useRef(null);
   const [disabledInput, setDisabledInput] = useState(false);
+  const inputRef = useRef(null);
   const elementRef = useRef(null);
-
-  // if (cookies.get('userID') === undefined) {
-  //   cookies.set('userID', uuidv4(), { path: '/' });
-  // }
 
   useEffect(() => {
     elementRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -52,8 +45,10 @@ export default function Chatbot() {
   };
 
   const getSessionIntent = () => {
+    console.log(sessionIntent);
     return {
       contexts: sessionIntent?.contexts?.map(({ name }) => name) || null,
+      fullInContexts: sessionIntent?.contexts,
       action: sessionIntent?.action || null,
       parameters: sessionIntent?.parameters?.map(({ key }) => key) || null,
     };
@@ -65,12 +60,13 @@ export default function Chatbot() {
       msg: { text: { text: text } },
       title,
     });
-    const { contexts, action, parameters } = getSessionIntent();
+    const { contexts, action, parameters, fullInContexts } = getSessionIntent();
     const request = {
       text,
       inContext: contexts,
       action,
       parameters,
+      fullInContexts,
     };
     if (parameters.length > 0) {
       request.parameters = mapParams(parameters, text);

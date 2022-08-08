@@ -9,7 +9,7 @@ const ContextSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    parameters: [{ key: String, value: String }],
+    parameters: { type: mongoose.Schema.Types.Mixed },
   },
   {
     timestamps: true,

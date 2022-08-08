@@ -4,12 +4,13 @@ const chatbot = require('../../../chatbot/client/query');
 const { mappingResponsesToQuery } = require('../../../util/format');
 
 router.post('/query-text', async (req, res) => {
-  const { text, inContext, parameters, action } = req.body;
+  const { text, inContext, parameters, action, fullInContexts } = req.body;
   const result = await chatbot.queryText(
     text,
     inContext || [],
     action || '',
-    parameters || []
+    parameters || {},
+    fullInContexts || []
   );
 
   return res.json({
@@ -24,7 +25,7 @@ router.post('/query-event', async (req, res) => {
     event,
     inContext || [],
     action || '',
-    parameters || []
+    parameters || {}
   );
 
   return res.json({

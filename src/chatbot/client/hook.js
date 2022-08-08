@@ -2,7 +2,7 @@ const Booking = require('../../models/Booking');
 const _ = require('lodash');
 const moment = require('moment');
 
-async function handleAction(action, parameters) {
+async function handleAction(action, parameters, fullInContexts) {
   if (_.isEmpty(parameters)) return;
   const response = [];
   switch (action) {
@@ -139,39 +139,34 @@ async function handleAction(action, parameters) {
         return response;
       }
 
-    // case 'rate':
-    //   if (queryResult.allRequiredParamsPresent) {
-    //     const outputContexts = queryResult.outputContexts;
-    //     let i = 0;
-    //     while (outputContexts[i].name.search('prebooking-followup') === -1) {
-    //       i++;
-    //     }
-    //     const parameters = outputContexts[i].parameters.fields;
-    //     const [date, time] = moment(
-    //       parameters.dateTime?.structValue?.fields?.date_time?.stringValue ||
-    //         parameters.dateTime?.stringValue
-    //     )
-    //       .utcOffset('+0700')
-    //       .ceil(30, 'minutes')
-    //       .format('DD-MM-YYYY HH:mm')
-    //       .split(' ');
-
-    //     try {
-    //       const update = await Booking.updateOne(
-    //         {
-    //           person: parameters.name.structValue.fields.name.stringValue,
-    //           phone: parameters.phone.stringValue,
-    //           date,
-    //           time,
-    //         },
-    //         { rate: queryResult.parameters.fields.rate.numberValue }
-    //       );
-    //       if (update) console.log('Rated');
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
-    //   break;
+    case 'action.rate':
+      const lastedBooking = await Booking.findOne().sort({ _id: -1 });
+      const { rate } = parameters;
+      try {
+        const update = await Booking.findOneAndUpdate(
+          {
+            person: lastedBooking.person,
+            phone: lastedBooking.phone,
+            date: lastedBooking.date,
+            time: lastedBooking.time,
+          },
+          { rate: rate },
+          { new: true }
+        );
+        if (update)
+          response.push({
+            type: 'text',
+            text: `Bạn đã cho ${rate} điểm 💖`,
+          });
+        return response;
+      } catch (error) {
+        console.log(error);
+        response.push({
+          type: 'text',
+          text: `Đánh giá không thành công`,
+        });
+        return response;
+      }
 
     default:
       break;

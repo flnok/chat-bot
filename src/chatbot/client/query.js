@@ -3,7 +3,13 @@ const Context = require('../../models/chatbot/Context');
 const { handleAction } = require('./hook');
 const _ = require('lodash');
 
-async function queryText(text, inContext = [], action = '', parameters = []) {
+async function queryText(
+  text,
+  inContext = [],
+  action = '',
+  parameters = {},
+  fullInContexts = []
+) {
   if (_.isEmpty(text)) return;
   const query = { trainingPhrases: text.trim().toLowerCase() };
   try {
@@ -28,15 +34,21 @@ async function queryText(text, inContext = [], action = '', parameters = []) {
         .lean();
     }
     if (action) {
-      const responsesFromAction = await handleAction(action, parameters);
+      const responsesFromAction = await handleAction(
+        action,
+        parameters,
+        fullInContexts
+      );
       result = await Intent.findOne({
         action: `${action}_output`,
       })
         .populate({ path: 'inContexts' })
         .populate({ path: 'contexts' })
         .lean();
-      if (result)
+      if (result) {
         result.responses = responsesFromAction?.concat(result?.responses);
+        result.contexts.forEach((context) => (context.parameters = parameters));
+      }
     }
     if (_.isEmpty(result)) {
       result = await Intent.findOne({ name: 'DEFAULT FALLBACK' }).populate(
