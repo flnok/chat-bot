@@ -37,9 +37,9 @@ async function queryEvent(
     if (intent) query.name = intent;
     if (inContext) query.contexts = await Context.findOne({ name: inContext });
     let result = await Intent.findOne(query);
-    if (_.isEmpty(result)) {
+    if (_.isEmpty(result))
       result = await Intent.findOne({ name: 'DEFAULT FALLBACK' });
-    }
+
     return result;
   } catch (error) {
     console.log(error.message);

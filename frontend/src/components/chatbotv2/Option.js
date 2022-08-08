@@ -31,8 +31,8 @@ export default function Option(props) {
       const event = opt.event;
       const title = opt.title;
       const parameters = opt.parameters;
-      const intent = opt.intent || '';
-      const inContext = opt.inContext || '';
+      const intent = opt.intent;
+      const inContext = opt.inContext;
       props.queryEvent(event, title, intent, inContext, parameters);
     }
   };
@@ -45,9 +45,7 @@ export default function Option(props) {
           borderRadius: '15px',
         }}
       >
-        <div className="option-content">
-          {renderOptions(props.content.list)}
-        </div>
+        <div className="option-content">{renderOptions(props.content)}</div>
       </div>
     </div>
   );

@@ -10,11 +10,15 @@ export default function Message(props) {
             <span className="small mb-0">
               {props.isImage === true ? (
                 <>
-                  <img
-                    src={props.content.rawUrl}
-                    className="img-fluid"
-                    alt="message"
-                  />
+                  {props.content?.map((img) => {
+                    return (
+                      <img
+                        src={img.rawUrl}
+                        className="img-fluid"
+                        alt="message"
+                      />
+                    );
+                  })}
                 </>
               ) : (
                 <> {props.title || props.content.toString()}</>

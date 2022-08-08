@@ -25,7 +25,6 @@ export default function Chatbot() {
   useEffect(() => {
     async function fetchData() {
       await queryEvent('welcome');
-      setDisabledInput(true);
     }
     fetchData();
     // eslint-disable-next-line
@@ -54,11 +53,11 @@ export default function Chatbot() {
       inContext,
       parameters,
     };
-    const res = await axios.post('/api/chatbot/query-text', req);
-    res.data.fulfillmentMessages.forEach((msg) => {
+    const result = await axios.post('/api/chatbot/query-text', req);
+    result?.data[0]?.msg?.forEach((data) => {
       newMessage = {
         author: 'bot',
-        msg: msg,
+        msg: data,
       };
       updateMessages(newMessage);
     });
@@ -85,19 +84,19 @@ export default function Chatbot() {
       parameters,
     };
     const result = await axios.post('/api/chatbot/query-event', req);
-    console.log('🚀 ~ file: Chatbot.js ~ line 88 ~ Chatbot ~ result', result);
-    result.data?.forEach((data) => {
+    result?.data[0]?.msg?.forEach((data) => {
       let newMessage = {
         author: 'bot',
-        msg: data.msg,
+        msg: data,
       };
       updateMessages(newMessage);
     });
   };
 
   const renderMessage = (msg, index) => {
+    console.log(msg);
     const isText = msg.msg?.text?.text;
-    if (isText) {
+    if (isText)
       return (
         <Message
           key={index}
@@ -107,8 +106,8 @@ export default function Chatbot() {
           title={msg.title}
         />
       );
-    }
-    switch (msg.msg?.payload?.type) {
+
+    switch (msg.msg?.type) {
       case 'options':
         return (
           <Option
@@ -149,12 +148,11 @@ export default function Chatbot() {
   };
 
   const renderMessages = (messages) => {
-    if (messages) {
-      return messages.map((message, index) => {
-        return renderMessage(message, index);
-      });
-    }
-    return null;
+    return messages
+      ? messages.map((message, index) => {
+          return renderMessage(message, index);
+        })
+      : null;
   };
 
   const handleInputMessage = (event) => {

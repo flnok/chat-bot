@@ -10,7 +10,10 @@ router.post('/query-text', async (req, res) => {
     inContext || null,
     parameters || []
   );
-  return res.json(result);
+
+  return res.json([
+    { intent: result, msg: mappingResponses(result.responses) },
+  ]);
 });
 
 router.post('/query-event', async (req, res) => {
@@ -28,18 +31,20 @@ router.post('/query-event', async (req, res) => {
 });
 
 function mappingResponses(responses) {
-  let result;
+  const result = [];
   responses.map((res) => {
     switch (res.type) {
       case 'text':
-        result = { text: { text: res.value } };
+        result.push({ text: { text: res.text } });
         break;
       case 'options':
-        result = { payload: res.payload };
+        result.push({ type: 'options', payload: res.options });
         break;
       case 'image':
+        result.push({ type: 'image', payload: res.image });
         break;
       case 'chips':
+        result.push({ type: 'chips', payload: res.chips });
         break;
       default:
         break;

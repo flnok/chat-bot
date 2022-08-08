@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'development') {
 // Session
 app.use(
   session({
-    cookie: { maxAge: 720000 },
+    cookie: { maxAge: 3600000 },
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,

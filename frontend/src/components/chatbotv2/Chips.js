@@ -66,7 +66,7 @@ export default function Chips(props) {
           borderRadius: '15px',
         }}
       >
-        <div className="chip-content">{renderChips(props.content.options)}</div>
+        <div className="chip-content">{renderChips(props.content)}</div>
       </div>
     </div>
   );
