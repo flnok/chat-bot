@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import Cookies from 'universal-cookie';
-import { v4 as uuidv4 } from 'uuid';
+// import Cookies from 'universal-cookie';
+// import { v4 as uuidv4 } from 'uuid';
 import Chips from './Chips';
 import Message from './Message';
 import Option from './Option';
 
-const cookies = new Cookies();
+// const cookies = new Cookies();
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([]);
@@ -15,9 +15,9 @@ export default function Chatbot() {
   const [disabledInput, setDisabledInput] = useState(false);
   const elementRef = useRef(null);
 
-  if (cookies.get('userID') === undefined) {
-    cookies.set('userID', uuidv4(), { path: '/' });
-  }
+  // if (cookies.get('userID') === undefined) {
+  //   cookies.set('userID', uuidv4(), { path: '/' });
+  // }
 
   useEffect(() => {
     elementRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,7 +25,17 @@ export default function Chatbot() {
 
   useEffect(() => {
     async function fetchData() {
-      await queryEvent('welcome');
+      const req = {
+        event: 'welcome',
+      };
+      const result = await axios.post('/api/chatbot/query-event', req);
+      setSessionIntent(result?.data?.intent);
+      result?.data?.msg?.forEach((data) => {
+        updateMessages({
+          author: 'bot',
+          msg: data,
+        });
+      });
     }
     fetchData();
     // eslint-disable-next-line
@@ -43,63 +53,57 @@ export default function Chatbot() {
 
   const getSessionIntent = () => {
     console.log({ sessionIntent });
-    const si = {
+    return {
       contexts: sessionIntent?.contexts?.map(({ name }) => name) || null,
       action: sessionIntent?.action || null,
-      parameters: sessionIntent?.parameters?.map(({ key }) => key),
+      parameters: sessionIntent?.parameters?.map(({ key }) => key) || null,
     };
-    return si;
   };
 
   const queryText = async (text, title = '') => {
-    let newMessage = {
+    updateMessages({
       author: 'me',
       msg: { text: { text: text } },
       title,
-    };
-    updateMessages(newMessage);
+    });
     const { contexts, action, parameters } = getSessionIntent();
     console.log({ contexts, action, parameters });
-    const req = {
+    const result = await axios.post('/api/chatbot/query-text', {
       text,
       inContext: contexts,
-      // action,
+      action,
       parameters,
-    };
-    const result = await axios.post('/api/chatbot/query-text', req);
+    });
     setSessionIntent(result?.data?.intent);
     result?.data?.msg?.forEach((data) => {
-      newMessage = {
+      updateMessages({
         author: 'bot',
         msg: data,
-      };
-      updateMessages(newMessage);
+      });
     });
   };
 
   const queryEvent = async (event, hasText = null) => {
-    if (hasText) {
-      let newMessage = {
+    if (hasText)
+      updateMessages({
         author: 'me',
         msg: { text: { text: hasText } },
-      };
-      updateMessages(newMessage);
-    }
+      });
     const { contexts, action, parameters } = getSessionIntent();
+    console.log({ contexts, action, parameters });
     const req = {
       event,
       inContext: contexts,
-      parameters,
       action,
+      parameters,
     };
     const result = await axios.post('/api/chatbot/query-event', req);
     setSessionIntent(result?.data?.intent);
     result?.data?.msg?.forEach((data) => {
-      let newMessage = {
+      updateMessages({
         author: 'bot',
         msg: data,
-      };
-      updateMessages(newMessage);
+      });
     });
   };
 

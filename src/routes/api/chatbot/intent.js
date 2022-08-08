@@ -7,7 +7,7 @@ const {
   getIntentById,
 } = require('../../../chatbot/intent');
 const { isAuth } = require('../../../middleware/auth');
-const { mappingPayload } = require('../../../util/format');
+const { mappingResponsesInternal } = require('../../../util/format');
 const router = express.Router(); // api/chatbot
 
 router.get('/intent', isAuth, async (req, res) => {
@@ -19,7 +19,7 @@ router.get('/intent/:id', isAuth, async (req, res) => {
   if (req.params.id != 'favicon.ico') {
     const { id } = req.params;
     const intent = await getIntentById(id);
-    const responses = mappingPayload(intent.responses);
+    const responses = mappingResponsesInternal(intent.responses);
     if (intent) return res.status(200).json({ intent, responses });
     else return res.status(500).send('Không có intent tên này');
   }
@@ -76,7 +76,7 @@ router.put('/intent/:id', isAuth, async (req, res) => {
     parameters: parameters || [],
     responses: responses || [],
   });
-  const responsesMapping = mappingPayload(intent.intent?.responses);
+  const responsesMapping = mappingResponsesInternal(intent.intent?.responses);
   if (intent?.intent)
     return res.status(200).json({ intent, responses: responsesMapping });
   else return res.status(500);

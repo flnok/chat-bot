@@ -122,6 +122,7 @@ async function updateIntent(
 ) {
   const update = {};
   if (!_.isEmpty(updateName)) update.name = updateName;
+  update.inContexts = inContexts;
   update.contexts = contexts;
   if (!_.isEmpty(event)) update.event = event;
   update.trainingPhrases = trainingPhrases;

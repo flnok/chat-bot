@@ -1,5 +1,5 @@
-const mappingPayload = (str) => {
-  if (!str) return;
+const mappingResponsesInternal = (str) => {
+  if (!str) return null;
   if (str?.length < 1) return null;
   const result = { text: [], payload: [] };
   str.forEach((r) => {
@@ -15,6 +15,31 @@ const mappingPayload = (str) => {
   return result;
 };
 
+const mappingResponsesToQuery = (responses) => {
+  if (!responses) return null;
+  const result = [];
+  responses.map((res) => {
+    switch (res.type) {
+      case 'text':
+        result.push({ text: { text: res.text } });
+        break;
+      case 'options':
+        result.push({ type: 'options', payload: res.options });
+        break;
+      case 'image':
+        result.push({ type: 'image', payload: res.image });
+        break;
+      case 'chips':
+        result.push({ type: 'chips', payload: res.chips });
+        break;
+      default:
+        break;
+    }
+  });
+  return result;
+};
+
 module.exports = {
-  mappingPayload,
+  mappingResponsesInternal,
+  mappingResponsesToQuery,
 };

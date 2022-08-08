@@ -7,6 +7,7 @@ import {
   Form,
   Nav,
   Offcanvas,
+  Table,
 } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
@@ -54,11 +55,15 @@ export default function ChatbotDashboard() {
     return intent
       ? intent.map((intent, index) => {
           return (
-            <li key={index} className="list-group-item">
-              <Nav.Link as={NavLink} to={`intent/${intent._id}`}>
-                <span className="text-uppercase text-dark">{intent.name}</span>
-              </Nav.Link>
-            </li>
+            <tr key={index}>
+              <td>
+                <Nav.Link as={NavLink} to={`intent/${intent._id}`}>
+                  <span className="text-uppercase text-dark">
+                    {intent.name}
+                  </span>
+                </Nav.Link>
+              </td>
+            </tr>
           );
         })
       : null;
@@ -261,7 +266,9 @@ export default function ChatbotDashboard() {
         </Offcanvas>
 
         <Container>
-          <ul className="list-group">{renderIntents(intent)}</ul>
+          <Table variant="light" bordered hover>
+            <tbody>{renderIntents(intent)}</tbody>
+          </Table>
         </Container>
       </div>
     </>
