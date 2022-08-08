@@ -75,18 +75,19 @@ export default function ChatbotDashboard() {
       name: formData.name,
       event: formData.event?.trim()?.toUpperCase(),
       action: formData.event?.trim()?.toLocaleLowerCase(),
+      responses: [],
     };
     data.inContexts = formatArray(formData.inContexts);
     data.contexts = formatArray(formData.contexts);
     data.trainingPhrases = formatArray(formData.trainingPhrases);
     data.parameters = formatArray(formData.parameters);
     if (formData.responses) {
-      data.responses = [];
       data.responses.push({ type: 'text', text: formData.responses });
     }
     if (formData.payload) {
-      if (!Array.isArray(formData.responses)) data.responses = [];
-      formatPayload(formData.payload)?.map((data) => data.responses.push(data));
+      formatPayload(formData.payload)?.map((pl) => {
+        data.responses.push(pl);
+      });
     }
     try {
       const response = await axios({

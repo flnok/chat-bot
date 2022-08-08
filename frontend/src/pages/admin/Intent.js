@@ -83,7 +83,6 @@ export default function Intent() {
           update.responses.push(data)
         );
       }
-      console.table({ update });
       const intent = await axios.put(
         `/api/chatbot/intent/${params.id}`,
         update
