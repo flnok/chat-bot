@@ -10,8 +10,8 @@ const { isAuth } = require('../../../middleware/auth');
 const router = express.Router(); // api/chatbot
 
 const mappingPayload = (str) => {
-  if (str.length < 1) return null;
-  if (str.length === 1) return str;
+  if (!str) return;
+  if (str?.length < 1) return null;
   const result = { text: [], payload: [] };
   str.forEach((r) => {
     switch (r.type) {
@@ -79,7 +79,7 @@ router.put('/intent/:id', isAuth, async (req, res) => {
     parameters,
     responses,
   } = req.body;
-  const result = await updateIntent(id, {
+  const intent = await updateIntent(id, {
     updateName: updateName || null,
     contexts: contexts || [],
     event: event || '',
@@ -88,7 +88,9 @@ router.put('/intent/:id', isAuth, async (req, res) => {
     parameters: parameters || [],
     responses: responses || [],
   });
-  if (result?.intent) return res.status(200).json(result);
+  const responsesMapping = mappingPayload(intent.intent?.responses);
+  if (intent?.intent)
+    return res.status(200).json({ intent, responses: responsesMapping });
   else return res.status(500);
 });
 

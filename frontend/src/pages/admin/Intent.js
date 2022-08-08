@@ -44,6 +44,7 @@ export default function Intent() {
         updateName: formData.name?.trim().toUpperCase(),
         event: formData.event?.trim().toUpperCase(),
         action: formData.action?.trim().toLowerCase(),
+        responses: [],
       };
       update.contexts =
         Array.isArray(formData.contexts) && formData.contexts.length > 0
@@ -59,7 +60,6 @@ export default function Intent() {
           ? formData.parameters
           : formatArray(formData.parameters);
       if (Array.isArray(formData.responses) && formData.responses.length > 0) {
-        update.responses = [];
         formData.responses?.map((data) =>
           update.responses?.push({
             type: 'text',
@@ -67,16 +67,13 @@ export default function Intent() {
           })
         );
       } else if (typeof formData.responses === 'string') {
-        update.responses = [];
         update.responses.push({ type: 'text', text: formData.responses });
       }
       if (Array.isArray(formData.payload) && formData.payload.length > 0) {
-        if (!Array.isArray(formData.responses)) update.responses = [];
         formData.payload?.map((data) =>
           update.responses.push(JSON.parse(data))
         );
       } else if (typeof formData.payload === 'string' && formData.payload) {
-        if (!Array.isArray(formData.responses)) update.responses = [];
         formatPayload(formData.payload)?.map((data) =>
           update.responses.push(data)
         );
@@ -86,7 +83,8 @@ export default function Intent() {
         update
       );
       setModalEditShow(false);
-      setIntent(intent.data.intent);
+      setIntent(intent.data.intent.intent);
+      setResponses(intent.data.responses);
     } catch (error) {
       console.log(error);
     }

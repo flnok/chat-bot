@@ -46,24 +46,39 @@ async function createIntent({
   };
 
   try {
-    if (data.contexts.length > 0) {
-      const contextsInDB = await Context.find({
+    if (data.contexts?.length > 0) {
+      data.contexts = data.contexts.map((ct) => {
+        return { name: ct.trim() };
+      });
+      const duplicateContexts = await Context.find({
         name: { $in: data.contexts.map((c) => c.name) },
       });
-      const newContexts = _.differenceBy(data.contexts, contextsInDB, 'name');
+      const newContexts = _.differenceBy(
+        data.contexts,
+        duplicateContexts,
+        'name'
+      );
       if (!_.isEmpty(newContexts)) {
-        data.contexts = await Context.create(newContexts);
+        await Context.create(newContexts);
+        data.contexts = await Context.find({
+          name: { $in: data.contexts.map((c) => c.name) },
+        });
       } else {
-        data.contexts = contextsInDB;
+        data.contexts = duplicateContexts;
       }
+    }
+    if (data.parameters) {
+      data.parameters = data.parameters.map((p) => {
+        return { key: p.trim() };
+      });
     }
     const intent = await Intent.create(data);
     return { message: 'Tạo thành công', intent };
   } catch (error) {
+    console.error(error.message);
     if (error.code == '11000' && error.keyValue?.name) {
       return { message: 'Bị trùng tên', status: 'DUPLICATE_NAME' };
     }
-    console.error(error.message);
   }
 }
 
@@ -88,9 +103,9 @@ async function updateIntent(
   if (!_.isEmpty(parameters)) update.parameters = parameters;
   if (!_.isEmpty(responses)) update.responses = responses;
   try {
-    if (update.contexts) {
+    if (update.contexts?.length > 0) {
       update.contexts = update.contexts.map((ct) => {
-        return { name: ct };
+        return { name: ct.trim() };
       });
       const duplicateContexts = await Context.find({
         name: { $in: update.contexts.map((c) => c.name) },
@@ -109,12 +124,11 @@ async function updateIntent(
         update.contexts = duplicateContexts;
       }
     }
-    if (update.parameters) {
-      update.parameters = update.parameters.map((p) => {
-        return { key: p };
+    if (update.parameters?.length > 0) {
+      update.parameters = update.parameters?.map((p) => {
+        return { key: p.trim() };
       });
     }
-
     const intent = await Intent.findOneAndUpdate(
       { _id: new ObjectId(id) },
       update,
