@@ -77,7 +77,7 @@ export default function Intent() {
         );
       } else if (typeof formData.payload === 'string' && formData.payload) {
         if (!Array.isArray(formData.responses)) update.responses = [];
-        formatPayload(formData.payload).map((data) =>
+        formatPayload(formData.payload)?.map((data) =>
           update.responses.push(data)
         );
       }
@@ -227,11 +227,11 @@ function ConfirmDelete(props) {
 function EditModal(props) {
   const initialState = {
     name: props.intent.name || '',
-    contexts: props.intent.contexts.map(({ name }) => name) || '',
+    contexts: props.intent.contexts?.map(({ name }) => name) || '',
     event: props.intent.event || '',
-    trainingPhrases: props.intent.trainingPhrases.map((tp) => tp) || '',
+    trainingPhrases: props.intent.trainingPhrases?.map((tp) => tp) || '',
     action: props.intent.action || '',
-    parameters: props.intent.parameters.map(({ key }) => key) || '',
+    parameters: props.intent.parameters?.map(({ key }) => key) || '',
     responses: props.responses.text || '',
     payload: props.responses.payload || '',
   };
