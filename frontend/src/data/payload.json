@@ -1,0 +1,93 @@
+{
+  "Welcome": {
+    "type": "options",
+    "options": [
+      {
+        "title": "Tôi muốn đặt bàn",
+        "event": "Booking"
+      },
+      {
+        "title": "Tôi muốn xem Menu",
+        "event": "Menu"
+      },
+      {
+        "title": "Chương trình khuyến mãi",
+        "event": "Promotion"
+      },
+      {
+        "title": "Kiểm tra thông tin đặt bàn",
+        "event": "Information"
+      },
+      {
+        "title": "Xem thông tin liên hệ",
+        "link": "contact"
+      },
+      {
+        "title": "Không giúp được gì cả 🧐",
+        "event": "Welcome_again"
+      }
+    ]
+  },
+  "Menu": {
+    "type": "options",
+    "options": [
+      {
+        "title": "Món lẩu",
+        "event": "Lau"
+      },
+      {
+        "title": "Món xào",
+        "event": "Xao"
+      },
+      {
+        "title": "Món Nướng",
+        "event": "Nuong"
+      },
+      {
+        "title": "Giải khát",
+        "event": "Nuoc"
+      },
+      {
+        "title": "Quay lại",
+        "event": "Welcome_again"
+      }
+    ]
+  },
+  "Promotion": [
+    {
+      "type": "image",
+      "image": [
+        {
+          "text": "Discount",
+          "rawUrl": "https://cdn.discordapp.com/attachments/994011424709943326/996670023710023680/discount.jpg"
+        }
+      ]
+    },
+    {
+      "type": "options",
+      "options": [
+        {
+          "title": "Tôi muốn đặt bàn",
+          "event": "Booking"
+        },
+        {
+          "title": "Xem Menu",
+          "event": "Menu"
+        },
+        {
+          "title": "Kiểm tra thông tin đặt bàn",
+          "event": "Information"
+        }
+      ]
+    }
+  ],
+  "Booking": {
+    "type": "chips",
+    "chips": [
+      {
+        "text": "Hôm nay"
+      },
+      { "text": "Ngày mai" }
+    ]
+  }
+}

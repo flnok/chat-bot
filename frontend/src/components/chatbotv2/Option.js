@@ -4,9 +4,22 @@ import { useNavigate } from 'react-router-dom';
 export default function Option(props) {
   const navigate = useNavigate();
 
-  function navigateClick(link) {
+  const navigateClick = (link) => {
     navigate(`/${link}`);
-  }
+  };
+
+  const handleOption = (opt) => {
+    // props.setDisabledInput(false);
+    const isLink = opt.link;
+    if (isLink) {
+      navigateClick(opt.link);
+    } else {
+      props.setMessages([]);
+      const event = opt.event;
+      const hasText = opt.title;
+      props.queryEvent(event, hasText);
+    }
+  };
 
   const renderOptions = (options) => {
     return options.map((opt, index) => (
@@ -19,22 +32,6 @@ export default function Option(props) {
         <span className="small">{opt.title}</span>
       </Button>
     ));
-  };
-
-  const handleOption = (opt) => {
-    props.setDisabledInput(false);
-    const isLink = opt.link;
-    if (isLink) {
-      navigateClick(opt.link);
-    } else {
-      props.setMessages([]);
-      const event = opt.event;
-      const title = opt.title;
-      const parameters = opt.parameters;
-      const intent = opt.intent;
-      const inContext = opt.inContext;
-      props.queryEvent(event, title, intent, inContext, parameters);
-    }
   };
 
   return (

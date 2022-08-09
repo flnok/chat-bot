@@ -1,15 +1,16 @@
 import { Route, Routes } from 'react-router-dom';
 import { AuthProvider, RequireAuth } from '../context/auth';
+import { ErrorProvider } from '../context/error';
 import About from '../pages/About';
-import Dashboard from '../pages/admin/Dashboard';
 import ChatbotDashboard from '../pages/admin/ChatbotDashboard';
-import AdminLayout from '../pages/admin/AdminLayout';
+import Dashboard from '../pages/admin/Dashboard';
 import Intent from '../pages/admin/Intent';
+import Contact from '../pages/Contact';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Menu from '../pages/Menu';
 import NotFound from '../pages/NotFound';
-import Contact from '../pages/Contact';
+import AdminLayout from './AdminLayout';
 import Layout from './Layout';
 
 export default function App() {

@@ -6,13 +6,13 @@ import { useAuth } from '../../context/auth';
 import { formatArray, formatPayload } from '../../util/format';
 
 export default function Intent() {
-  const [intent, setIntent] = useState(null);
-  const [responses, setResponses] = useState(null);
   const auth = useAuth();
-  const [modalShow, setModalShow] = useState(false);
-  const [modalEditShow, setModalEditShow] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
+  const [intent, setIntent] = useState(null);
+  const [responses, setResponses] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
+  const [modalEditShow, setModalEditShow] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -21,7 +21,11 @@ export default function Intent() {
         setIntent(intent.data.intent);
         setResponses(intent.data.responses);
       } catch (error) {
-        if (error.response.status === 401)
+        console.log(error);
+        if (
+          error.response.status === 401 &&
+          error.response?.data?.errorStatus === 'NOT_LOGIN'
+        )
           auth.logout(() => navigate('/login'));
       }
     }
@@ -95,7 +99,7 @@ export default function Intent() {
     }
   };
 
-  function renderIntent(intent) {
+  const renderIntent = (intent) => {
     return intent ? (
       <>
         <div className="display-5 text-center mb-3">
@@ -134,7 +138,7 @@ export default function Intent() {
           </div>
           <div className="form-group row">
             <label className="col-4 col-form-label">Event</label>
-            <div className="col-8">{intent.event}</div>
+            <div className="col-8 text-info">{intent.event}</div>
           </div>
           <div className="form-group row">
             <label className="col-4 col-form-label">Training Phrases</label>
@@ -150,7 +154,7 @@ export default function Intent() {
           </div>
           <div className="form-group row">
             <label className="col-4 col-form-label">Action</label>
-            <div className="col-8">{intent.action}</div>
+            <div className="col-8 text-danger">{intent.action}</div>
           </div>
           <div className="form-group row">
             <label className="col-4 col-form-label">Parameters</label>
@@ -216,7 +220,7 @@ export default function Intent() {
         />
       </>
     ) : null;
-  }
+  };
   return <Container>{renderIntent(intent)}</Container>;
 }
 

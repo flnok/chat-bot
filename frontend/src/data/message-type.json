@@ -1,0 +1,57 @@
+{
+  "isText": {
+    "author": "me",
+    "msg": { "text": { "text": "text here" } },
+    "title": "Ipsum"
+  },
+  "isImage": {
+    "author": "bot",
+    "msg": {
+      "payload": {
+        "type": "image",
+        "image": [
+          {
+            "rawUrl": "https://cdn.discordapp.com/attachments/994011424709943326/996670023710023680/discount.jpg",
+            "text": "Discount"
+          }
+        ]
+      }
+    },
+    "title": "Ipsum"
+  },
+  "isOption": {
+    "author": "me",
+    "msg": {
+      "payload": {
+        "type": "options",
+        "options": [
+          {
+            "title": "Ví dụ",
+            "event": "EXAMPLE"
+          },
+          {
+            "title": "Title1",
+            "event": "EVENT",
+            "link": "link"
+          }
+        ]
+      }
+    }
+  },
+  "isChip": {
+    "author": "bot",
+    "msg": {
+      "payload": {
+        "type": "chips",
+        "chips": [
+          {
+            "text": "Hôm nay"
+          },
+          {
+            "text": "Ngày mai"
+          }
+        ]
+      }
+    }
+  }
+}

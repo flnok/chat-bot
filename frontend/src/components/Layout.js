@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
-import { useState } from 'react';
 import Chatbot from './chatbot/Chatbot';
 import ChatbotV2 from './chatbotv2/Chatbot';
 import Header from './Header';
@@ -28,11 +28,9 @@ export default function Layout() {
       <div className="footer text-end">
         <Button
           variant="outline-dark"
+          size="lg"
           onClick={(e) => {
-            if (version === 'v1') setVersion('v2');
-            else {
-              setVersion('v1');
-            }
+            version === 'v1' ? setVersion('v2') : setVersion('v1');
           }}
         >
           Đổi chatbot

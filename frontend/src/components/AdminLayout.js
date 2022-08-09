@@ -1,6 +1,6 @@
 import { useNavigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../context/auth';
-import DashboardHeader from '../../components/DashboardHeader';
+import { useAuth } from '../context/auth';
+import DashboardHeader from './DashboardHeader';
 
 export default function AdminLayout() {
   const auth = useAuth();

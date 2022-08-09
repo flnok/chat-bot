@@ -10,10 +10,11 @@ export default function Chatbot() {
   const [sessionIntent, setSessionIntent] = useState(null);
   const [disabledInput, setDisabledInput] = useState(false);
   const inputRef = useRef(null);
-  const elementRef = useRef(null);
+  const scrollToBottom = useRef(null);
 
   useEffect(() => {
-    elementRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollToBottom.current?.scrollIntoView({ behavior: 'smooth' });
+    inputRef.current.focus();
   }, [messages]);
 
   useEffect(() => {
@@ -34,10 +35,6 @@ export default function Chatbot() {
     // eslint-disable-next-line
   }, []);
 
-  useEffect(() => {
-    inputRef.current.focus();
-  }, [messages]);
-
   const updateMessages = (msg) => {
     setMessages((currentMessage) => {
       return [...currentMessage, msg];
@@ -45,7 +42,6 @@ export default function Chatbot() {
   };
 
   const getSessionIntent = () => {
-    console.log(sessionIntent);
     return {
       contexts: sessionIntent?.contexts?.map(({ name }) => name) || null,
       fullInContexts: sessionIntent?.contexts,
@@ -87,14 +83,18 @@ export default function Chatbot() {
         author: 'me',
         msg: { text: { text: hasText } },
       });
-    const { contexts, action, parameters } = getSessionIntent();
-    const req = {
+    const { contexts, action, parameters, fullInContexts } = getSessionIntent();
+    const request = {
       event,
       inContext: contexts,
       action,
       parameters,
+      fullInContexts,
     };
-    const result = await axios.post('/api/chatbot/query-event', req);
+    if (parameters.length > 0) {
+      request.parameters = {};
+    }
+    const result = await axios.post('/api/chatbot/query-event', request);
     setSessionIntent(result?.data?.intent);
     result?.data?.msg?.forEach((data) => {
       updateMessages({
@@ -201,13 +201,13 @@ export default function Chatbot() {
         }}
       >
         <p className="mb-0 fw-bold fs-5">
-          <span className="dot"></span> Nhà hàng Thuận Phát v2
+          <span className="dot"></span> Nhà hàng Thuận Phát cây nhà lá vườn
         </p>
       </div>
 
       <div className="card-body chat-bot">
         {renderMessages(messages)}
-        <div ref={elementRef} />
+        <div ref={scrollToBottom} />
       </div>
 
       <div
