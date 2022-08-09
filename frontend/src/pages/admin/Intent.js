@@ -128,7 +128,7 @@ export default function Intent() {
             </div>
           </div>
           <div className="form-group row">
-            <label className="col-4 col-form-label">Context</label>
+            <label className="col-4 col-form-label">Contexts</label>
             <div className="col-8">
               {intent.contexts?.map(({ name }, index) => {
                 return (
@@ -305,7 +305,7 @@ function EditModal(props) {
             </Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
-            <Form.Label>Context</Form.Label>
+            <Form.Label>Contexts</Form.Label>
             <Form.Control
               onChange={(e) =>
                 setFormData({ ...formData, contexts: e.target.value })
