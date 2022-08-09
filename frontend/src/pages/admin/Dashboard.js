@@ -64,24 +64,23 @@ export default function Dashboard() {
   };
 
   const renderBookingInformation = (bookings) => {
-    if (bookings) {
-      return bookings.map((booking, index) => {
-        return (
-          <tr key={index}>
-            <th>{index + 1}</th>
-            <td>
-              {booking.date} | {booking.time}
-            </td>
-            <td>{booking.person}</td>
-            <td>{booking.phone}</td>
-            <td>{booking.guestAmount}</td>
-            <td>{booking.rate}</td>
-            <td>{renderButton(booking._id)}</td>
-          </tr>
-        );
-      });
-    }
-    return null;
+    return bookings
+      ? bookings.map((booking, index) => {
+          return (
+            <tr key={index}>
+              <th>{index + 1}</th>
+              <td>
+                {booking.date} | {booking.time}
+              </td>
+              <td>{booking.person}</td>
+              <td>{booking.phone}</td>
+              <td>{booking.guestAmount}</td>
+              <td>{booking.rate}</td>
+              <td>{renderButton(booking._id)}</td>
+            </tr>
+          );
+        })
+      : null;
   };
 
   return (

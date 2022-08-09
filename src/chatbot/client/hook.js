@@ -8,8 +8,7 @@ async function handleAction(action, parameters, fullInContexts) {
   switch (action) {
     case 'action.information':
       const info = await Booking.find({
-        person: parameters.name,
-        phone: parameters.phone,
+        $or: [{ person: parameters.name }, { phone: parameters.phone }],
       }).sort({
         sortDate: 'asc',
       });
@@ -31,7 +30,7 @@ async function handleAction(action, parameters, fullInContexts) {
         ) {
           response.push({
             type: 'text',
-            text: `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`,
+            text: `Thông tin đặt bàn của bạn là\nTên: ${i.person}, SĐT: ${i.phone}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`,
           });
           count++;
         }
@@ -46,6 +45,16 @@ async function handleAction(action, parameters, fullInContexts) {
 
     case 'action.booking':
       const { time, date, name, phone, guests } = parameters;
+      const isMissingParams = !Object.values(parameters).some(
+        (x) => x !== null && x !== ''
+      );
+      if (isMissingParams)
+        return [
+          {
+            type: text,
+            text: 'Thiếu thông tin hoặc thông tin không đúng cú pháp, vui lòng kiểm tra lại',
+          },
+        ];
       const data = { person: name, phone, guestAmount: guests };
       const [openTime, closeTime] = ['07:59', '22:01'];
       const inputDateTime = `${time} ${date}`;
@@ -131,18 +140,40 @@ async function handleAction(action, parameters, fullInContexts) {
           );
         return response;
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
         response.push({
           type: 'text',
-          text: `Đặt bàn không thành công, hãy thử lại lần nữa nhé`,
+          text: `Đặt bàn không thành công, hãy kiểm tra lại cú pháp, đặc biệt là sđt và số lượng người nhé`,
         });
         return response;
       }
 
     case 'action.rate':
-      const lastedBooking = await Booking.findOne().sort({ _id: -1 });
       const { rate } = parameters;
+      if (parseInt(rate) < 0 && parseInt(rate)) {
+        response.push(
+          {
+            type: 'text',
+            text: 'Chỉ đánh giá từ 0 - 10 thôi nhé',
+          },
+          {
+            type: 'options',
+            options: [
+              {
+                title: 'Đánh giá lại',
+                event: 'RATE',
+              },
+              {
+                title: 'Quay về',
+                event: 'WELCOME',
+              },
+            ],
+          }
+        );
+        return response;
+      }
       try {
+        const lastedBooking = await Booking.findOne().sort({ _id: -1 });
         const update = await Booking.findOneAndUpdate(
           {
             person: lastedBooking.person,
@@ -154,10 +185,25 @@ async function handleAction(action, parameters, fullInContexts) {
           { new: true }
         );
         if (update)
-          response.push({
-            type: 'text',
-            text: `Bạn đã cho ${rate} điểm 💖`,
-          });
+          response.push(
+            {
+              type: 'text',
+              text: `Bạn đã cho ${rate} điểm 💖. Cảm ơn bạn đã đánh giá 😚`,
+            },
+            {
+              type: 'options',
+              options: [
+                {
+                  title: 'Đặt bàn khác',
+                  event: 'Booking',
+                },
+                {
+                  title: 'Quay lại',
+                  event: 'Welcome',
+                },
+              ],
+            }
+          );
         return response;
       } catch (error) {
         console.log(error);
