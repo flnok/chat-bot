@@ -7,11 +7,29 @@ async function handleAction(action, parameters, fullInContexts) {
   const response = [];
   switch (action) {
     case 'action.information':
-      const info = await Booking.find({
-        $or: [{ person: parameters.name }, { phone: parameters.phone }],
-      }).sort({
-        sortDate: 'asc',
-      });
+      let info;
+      if (!parameters.name || !parameters.phone) {
+        info = await Booking.find({
+          $or: [
+            { person: parameters.name },
+            { person: parameters.phone },
+            { phone: parameters.phone },
+            { phone: parameters.name },
+          ],
+        }).sort({
+          sortDate: 'asc',
+        });
+      } else {
+        info = await Booking.find({
+          $or: [
+            { person: parameters.name, phone: parameters.phone },
+            { person: parameters.phone, phone: parameters.name },
+          ],
+        }).sort({
+          sortDate: 'asc',
+        });
+      }
+
       if (_.isEmpty(info)) {
         response.push({
           type: 'text',
@@ -150,7 +168,8 @@ async function handleAction(action, parameters, fullInContexts) {
 
     case 'action.rate':
       const { rate } = parameters;
-      if (parseInt(rate) < 0 && parseInt(rate)) {
+      console.log(parseInt(rate));
+      if (parseInt(rate) < 0 || parseInt(rate) > 10) {
         response.push(
           {
             type: 'text',
