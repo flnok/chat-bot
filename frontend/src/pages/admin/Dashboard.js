@@ -14,8 +14,12 @@ export default function Dashboard() {
       try {
         const res = await axios.get('/api/bookings');
         setBookings(res.data.bookings);
-      } catch (error) {
-        if (error.response.status === 401) {
+      } catch (err) {
+        console.log(err);
+        if (
+          err.response.status === 401 &&
+          err.response?.data?.errorStatus === 'NOT_LOGIN'
+        ) {
           auth.logout(() => {
             navigate('/login');
           });

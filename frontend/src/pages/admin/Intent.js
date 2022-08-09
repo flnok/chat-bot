@@ -20,13 +20,16 @@ export default function Intent() {
         const intent = await axios.get(`/api/chatbot/intent/${params.id}`);
         setIntent(intent.data.intent);
         setResponses(intent.data.responses);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
         if (
-          error.response.status === 401 &&
-          error.response?.data?.errorStatus === 'NOT_LOGIN'
-        )
-          auth.logout(() => navigate('/login'));
+          err.response.status === 401 &&
+          err.response?.data?.errorStatus === 'NOT_LOGIN'
+        ) {
+          auth.logout(() => {
+            navigate('/login');
+          });
+        }
       }
     }
     fetchData();
