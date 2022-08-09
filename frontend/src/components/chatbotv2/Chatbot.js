@@ -201,7 +201,11 @@ export default function Chatbot() {
         }}
       >
         <p className="mb-0 fw-bold fs-5">
-          <span className="dot"></span> Nhà hàng Thuận Phát cây nhà lá vườn
+          <span className="dot"></span> Nhà hàng Thuận Phát
+          <small className="text-muted" style={{ fontSize: '0.8rem' }}>
+            {' '}
+            (cây nhà lá vườn)
+          </small>
         </p>
       </div>
 
