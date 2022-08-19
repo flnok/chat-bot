@@ -32,25 +32,29 @@ class QueryController {
     }
   };
 
-  // dialogFlowQueryText = async (req, res, next) => {
-  //   try {
-  //     const data = await this.queryService.syncDatabase();
+  dialogFlowQueryText = async (req, res, next) => {
+    try {
+      const dto = req.body;
+      const responses = await this.queryService.dialogFlowQueryText(dto);
+      const data = responses[0].queryResult;
 
-  //     return res.status(200).json({ data, message: 'syncDB' });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+      return res.status(200).json({ data, message: 'dialogFlowQueryText' });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-  // dialogFlowQueryEvent = async (req, res, next) => {
-  //   try {
-  //     const data = await this.queryService.syncDatabase();
+  dialogFlowQueryEvent = async (req, res, next) => {
+    try {
+      const dto = req.body;
+      const responses = await this.queryService.dialogFlowQueryEvent(dto);
+      const data = responses[0].queryResult;
 
-  //     return res.status(200).json({ data, message: 'syncDB' });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+      return res.status(200).json({ data, message: 'syncDB' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 module.exports = { QueryController };

@@ -6,7 +6,7 @@ const Booking = require('../models/Booking');
 function handleWebhook(req, res) {
   if (!req.body.queryResult.fulfillmentMessages) return;
   req.body.queryResult.fulfillmentMessages =
-    req.body.queryResult.fulfillmentMessages.map((m) => {
+    req.body.queryResult.fulfillmentMessages.map(m => {
       if (!m.platform) m.platform = 'PLATFORM_UNSPECIFIED';
       return m;
     });
@@ -23,16 +23,16 @@ function handleWebhook(req, res) {
 
     if (info.length > 0) {
       let count = 0;
-      info.forEach((i) => {
+      info.forEach(i => {
         if (!i.sortDate) console.log(i);
         if (
           moment(i.sortDate).isSameOrAfter(
             moment(new Date(), 'DD-MM-YYYY'),
-            'minutes'
+            'minutes',
           )
         ) {
           agent.add(
-            `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`
+            `Thông tin đặt bàn của bạn là\nTên: ${i.person}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`,
           );
           count++;
         }
@@ -51,7 +51,7 @@ function handleWebhook(req, res) {
       agent.parameters.dateTime['date_time'] || agent.parameters.dateTime;
     console.log(
       '🚀 ~ file: webhook.js ~ line 37 ~ dateTime ~ inputDateTime',
-      inputDateTime
+      inputDateTime,
     );
     const [date, time] = moment(inputDateTime)
       .utcOffset('+0700') //Chỉ hiện thị chứ không ghi vào db
@@ -66,11 +66,11 @@ function handleWebhook(req, res) {
     console.log('🚀 ~ file: webhook.js ~ line 50 ~ dateTime ~ time', time);
     const isOpenTime = moment(time, 'HH:mm').isBetween(
       moment(openTime, 'HH:mm'),
-      moment(closeTime, 'HH:mm')
+      moment(closeTime, 'HH:mm'),
     );
     const isValidDate = moment(inputDateTime).isSameOrAfter(
       moment(new Date()),
-      'minutes'
+      'minutes',
     );
 
     console.log(
@@ -79,7 +79,7 @@ function handleWebhook(req, res) {
       'isOpenTime: ',
       isOpenTime,
       'isValidDate: ',
-      isValidDate
+      isValidDate,
     );
     if (
       agent.parameters.hasOwnProperty('dateTime') &&
@@ -88,7 +88,7 @@ function handleWebhook(req, res) {
       !isBooked
     ) {
       agent.add(
-        `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhấn nút tiếp tục để hoàn tất việc đặt bàn`
+        `Hiện bạn có thể đặt bàn vào lúc ${time} ngày ${date}.\nBạn hãy nhấn nút tiếp tục để hoàn tất việc đặt bàn`,
       );
       agent.add(
         // Navigation
@@ -119,13 +119,13 @@ function handleWebhook(req, res) {
           {
             rawPayload: true,
             sendAsMessage: true,
-          }
-        )
+          },
+        ),
       );
     } else {
       // Slot filling request
       const wrongInput = agent.contexts.filter(
-        (context) => context.name === 'pre_booking_dialog_context'
+        context => context.name === 'pre_booking_dialog_context',
       );
       if (wrongInput.length > 0) {
         // Chưa nhập hoặc nhập sai kiểu dữ liệu
@@ -147,8 +147,8 @@ function handleWebhook(req, res) {
             {
               rawPayload: true,
               sendAsMessage: true,
-            }
-          )
+            },
+          ),
         );
       } else {
         // Nhập rồi nhưng không đúng
@@ -156,7 +156,7 @@ function handleWebhook(req, res) {
           agent.add(`Thời gian này không có bàn trống hãy chọn thời gian khác`);
         } else {
           agent.add(
-            `Vui lòng nhập ngày và giờ hợp lệ 8h-22h từ lúc này trở đi (vd : 18h 22-7, ngày mai 17h)`
+            `Vui lòng nhập ngày và giờ hợp lệ 8h-22h từ lúc này trở đi (vd : 18h 22-7, ngày mai 17h)`,
           );
         }
       }
@@ -170,13 +170,13 @@ function handleWebhook(req, res) {
       agent.parameters.rate >= 0 &&
       agent.parameters.rate < 11
     ) {
-      agent.consoleMessages.forEach((message) => {
+      agent.consoleMessages.forEach(message => {
         agent.add(message);
       });
       console.log(agent.parameters.rate);
     } else {
       const wrongInput = agent.contexts.filter(
-        (context) => context.name === 'rate_dialog_context'
+        context => context.name === 'rate_dialog_context',
       );
       if (wrongInput.length > 0) {
         // Chưa nhập hoặc nhập sai kiểu dữ liệu
@@ -204,8 +204,8 @@ function handleWebhook(req, res) {
             {
               rawPayload: true,
               sendAsMessage: true,
-            }
-          )
+            },
+          ),
         );
       } else {
         // Nhập rồi nhưng không đúng

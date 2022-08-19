@@ -2,8 +2,20 @@ const message = require('../assets/message');
 const HttpException = require('../exceptions/HttpException');
 const _ = require('lodash');
 const { isEmpty } = require('../utils');
-const { Intent, Context } = require('../models');
+const { Intent, Context, Booking } = require('../models');
 const { handleAction } = require('../chatbot/hook');
+const dialogflow = require('@google-cloud/dialogflow');
+const moment = require('moment');
+require('moment-round');
+const { struct } = require('pb-util');
+const config = require('../config');
+const projectId = config.googleProjectID;
+const sessionId = config.dialogFlowSessionID;
+const credentials = {
+  client_email: config.googleClientEmail,
+  private_key: config.googlePrivateKey,
+};
+const sessionClient = new dialogflow.SessionsClient({ projectId, credentials });
 
 class QueryService {
   async queryText(dto) {
@@ -42,7 +54,11 @@ class QueryService {
     }
 
     if (data.action) {
-      const responsesFromAction = await handleAction(data.action, data.parameters, data.fullInContexts);
+      const responsesFromAction = await handleAction(
+        data.action,
+        data.parameters,
+        data.fullInContexts,
+      );
       result = await Intent.findOne({
         action: `${data.action}_output`,
       })
@@ -51,12 +67,16 @@ class QueryService {
         .lean();
       if (result) {
         result.responses = responsesFromAction?.concat(result?.responses);
-        result.contexts.forEach(context => (context.parameters = data.parameters));
+        result.contexts.forEach(
+          context => (context.parameters = data.parameters),
+        );
       }
     }
 
     if (_.isEmpty(result)) {
-      result = await Intent.findOne({ name: 'DEFAULT FALLBACK' }).populate('contexts');
+      result = await Intent.findOne({ name: 'DEFAULT FALLBACK' }).populate(
+        'contexts',
+      );
     }
 
     return result;
@@ -97,12 +117,148 @@ class QueryService {
       .lean();
 
     if (_.isEmpty(result)) {
-      result = await Intent.findOne({ name: 'default fallback' }).populate('contexts');
+      result = await Intent.findOne({ name: 'default fallback' }).populate(
+        'contexts',
+      );
     }
 
     return result;
   }
+
+  async dialogFlowQueryText({
+    queries,
+    parameters = {},
+    languageCode = config.defaultLanguageCode,
+    userId,
+  }) {
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      projectId,
+      sessionId + userId,
+    );
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text: queries,
+          languageCode: languageCode,
+        },
+      },
+      queryParams: { payload: { data: parameters } },
+    };
+
+    const responses = await sessionClient.detectIntent(request);
+    await addDb(responses[0].queryResult);
+
+    return responses;
+  }
+
+  async dialogFlowQueryEvent({
+    queries,
+    parameters = {},
+    languageCode = config.defaultLanguageCode,
+    userId,
+  }) {
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      projectId,
+      sessionId + userId,
+    );
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        event: {
+          name: queries,
+          parameters: struct.encode(parameters),
+          languageCode: languageCode,
+        },
+      },
+    };
+
+    const responses = await sessionClient.detectIntent(request);
+    await addDb(responses[0].queryResult);
+
+    return responses;
+  }
 }
+
+const addDb = async queryResult => {
+  switch (queryResult.action) {
+    case 'booking':
+      if (queryResult.allRequiredParamsPresent) {
+        const fields = queryResult.parameters.fields;
+        const outputContexts = queryResult.outputContexts;
+        let i = 0;
+        while (outputContexts[i].name.search('prebooking-followup') === -1) {
+          i++;
+        }
+        const parameters = outputContexts[i].parameters.fields;
+        const [date, time] = moment(
+          parameters.dateTime?.structValue?.fields?.date_time?.stringValue ||
+            parameters.dateTime?.stringValue,
+        )
+          .utcOffset('+0700')
+          .ceil(30, 'minutes')
+          .format('DD-MM-YYYY HH:mm')
+          .split(' ');
+
+        const sortDate = moment(`${date}`, 'DD-MM-YYYY')
+          .add(`${time}`, 'hours')
+          .format();
+
+        const data = {
+          person: fields.name.structValue.fields.name.stringValue,
+          phone: fields.phone.stringValue,
+          date: date,
+          time: time,
+          guestAmount: fields.guests.numberValue,
+          sortDate: sortDate,
+        };
+        try {
+          const booked = await Booking.create(data);
+          if (booked) console.log('Booked');
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      break;
+
+    case 'rate':
+      if (queryResult.allRequiredParamsPresent) {
+        const outputContexts = queryResult.outputContexts;
+        let i = 0;
+        while (outputContexts[i].name.search('prebooking-followup') === -1) {
+          i++;
+        }
+        const parameters = outputContexts[i].parameters.fields;
+        const [date, time] = moment(
+          parameters.dateTime?.structValue?.fields?.date_time?.stringValue ||
+            parameters.dateTime?.stringValue,
+        )
+          .utcOffset('+0700')
+          .ceil(30, 'minutes')
+          .format('DD-MM-YYYY HH:mm')
+          .split(' ');
+
+        try {
+          const update = await Booking.updateOne(
+            {
+              person: parameters.name.structValue.fields.name.stringValue,
+              phone: parameters.phone.stringValue,
+              date,
+              time,
+            },
+            { rate: queryResult.parameters.fields.rate.numberValue },
+          );
+          if (update) console.log('Rated');
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+};
 
 module.exports = {
   QueryService,
