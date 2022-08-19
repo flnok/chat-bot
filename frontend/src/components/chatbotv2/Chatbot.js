@@ -22,9 +22,9 @@ export default function Chatbot() {
       const req = {
         event: 'welcome',
       };
-      const result = await axios.post('/api/chatbot/query-event', req);
-      setSessionIntent(result?.data?.intent);
-      result?.data?.msg?.forEach((data) => {
+      const result = await axios.post('/api/query/event', req);
+      setSessionIntent(result?.data?.data);
+      result?.data?.msg?.forEach(data => {
         updateMessages({
           author: 'bot',
           msg: data,
@@ -35,8 +35,8 @@ export default function Chatbot() {
     // eslint-disable-next-line
   }, []);
 
-  const updateMessages = (msg) => {
-    setMessages((currentMessage) => {
+  const updateMessages = msg => {
+    setMessages(currentMessage => {
       return [...currentMessage, msg];
     });
   };
@@ -67,9 +67,9 @@ export default function Chatbot() {
     if (parameters.length > 0) {
       request.parameters = mapParams(parameters, text);
     }
-    const result = await axios.post('/api/chatbot/query-text', request);
-    setSessionIntent(result?.data?.intent);
-    result?.data?.msg?.forEach((data) => {
+    const result = await axios.post('/api/query/text', request);
+    setSessionIntent(result?.data?.data);
+    result?.data?.msg?.forEach(data => {
       updateMessages({
         author: 'bot',
         msg: data,
@@ -94,9 +94,9 @@ export default function Chatbot() {
     if (parameters.length > 0) {
       request.parameters = {};
     }
-    const result = await axios.post('/api/chatbot/query-event', request);
-    setSessionIntent(result?.data?.intent);
-    result?.data?.msg?.forEach((data) => {
+    const result = await axios.post('/api/query/event', request);
+    setSessionIntent(result?.data?.data);
+    result?.data?.msg?.forEach(data => {
       updateMessages({
         author: 'bot',
         msg: data,
@@ -106,16 +106,7 @@ export default function Chatbot() {
 
   const renderMessage = (msg, index) => {
     const isText = msg.msg?.text?.text;
-    if (isText)
-      return (
-        <Message
-          key={index}
-          index={index}
-          author={msg.author}
-          content={msg.msg.text.text}
-          title={msg.title}
-        />
-      );
+    if (isText) return <Message key={index} index={index} author={msg.author} content={msg.msg.text.text} title={msg.title} />;
 
     switch (msg.msg?.type) {
       case 'options':
@@ -131,33 +122,17 @@ export default function Chatbot() {
         );
 
       case 'image':
-        return (
-          <Message
-            key={index}
-            index={index}
-            author={msg.author}
-            content={msg.msg.payload}
-            title={msg.title}
-            isImage={true}
-          />
-        );
+        return <Message key={index} index={index} author={msg.author} content={msg.msg.payload} title={msg.title} isImage={true} />;
 
       case 'chips':
-        return (
-          <Chips
-            key={index}
-            index={index}
-            content={msg.msg.payload}
-            inputRef={inputRef}
-          />
-        );
+        return <Chips key={index} index={index} content={msg.msg.payload} inputRef={inputRef} />;
 
       default:
         return null;
     }
   };
 
-  const renderMessages = (messages) => {
+  const renderMessages = messages => {
     return messages
       ? messages.map((message, index) => {
           return renderMessage(message, index);
@@ -165,7 +140,7 @@ export default function Chatbot() {
       : null;
   };
 
-  const handleInputMessage = (event) => {
+  const handleInputMessage = event => {
     if (event.key === 'Enter' && event.target.value.trim() !== '') {
       queryText(event.target.value);
       event.target.value = '';

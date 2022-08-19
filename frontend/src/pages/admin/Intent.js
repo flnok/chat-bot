@@ -17,15 +17,12 @@ export default function Intent() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const intent = await axios.get(`/api/chatbot/intent/${params.id}`);
-        setIntent(intent.data.intent);
-        setResponses(intent.data.responses);
+        const response = await axios.get(`/api/intent/${params.id}`);
+        setIntent(response.data.data.intent);
+        setResponses(response.data.data.responses);
       } catch (err) {
         console.log(err);
-        if (
-          err.response.status === 401 &&
-          err.response?.data?.errorStatus === 'NOT_LOGIN'
-        ) {
+        if (err.response.status === 401 && err.response?.data?.errorStatus === 'NOT_LOGIN') {
           auth.logout(() => {
             navigate('/login');
           });
@@ -38,14 +35,14 @@ export default function Intent() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/chatbot/intent/${params.id}`);
+      await axios.delete(`/api/intent/${params.id}`);
       navigate(-1);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleEdit = async (formData) => {
+  const handleEdit = async formData => {
     if (!formData) return;
     try {
       const update = {
@@ -54,55 +51,40 @@ export default function Intent() {
         action: formData.action?.trim().toLowerCase(),
         responses: [],
       };
-      update.contexts =
-        Array.isArray(formData.contexts) && formData.contexts.length > 0
-          ? formData.contexts
-          : formatArray(formData.contexts);
+      update.contexts = Array.isArray(formData.contexts) && formData.contexts.length > 0 ? formData.contexts : formatArray(formData.contexts);
       update.inContexts =
-        Array.isArray(formData.inContexts) && formData.inContexts.length > 0
-          ? formData.inContexts
-          : formatArray(formData.inContexts);
+        Array.isArray(formData.inContexts) && formData.inContexts.length > 0 ? formData.inContexts : formatArray(formData.inContexts);
       update.trainingPhrases =
-        Array.isArray(formData.trainingPhrases) &&
-        formData.trainingPhrases.length > 0
+        Array.isArray(formData.trainingPhrases) && formData.trainingPhrases.length > 0
           ? formData.trainingPhrases
           : formatArray(formData.trainingPhrases);
       update.parameters =
-        Array.isArray(formData.parameters) && formData.parameters.length > 0
-          ? formData.parameters
-          : formatArray(formData.parameters);
+        Array.isArray(formData.parameters) && formData.parameters.length > 0 ? formData.parameters : formatArray(formData.parameters);
       if (Array.isArray(formData.responses) && formData.responses?.length > 0) {
-        formData.responses?.map((data) =>
+        formData.responses?.map(data =>
           update.responses?.push({
             type: 'text',
             text: data,
-          })
+          }),
         );
       } else if (typeof formData.responses === 'string') {
         update.responses.push({ type: 'text', text: formData.responses });
       }
       if (Array.isArray(formData.payload) && formData.payload?.length > 0) {
-        formData.payload?.map((data) =>
-          update.responses.push(JSON.parse(data))
-        );
+        formData.payload?.map(data => update.responses.push(JSON.parse(data)));
       } else if (typeof formData.payload === 'string' && formData.payload) {
-        formatPayload(formData.payload)?.map((data) =>
-          update.responses.push(data)
-        );
+        formatPayload(formData.payload)?.map(data => update.responses.push(data));
       }
-      const intent = await axios.put(
-        `/api/chatbot/intent/${params.id}`,
-        update
-      );
+      const response = await axios.put(`/api/intent/${params.id}`, update);
       setModalEditShow(false);
-      setIntent(intent.data.intent.intent);
-      setResponses(intent.data.responses);
+      setIntent(response.data.data.intent);
+      setResponses(response.data.data.responses);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const renderIntent = (intent) => {
+  const renderIntent = intent => {
     return intent ? (
       <>
         <div className="display-5 text-center mb-3">
@@ -184,11 +166,7 @@ export default function Intent() {
             <div className="col-8">
               <div style={{ whiteSpace: 'break-spaces' }}>
                 {responses?.payload?.map((value, index) => {
-                  return (
-                    <div key={index}>
-                      {JSON.stringify(JSON.parse(value), null, 4)}
-                    </div>
-                  );
+                  return <div key={index}>{JSON.stringify(JSON.parse(value), null, 4)}</div>;
                 })}
               </div>
             </div>
@@ -208,19 +186,9 @@ export default function Intent() {
           </div>
         </form>
 
-        <ConfirmDelete
-          show={modalShow}
-          handleDelete={handleDelete}
-          onHide={() => setModalShow(false)}
-        />
+        <ConfirmDelete show={modalShow} handleDelete={handleDelete} onHide={() => setModalShow(false)} />
 
-        <EditModal
-          intent={intent}
-          responses={responses}
-          show={modalEditShow}
-          handleEdit={handleEdit}
-          onHide={() => setModalEditShow(false)}
-        />
+        <EditModal intent={intent} responses={responses} show={modalEditShow} handleEdit={handleEdit} onHide={() => setModalEditShow(false)} />
       </>
     ) : null;
   };
@@ -252,7 +220,7 @@ function EditModal(props) {
     inContexts: props.intent?.inContexts?.map(({ name }) => name) || '',
     contexts: props.intent?.contexts?.map(({ name }) => name) || '',
     event: props.intent?.event || '',
-    trainingPhrases: props.intent?.trainingPhrases?.map((tp) => tp) || '',
+    trainingPhrases: props.intent?.trainingPhrases?.map(tp => tp) || '',
     action: props.intent?.action || '',
     parameters: props.intent?.parameters?.map(({ key }) => key) || '',
     responses: props.responses?.text || '',
@@ -267,9 +235,7 @@ function EditModal(props) {
   }, [formData.name]);
 
   const showValidate = () => {
-    return validate === true ? (
-      <Alert variant="danger">Tên không được bỏ trống</Alert>
-    ) : null;
+    return validate === true ? <Alert variant="danger">Tên không được bỏ trống</Alert> : null;
   };
 
   return (
@@ -281,49 +247,32 @@ function EditModal(props) {
         <Form>
           <Form.Group className="mb-3">
             <Form.Label className="required">Tên kịch bản</Form.Label>
-            <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              value={formData.name}
-              type="text"
-              required
-            />
+            <Form.Control onChange={e => setFormData({ ...formData, name: e.target.value })} value={formData.name} type="text" required />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>InContexts</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, inContexts: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, inContexts: e.target.value })}
               value={formData.inContexts}
               type="text"
               placeholder="vd: Booking, Information"
             />
-            <Form.Text className="text-muted">
-              Cách nhau bằng dấu phẩy
-            </Form.Text>
+            <Form.Text className="text-muted">Cách nhau bằng dấu phẩy</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Contexts</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, contexts: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, contexts: e.target.value })}
               value={formData.contexts}
               type="text"
               placeholder="vd: Booking, Information"
             />
-            <Form.Text className="text-muted">
-              Cách nhau bằng dấu phẩy
-            </Form.Text>
+            <Form.Text className="text-muted">Cách nhau bằng dấu phẩy</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Event</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, event: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, event: e.target.value })}
               value={formData.event}
               type="text"
               placeholder="vd: Booking, Information"
@@ -332,7 +281,7 @@ function EditModal(props) {
           <Form.Group className="mb-3">
             <Form.Label>Training Phrases</Form.Label>
             <Form.Control
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({
                   ...formData,
                   trainingPhrases: e.target.value,
@@ -342,16 +291,12 @@ function EditModal(props) {
               type="text"
               placeholder="vd: Tôi muốn đặt bàn, xem Menu"
             />
-            <Form.Text className="text-muted">
-              Cách nhau bằng dấu phẩy
-            </Form.Text>
+            <Form.Text className="text-muted">Cách nhau bằng dấu phẩy</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Action</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, action: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, action: e.target.value })}
               value={formData.action}
               type="text"
               placeholder="vd: Booking, Information"
@@ -360,23 +305,17 @@ function EditModal(props) {
           <Form.Group className="mb-3">
             <Form.Label>Parameters</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, parameters: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, parameters: e.target.value })}
               value={formData.parameters}
               type="text"
               placeholder="vd: date, name, phone, ..."
             />
-            <Form.Text className="text-muted">
-              Cách nhau bằng dấu phẩy
-            </Form.Text>
+            <Form.Text className="text-muted">Cách nhau bằng dấu phẩy</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Responses</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, responses: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, responses: e.target.value })}
               value={formData.responses}
               type="text"
               placeholder="vd: Bạn muốn đặt bàn lúc nào?, Chào mừng bạn tới ... "
@@ -385,20 +324,16 @@ function EditModal(props) {
               as="textarea"
               placeholder="Custom payload"
               style={{ height: '100px' }}
-              onChange={(e) =>
-                setFormData({ ...formData, payload: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, payload: e.target.value })}
               value={formData.payload}
             />
-            <Form.Text className="text-muted">
-              Câu trả lời của chatbot
-            </Form.Text>
+            <Form.Text className="text-muted">Câu trả lời của chatbot</Form.Text>
           </Form.Group>
           {showValidate()}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="success" onClick={(e) => props.handleEdit(formData)}>
+        <Button disabled={validate} variant="success" onClick={e => props.handleEdit(formData)}>
           Cập nhật
         </Button>
         <Button variant="secondary" onClick={props.onHide}>

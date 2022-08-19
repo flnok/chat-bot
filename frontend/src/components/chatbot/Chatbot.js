@@ -29,8 +29,8 @@ export default function Chatbot() {
     inputRef.current.focus();
   }, [messages]);
 
-  const updateMessages = (msg) => {
-    setMessages((currentMessage) => {
+  const updateMessages = msg => {
+    setMessages(currentMessage => {
       return [...currentMessage, msg];
     });
   };
@@ -49,9 +49,9 @@ export default function Chatbot() {
       userId: cookies.get('userID'),
     };
 
-    const res = await axios.post('/api/dialog-flow/query-text', req);
+    const res = await axios.post('/api/query/dialogflow/text', req);
 
-    res.data.fulfillmentMessages.forEach((msg) => {
+    res.data.data.fulfillmentMessages.forEach(msg => {
       newMessage = {
         author: 'bot',
         msg: msg,
@@ -75,8 +75,8 @@ export default function Chatbot() {
       languageCode: 'vi',
       userId: cookies.get('userID'),
     };
-    const res = await axios.post('/api/dialog-flow/query-event', req);
-    res.data.fulfillmentMessages.forEach((msg) => {
+    const res = await axios.post('/api/query/dialogflow/event', req);
+    res.data.data.fulfillmentMessages.forEach(msg => {
       let newMessage = {
         author: 'bot',
         msg: msg,
@@ -137,7 +137,7 @@ export default function Chatbot() {
     }
   };
 
-  const renderMessages = (messages) => {
+  const renderMessages = messages => {
     if (messages) {
       return messages.map((message, index) => {
         return renderMessage(message, index);
@@ -146,7 +146,7 @@ export default function Chatbot() {
     return null;
   };
 
-  const handleInputMessage = (event) => {
+  const handleInputMessage = event => {
     if (event.key === 'Enter' && event.target.value.trim() !== '') {
       queryText(event.target.value);
       event.target.value = '';

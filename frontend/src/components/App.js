@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { AuthProvider, RequireAuth } from '../context/auth';
-import { ErrorProvider } from '../context/error';
 import About from '../pages/About';
 import ChatbotDashboard from '../pages/admin/ChatbotDashboard';
 import Dashboard from '../pages/admin/Dashboard';

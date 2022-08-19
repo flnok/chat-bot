@@ -1,14 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import {
-  Alert,
-  Button,
-  Container,
-  Form,
-  Nav,
-  Offcanvas,
-  Table,
-} from 'react-bootstrap';
+import { Alert, Button, Container, Form, Nav, Offcanvas, Table } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
 import { formatArray, formatPayload } from '../../util/format';
@@ -37,14 +29,11 @@ export default function ChatbotDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axios.get('/api/chatbot/intent');
-        setIntent(res.data.intents);
+        const res = await axios.get('/api/intent');
+        setIntent(res.data.data);
       } catch (err) {
         console.log(err);
-        if (
-          err.response.status === 401 &&
-          err.response?.data?.errorStatus === 'NOT_LOGIN'
-        ) {
+        if (err.response.status === 401 && err.response?.data?.errorStatus === 'NOT_LOGIN') {
           auth.logout(() => {
             navigate('/login');
           });
@@ -62,9 +51,7 @@ export default function ChatbotDashboard() {
             <tr key={index}>
               <td>
                 <Nav.Link as={NavLink} to={`intent/${intent._id}`}>
-                  <span className="text-uppercase text-dark">
-                    {intent.name}
-                  </span>
+                  <span className="text-uppercase text-dark">{intent.name}</span>
                 </Nav.Link>
               </td>
             </tr>
@@ -73,7 +60,7 @@ export default function ChatbotDashboard() {
       : null;
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
     const data = {
       name: formData.name,
@@ -85,33 +72,31 @@ export default function ChatbotDashboard() {
     data.contexts = formatArray(formData.contexts);
     data.trainingPhrases = formatArray(formData.trainingPhrases);
     data.parameters = formatArray(formData.parameters);
-    if (formData.responses)
-      data.responses.push({ type: 'text', text: formData.responses });
+    if (formData.responses) data.responses.push({ type: 'text', text: formData.responses });
     if (formData.payload) {
-      formatPayload(formData.payload)?.forEach((pl) => {
+      formatPayload(formData.payload)?.forEach(pl => {
         data.responses.push(pl);
       });
     }
     try {
       const response = await axios({
         method: 'post',
-        url: '/api/chatbot/intent',
+        url: '/api/intent',
         data,
       });
-      notifyCreate('success');
-      setIntent([...intent, response.data.intent]);
+      handleCreate('success', response);
     } catch (error) {
-      if (error.response.status === 501) notifyCreate('duplicate');
-      console.log(error);
+      if (error.response.status === 409) handleCreate('duplicate');
     }
   };
 
-  function notifyCreate(status) {
+  function handleCreate(status, data) {
     switch (status) {
       case 'success':
         handleClose();
         setValidate(false);
         setFormData(initialState);
+        setIntent([...intent, data.data.data]);
         break;
       case 'duplicate':
         setValidate(true);
@@ -125,12 +110,7 @@ export default function ChatbotDashboard() {
     <>
       <div className="display-5 text-center">Danh sách các mẫu kịch bản</div>
       <div className="text-center">
-        <Button
-          variant="outline-danger"
-          size="lg"
-          className="my-3"
-          onClick={handleShow}
-        >
+        <Button variant="outline-danger" size="lg" className="my-3" onClick={handleShow}>
           Tạo kịch bản
         </Button>
 
@@ -153,18 +133,9 @@ export default function ChatbotDashboard() {
   );
 }
 
-function CreateCanvas({
-  show,
-  handleClose,
-  handleSubmit,
-  setFormData,
-  formData,
-  validate,
-}) {
+function CreateCanvas({ show, handleClose, handleSubmit, setFormData, formData, validate }) {
   const showValidate = () => {
-    return validate === true ? (
-      <Alert variant="danger">Bị trùng tên</Alert>
-    ) : null;
+    return validate === true ? <Alert variant="danger">Bị trùng tên</Alert> : null;
   };
 
   return (
@@ -177,9 +148,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label className="required">Tên kịch bản</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               value={formData.name}
               type="text"
               placeholder="vd: Đặt bàn, xem thông tin"
@@ -189,9 +158,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label>InContexts</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, inContexts: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, inContexts: e.target.value })}
               value={formData.inContexts}
               type="text"
               placeholder="vd: Booking, Information"
@@ -201,9 +168,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label>Context</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, contexts: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, contexts: e.target.value })}
               value={formData.contexts}
               type="text"
               placeholder="vd: Booking, Information"
@@ -213,9 +178,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label>Event</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, event: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, event: e.target.value })}
               value={formData.event}
               type="text"
               placeholder="vd: Booking, Information"
@@ -225,7 +188,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label>Training Phrases</Form.Label>
             <Form.Control
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({
                   ...formData,
                   trainingPhrases: e.target.value,
@@ -235,16 +198,12 @@ function CreateCanvas({
               type="text"
               placeholder="vd: Tôi muốn đặt bàn, xem Menu"
             />
-            <Form.Text className="text-muted">
-              Từ để chatbot nhận biết
-            </Form.Text>
+            <Form.Text className="text-muted">Từ để chatbot nhận biết</Form.Text>
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Action</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, action: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, action: e.target.value })}
               value={formData.action}
               type="text"
               placeholder="vd: Booking, Information"
@@ -254,9 +213,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label>Parameters</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, parameters: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, parameters: e.target.value })}
               value={formData.parameters}
               type="text"
               placeholder="vd: date, name, phone, ..."
@@ -265,9 +222,7 @@ function CreateCanvas({
           <Form.Group className="mb-3">
             <Form.Label>Responses</Form.Label>
             <Form.Control
-              onChange={(e) =>
-                setFormData({ ...formData, responses: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, responses: e.target.value })}
               value={formData.responses}
               type="text"
               placeholder="vd: Bạn muốn đặt bàn lúc nào?, Chào mừng bạn tới ... "
@@ -276,14 +231,10 @@ function CreateCanvas({
               as="textarea"
               placeholder="Custom payload"
               style={{ height: '100px' }}
-              onChange={(e) =>
-                setFormData({ ...formData, payload: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, payload: e.target.value })}
               value={formData.payload}
             />
-            <Form.Text className="text-muted">
-              Câu trả lời của chatbot
-            </Form.Text>
+            <Form.Text className="text-muted">Câu trả lời của chatbot</Form.Text>
           </Form.Group>
           {showValidate()}
           <div className="d-grid gap-2 col-6 mx-auto">

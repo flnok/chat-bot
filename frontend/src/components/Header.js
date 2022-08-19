@@ -24,45 +24,42 @@ export default function Header() {
               <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="/"
-              >
+                to="/">
                 Home
               </Nav.Link>
-              <Nav.Link
+              {/* <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="about"
               >
                 About
-              </Nav.Link>
-              <Nav.Link
+              </Nav.Link> */}
+              {/* <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="menu"
               >
                 Menu
-              </Nav.Link>
-              <Nav.Link
+              </Nav.Link> */}
+              {/* <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
                 to="contact"
               >
                 Contact
-              </Nav.Link>
+              </Nav.Link> */}
               {!auth.isLogIn ? (
                 <Nav.Link
                   as={NavLink}
                   style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                  to="login"
-                >
+                  to="login">
                   Login
                 </Nav.Link>
               ) : (
                 <Nav.Link
                   as={NavLink}
                   style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                  to="dashboard"
-                >
+                  to="dashboard">
                   Dashboard
                 </Nav.Link>
               )}

@@ -1,4 +1,4 @@
-import { config } from '../../config/config';
+import { config } from '../../config';
 
 export default function Message(props) {
   return (
@@ -12,8 +12,8 @@ export default function Message(props) {
                 <>
                   <img
                     src={
-                      props.content.listValue.values[0].listValue.values[0]
-                        .structValue.fields.rawUrl.stringValue
+                      props.content.listValue.values[0].listValue.values[0].structValue.fields
+                        .rawUrl.stringValue
                     }
                     className="img-fluid"
                     alt="message"
@@ -29,9 +29,7 @@ export default function Message(props) {
       {props.author === 'me' && (
         <div key={props.index} className="d-flex justify-content-end mb-4">
           <div className="p-3 me-3 chat-bot-message-user">
-            <span className="small mb-0">
-              {props.title || props.content.toString()}
-            </span>
+            <span className="small mb-0">{props.title || props.content.toString()}</span>
           </div>
         </div>
       )}

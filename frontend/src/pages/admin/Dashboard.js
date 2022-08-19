@@ -13,13 +13,10 @@ export default function Dashboard() {
     async function fetchData() {
       try {
         const res = await axios.get('/api/bookings');
-        setBookings(res.data.bookings);
+        setBookings(res.data.data);
       } catch (err) {
         console.log(err);
-        if (
-          err.response.status === 401 &&
-          err.response?.data?.errorStatus === 'NOT_LOGIN'
-        ) {
+        if (err.response.status === 401 && err.response?.data?.errorStatus === 'NOT_LOGIN') {
           auth.logout(() => {
             navigate('/login');
           });
@@ -30,15 +27,15 @@ export default function Dashboard() {
     // eslint-disable-next-line
   }, []);
 
-  const removeBooking = (id) => {
-    setBookings((current) =>
-      current.filter((b) => {
+  const removeBooking = id => {
+    setBookings(current =>
+      current.filter(b => {
         return b._id !== id;
-      })
+      }),
     );
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async id => {
     try {
       const res = await axios.delete(`/api/bookings/${id}`);
       if (res.status === 200) removeBooking(id);
@@ -47,27 +44,27 @@ export default function Dashboard() {
     }
   };
 
-  const renderButton = (id) => {
+  const renderButton = id => {
     return (
-      <ul className="list-inline m-0">
-        <li className="list-inline-item">
+      <ul className='list-inline m-0'>
+        <li className='list-inline-item'>
           <button
-            className="btn btn-danger btn-sm rounded-0"
-            type="button"
-            data-toggle="tooltip"
-            title="Delete"
-            onClick={(e) => {
+            className='btn btn-danger btn-sm rounded-0'
+            type='button'
+            data-toggle='tooltip'
+            title='Delete'
+            onClick={e => {
               handleDelete(id);
             }}
           >
-            <i className="fa fa-trash"></i>
+            <i className='fa fa-trash'></i>
           </button>
         </li>
       </ul>
     );
   };
 
-  const renderBookingInformation = (bookings) => {
+  const renderBookingInformation = bookings => {
     return bookings
       ? bookings.map((booking, index) => {
           return (
@@ -90,18 +87,18 @@ export default function Dashboard() {
   return (
     <>
       <div>
-        <div className="display-5 text-center">Thông tin đặt bàn</div>
-        <Col className="text-center container table-responsive">
-          <table className="table table-striped table-hover">
+        <div className='display-5 text-center'>Thông tin đặt bàn</div>
+        <Col className='text-center container table-responsive'>
+          <table className='table table-striped table-hover'>
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">Ngày giờ</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Số điện thoại</th>
-                <th scope="col">Số lượng khách</th>
-                <th scope="col">Đánh giá chatbot</th>
-                <th scope="col"></th>
+                <th scope='col'>#</th>
+                <th scope='col'>Ngày giờ</th>
+                <th scope='col'>Tên</th>
+                <th scope='col'>Số điện thoại</th>
+                <th scope='col'>Số lượng khách</th>
+                <th scope='col'>Đánh giá chatbot</th>
+                <th scope='col'></th>
               </tr>
             </thead>
             <tbody>{renderBookingInformation(bookings)}</tbody>
