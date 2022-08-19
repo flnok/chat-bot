@@ -1,6 +1,7 @@
-const Booking = require('../../models/Booking');
+const { Booking } = require('../models');
 const _ = require('lodash');
 const moment = require('moment');
+const HttpException = require('../exceptions/HttpException');
 
 async function handleAction(action, parameters, fullInContexts) {
   if (_.isEmpty(parameters)) return;
@@ -29,7 +30,6 @@ async function handleAction(action, parameters, fullInContexts) {
           sortDate: 'asc',
         });
       }
-
       if (_.isEmpty(info)) {
         response.push({
           type: 'text',
@@ -38,14 +38,9 @@ async function handleAction(action, parameters, fullInContexts) {
         return response;
       }
       let count = 0;
-      info.forEach((i) => {
+      info.forEach(i => {
         if (!i.sortDate) console.log(i);
-        if (
-          moment(i.sortDate).isSameOrAfter(
-            moment(new Date(), 'DD-MM-YYYY'),
-            'minutes'
-          )
-        ) {
+        if (moment(i.sortDate).isSameOrAfter(moment(new Date(), 'DD-MM-YYYY'), 'minutes')) {
           response.push({
             type: 'text',
             text: `Thông tin đặt bàn của bạn là\nTên: ${i.person}, SĐT: ${i.phone}\nNgày: ${i.date} vào lúc ${i.time}\nSố lượng khách: ${i.guestAmount}`,
@@ -63,9 +58,8 @@ async function handleAction(action, parameters, fullInContexts) {
 
     case 'action.booking':
       const { time, date, name, phone, guests } = parameters;
-      const isMissingParams = !Object.values(parameters).some(
-        (x) => x !== null && x !== ''
-      );
+      if (!time || !date) throw new HttpException(400, 'Vui lòng nhập ngày và giờ hợp lệ');
+      const isMissingParams = !Object.values(parameters).some(x => x !== null && x !== '');
       if (isMissingParams)
         return [
           {
@@ -86,10 +80,7 @@ async function handleAction(action, parameters, fullInContexts) {
         .ceil(30, 'minutes')
         .format('DD-MM-YYYY HH:mm')
         .split(' ');
-      const isOpenTime = moment(inputTime, 'HH:mm').isBetween(
-        moment(openTime, 'HH:mm'),
-        moment(closeTime, 'HH:mm')
-      );
+      const isOpenTime = moment(inputTime, 'HH:mm').isBetween(moment(openTime, 'HH:mm'), moment(closeTime, 'HH:mm'));
       if (!isOpenTime) {
         response.push({
           type: 'text',
@@ -123,9 +114,7 @@ async function handleAction(action, parameters, fullInContexts) {
       }
       data.date = inputDate;
       data.time = inputTime;
-      data.sortDate = moment(`${inputDate}`, 'DD-MM-YYYY')
-        .add(`${inputTime}`, 'hours')
-        .format();
+      data.sortDate = moment(`${inputDate}`, 'DD-MM-YYYY').add(`${inputTime}`, 'hours').format();
       try {
         const booked = await Booking.create(data);
         if (booked)
@@ -154,7 +143,7 @@ async function handleAction(action, parameters, fullInContexts) {
                   event: 'INFORMATION',
                 },
               ],
-            }
+            },
           );
         return response;
       } catch (error) {
@@ -187,7 +176,7 @@ async function handleAction(action, parameters, fullInContexts) {
                 event: 'WELCOME',
               },
             ],
-          }
+          },
         );
         return response;
       }
@@ -201,7 +190,7 @@ async function handleAction(action, parameters, fullInContexts) {
             time: lastedBooking.time,
           },
           { rate: rate },
-          { new: true }
+          { new: true },
         );
         if (update)
           response.push(
@@ -221,7 +210,7 @@ async function handleAction(action, parameters, fullInContexts) {
                   event: 'Welcome',
                 },
               ],
-            }
+            },
           );
         return response;
       } catch (error) {

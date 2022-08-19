@@ -1,4 +1,6 @@
 const uuid = require('uuid');
+const { config } = require('dotenv');
+config();
 
 module.exports = {
   googleProjectID: process.env.GOOGLE_PROJECT_ID,
@@ -8,4 +10,5 @@ module.exports = {
   googlePrivateKey: JSON.parse(process.env.GOOGLE_PRIVATE_KEY),
   defaultLanguageCode: 'vi',
   mongoURI: process.env.MONGODB_URI,
+  secret: process.env.SECRET,
 };

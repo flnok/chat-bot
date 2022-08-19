@@ -1,63 +1,87 @@
 const path = require('path');
 const express = require('express');
-const dotenv = require('dotenv');
 const morgan = require('morgan');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const cors = require('cors');
-const connectDB = require('./src/config/database');
+const { connect, set } = require('mongoose');
+const hpp = require('hpp');
+const compression = require('compression');
+const helmet = require('helmet');
+const { IndexRouter, AuthRouter, BookingRouter, IntentRouter, InternalRouter, QueryRouter } = require('./src/routes');
+const { errorMiddleware } = require('./src/middleware');
+const { mongoURI, secret } = require('./src/config');
 
-// Config
-dotenv.config();
-const PORT = process.env.PORT || 1202;
-connectDB();
-const app = express();
+class Index {
+  constructor(routes) {
+    this.app = express();
+    this.env = process.env.NODE_ENV;
+    this.port = process.env.PORT || 1202;
+    this.connectToDatabase();
+    this.initializeMiddlewares();
+    this.initializeRoutes(routes);
+    this.initializeErrorHandling();
+  }
 
-// Logging
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+  listen() {
+    this.app.listen(this.port, () => {
+      console.info(`=================================`);
+      console.info(`======= ENV: ${this.env} =======`);
+      console.info(`🚀 App listening on the port ${this.port}`);
+      console.info(`=================================`);
+    });
+  }
 
-// Session
-app.use(
-  session({
-    cookie: { maxAge: 3600000 },
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
-    }),
-  })
-);
+  connectToDatabase() {
+    if (process.env.NODE_ENV !== 'production') {
+      set('debug', true);
+    }
 
-// Body-parser
-app.use(
-  express.urlencoded({
-    extended: false,
-  })
-);
-app.use(express.json());
-app.use(cookieParser());
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
+    connect(mongoURI);
+  }
 
-// Routes
-app.use('/', require('./src/routes'));
+  initializeMiddlewares() {
+    if (this.env === 'development') {
+      this.app.use(morgan('dev'));
+    }
+    this.app.use(
+      session({
+        cookie: { maxAge: 3600000 },
+        secret: secret,
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+          mongoUrl: process.env.MONGODB_URI,
+        }),
+      }),
+    );
+    this.app.use(cors({ origin: true, credentials: true }));
+    this.app.use(hpp());
+    this.app.use(helmet());
+    this.app.use(compression());
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(cookieParser());
+    if (this.env === 'production') {
+      this.app.use(express.static('./frontend/build'));
+      this.app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+      });
+    }
+  }
 
-// Static
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('./frontend/build'));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
-  });
+  initializeRoutes(routes) {
+    routes.forEach(route => {
+      this.app.use('/api', route.router);
+    });
+  }
+
+  initializeErrorHandling() {
+    this.app.use(errorMiddleware);
+  }
 }
 
 // Running
-app.listen(PORT, console.log(`${process.env.NODE_ENV} port ${PORT}`));
+const app = new Index([new IndexRouter(), new AuthRouter(), new BookingRouter(), new IntentRouter(), new InternalRouter(), new QueryRouter()]);
+app.listen();

@@ -1,8 +1,8 @@
-const mappingResponsesInternal = (str) => {
+const mappingResponsesInternal = str => {
   if (!str) return null;
   if (str?.length < 1) return null;
   const result = { text: [], payload: [] };
-  str.forEach((r) => {
+  str.forEach(r => {
     switch (r.type) {
       case 'text':
         result.text = [...result.text, r.text];
@@ -15,10 +15,10 @@ const mappingResponsesInternal = (str) => {
   return result;
 };
 
-const mappingResponsesToQuery = (responses) => {
+const mappingResponsesToQuery = responses => {
   if (!responses) return null;
   const result = [];
-  responses.map((res) => {
+  responses.map(res => {
     switch (res.type) {
       case 'text':
         result.push({ text: { text: res.text } });
