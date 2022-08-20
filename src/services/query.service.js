@@ -3,7 +3,7 @@ const HttpException = require('../exceptions/HttpException');
 const _ = require('lodash');
 const { isEmpty } = require('../utils');
 const { Intent, Context, Booking } = require('../models');
-const { handleAction } = require('../chatbot/hook');
+const { handleAction } = require('../middleware');
 const dialogflow = require('@google-cloud/dialogflow');
 const moment = require('moment');
 require('moment-round');

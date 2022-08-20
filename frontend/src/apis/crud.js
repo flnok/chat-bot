@@ -18,3 +18,24 @@ export const createIntent = async dto => {
   });
   return { data, status };
 };
+
+export const getIntentById = async id => {
+  const { data, status } = await axios.get(`/api/intents/${id}`).catch(err => {
+    return { data: err.response.data, status: err.response.status };
+  });
+  return { data, status };
+};
+
+export const deleteIntentById = async id => {
+  const { data, status } = await axios.delete(`/api/intents/${id}`).catch(err => {
+    return { data: err.response.data, status: err.response.status };
+  });
+  return { data, status };
+};
+
+export const updateIntent = async (id, dto) => {
+  const { data, status } = await axios.put(`/api/intents/${id}`, dto).catch(err => {
+    return { data: err.response.data, status: err.response.status };
+  });
+  return { data, status };
+};
