@@ -1,20 +1,17 @@
-import { useNavigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/auth';
-import DashboardHeader from './DashboardHeader';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context';
+import { Header } from './';
 
 export default function AdminLayout() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  if (!auth.isLogIn) {
-    console.log('Chưa đăng nhập');
-    navigate('/login');
-  }
+  if (!auth.isLogIn) navigate('/login');
 
   return (
     <>
-      <div className="header">
-        <DashboardHeader />
+      <div className='header'>
+        <Header />
       </div>
       <div>
         <Outlet />

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { useContext, createContext } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { createContext, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocalStorage } from '../hooks';
 
 const AuthContext = createContext();
 
@@ -12,9 +12,9 @@ export function useAuth() {
 export function RequireAuth({ children }) {
   const auth = useAuth();
   const location = useLocation();
-  if (!auth.isLogIn) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+  const navigate = useNavigate();
+  if (!auth.isLogIn) navigate('/login', { replace: true, state: location });
+
   return children;
 }
 
@@ -25,16 +25,12 @@ export function AuthProvider({ children }) {
     setIsLogin(user);
     callback();
   };
-  const logout = (callback) => {
+  const logout = callback => {
     localStorage.clear();
     axios.post('api/auth/logout');
     callback();
     window.location.reload();
   };
 
-  return (
-    <AuthContext.Provider value={{ isLogIn, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isLogIn, login, logout }}>{children}</AuthContext.Provider>;
 }

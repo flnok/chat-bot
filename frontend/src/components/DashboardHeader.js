@@ -1,6 +1,6 @@
 import { Container, Nav, Navbar, Row } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/auth';
+import { useAuth } from '../context';
 
 export default function DashboardHeader() {
   const auth = useAuth();
@@ -10,36 +10,33 @@ export default function DashboardHeader() {
     textDecoration: 'none',
   };
   return (
-    <Navbar expand="lg" sticky="top">
-      <Container fluid className="flex-column">
+    <Navbar expand='lg' sticky='top'>
+      <Container fluid className='flex-column'>
         <Row>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="m-auto text-center">
+          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <Navbar.Collapse id='basic-navbar-nav'>
+            <Nav className='m-auto text-center'>
               <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="/"
-              >
+                to='/'>
                 Home
               </Nav.Link>
               <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="/dashboard"
-                end
-              >
+                to='/dashboard'
+                end>
                 Dashboard
               </Nav.Link>
               <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="chatbot"
-              >
+                to='chatbot'>
                 Chatbot
               </Nav.Link>
               <Nav.Link
-                as="a"
+                as='a'
                 style={{
                   color: 'teal',
                   textDecoration: 'none',
@@ -47,8 +44,7 @@ export default function DashboardHeader() {
                 }}
                 onClick={() => {
                   auth.logout(() => navigate('/'));
-                }}
-              >
+                }}>
                 Logout
               </Nav.Link>
             </Nav>

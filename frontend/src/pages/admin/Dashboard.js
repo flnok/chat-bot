@@ -1,29 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Col } from 'react-bootstrap';
-import { useAuth } from '../../context/auth';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { deleteBookingById, fetchBookings } from '../../apis';
+import { useAuth } from '../../context';
 
 export default function Dashboard() {
   const auth = useAuth();
   const navigate = useNavigate();
-  const [bookings, setBookings] = useState('');
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await axios.get('/api/bookings');
-        setBookings(res.data.data);
-      } catch (err) {
-        console.log(err);
-        if (err.response.status === 401 && err.response?.data?.errorStatus === 'NOT_LOGIN') {
-          auth.logout(() => {
-            navigate('/login');
-          });
-        }
-      }
-    }
-    fetchData();
+    (async function fetchData() {
+      const response = await fetchBookings();
+      if (response.status === 401) auth.logout(() => navigate('/login'));
+      setBookings(response.data.data);
+    })();
     // eslint-disable-next-line
   }, []);
 
@@ -36,32 +27,8 @@ export default function Dashboard() {
   };
 
   const handleDelete = async id => {
-    try {
-      const res = await axios.delete(`/api/bookings/${id}`);
-      if (res.status === 200) removeBooking(id);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const renderButton = id => {
-    return (
-      <ul className='list-inline m-0'>
-        <li className='list-inline-item'>
-          <button
-            className='btn btn-danger btn-sm rounded-0'
-            type='button'
-            data-toggle='tooltip'
-            title='Delete'
-            onClick={e => {
-              handleDelete(id);
-            }}
-          >
-            <i className='fa fa-trash'></i>
-          </button>
-        </li>
-      </ul>
-    );
+    const response = await deleteBookingById(id);
+    if (response.status === 200) removeBooking(id);
   };
 
   const renderBookingInformation = bookings => {
@@ -77,7 +44,20 @@ export default function Dashboard() {
               <td>{booking.phone}</td>
               <td>{booking.guestAmount}</td>
               <td>{booking.rate}</td>
-              <td>{renderButton(booking._id)}</td>
+              <td>
+                {
+                  <button
+                    className='btn btn-danger btn-sm rounded-0'
+                    type='button'
+                    data-toggle='tooltip'
+                    title='Delete'
+                    onClick={e => {
+                      handleDelete(booking._id);
+                    }}>
+                    <i className='fa fa-trash'></i>
+                  </button>
+                }
+              </td>
             </tr>
           );
         })

@@ -1,73 +1,67 @@
 import { Container, Nav, Navbar, Row } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
-import { useAuth } from '../context/auth';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { activeStyle, brandStyle } from '../assets/style';
+import { useAuth } from '../context';
 
 export default function Header() {
   const auth = useAuth();
-  const activeStyle = {
-    color: '#8B8C89',
-    textDecoration: 'none',
-  };
-  const brandStyle = {
-    color: '#C52233',
-    fontFamily: "'Playball', cursive",
-    fontSize: '50px',
-    textAlign: 'center',
-  };
+  const navigate = useNavigate();
+
   return (
-    <Navbar expand="lg" sticky="top">
-      <Container fluid className="flex-column">
+    <Navbar expand='lg' sticky='top'>
+      <Container fluid className='flex-column'>
         <Row>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="m-auto text-center">
+          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <Navbar.Collapse id='basic-navbar-nav'>
+            <Nav className='m-auto text-center'>
               <Nav.Link
                 as={NavLink}
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="/">
+                to='/'>
                 Home
               </Nav.Link>
-              {/* <Nav.Link
-                as={NavLink}
-                style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="about"
-              >
-                About
-              </Nav.Link> */}
-              {/* <Nav.Link
-                as={NavLink}
-                style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="menu"
-              >
-                Menu
-              </Nav.Link> */}
-              {/* <Nav.Link
-                as={NavLink}
-                style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                to="contact"
-              >
-                Contact
-              </Nav.Link> */}
               {!auth.isLogIn ? (
                 <Nav.Link
                   as={NavLink}
                   style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                  to="login">
+                  to='login'>
                   Login
                 </Nav.Link>
               ) : (
-                <Nav.Link
-                  as={NavLink}
-                  style={({ isActive }) => (isActive ? activeStyle : undefined)}
-                  to="dashboard">
-                  Dashboard
-                </Nav.Link>
+                <>
+                  <Nav.Link
+                    as={NavLink}
+                    style={({ isActive }) => (isActive ? activeStyle : undefined)}
+                    to='/dashboard'
+                    end>
+                    Dashboard
+                  </Nav.Link>
+                  <Nav.Link
+                    as={NavLink}
+                    style={({ isActive }) => (isActive ? activeStyle : undefined)}
+                    to='/dashboard/chatbot'>
+                    Chatbot
+                  </Nav.Link>
+                  <Nav.Link
+                    as='a'
+                    style={{
+                      color: 'teal',
+                      textDecoration: 'none',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      auth.logout(() => navigate('/'));
+                    }}>
+                    Logout
+                  </Nav.Link>
+                </>
               )}
             </Nav>
           </Navbar.Collapse>
         </Row>
+
         <Row>
-          <Navbar.Text href="/" style={brandStyle} className="noselect">
+          <Navbar.Text href='/' style={brandStyle} className='noselect'>
             Nhà hàng Thuận Phát
           </Navbar.Text>
         </Row>

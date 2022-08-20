@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
+import { axiosQuery } from '../../apis';
 import { mapParams } from '../../util/format';
 import Chips from './Chips';
 import Message from './Message';
@@ -13,29 +13,40 @@ export default function Chatbot() {
   const scrollToBottom = useRef(null);
 
   useEffect(() => {
-    scrollToBottom.current?.scrollIntoView({ behavior: 'smooth' });
-    inputRef.current.focus();
+    handleNewMessage();
   }, [messages]);
 
   useEffect(() => {
-    async function fetchData() {
-      const req = {
-        event: 'welcome',
-      };
-      const result = await axios.post('/api/query/event', req);
-      setSessionIntent(result?.data?.data);
-      result?.data?.msg?.forEach(data => {
+    (async function queryWelcome() {
+      const data = await axiosQuery('event', { event: 'welcome' });
+      setSessionIntent(data?.data);
+      data?.msg?.forEach(data => {
         updateMessages({
           author: 'bot',
-          msg: data,
+          data,
         });
       });
-    }
-    fetchData();
+    })();
     // eslint-disable-next-line
   }, []);
 
-  const updateMessages = msg => {
+  const handleNewMessage = () => {
+    scrollToBottom.current?.scrollIntoView({ behavior: 'smooth' });
+    inputRef.current?.focus();
+  };
+
+  const updateMessages = data => {
+    const msg =
+      data.author === 'me'
+        ? {
+            author: data.author,
+            msg: { text: { text: data.text } },
+            title: data.title,
+          }
+        : {
+            author: data.author,
+            msg: data.data,
+          };
     setMessages(currentMessage => {
       return [...currentMessage, msg];
     });
@@ -51,11 +62,8 @@ export default function Chatbot() {
   };
 
   const queryText = async (text, title = '') => {
-    updateMessages({
-      author: 'me',
-      msg: { text: { text: text } },
-      title,
-    });
+    updateMessages({ author: 'me', text, title });
+
     const { contexts, action, parameters, fullInContexts } = getSessionIntent();
     const request = {
       text,
@@ -64,25 +72,16 @@ export default function Chatbot() {
       parameters,
       fullInContexts,
     };
-    if (parameters.length > 0) {
-      request.parameters = mapParams(parameters, text);
-    }
-    const result = await axios.post('/api/query/text', request);
-    setSessionIntent(result?.data?.data);
-    result?.data?.msg?.forEach(data => {
-      updateMessages({
-        author: 'bot',
-        msg: data,
-      });
-    });
+    if (parameters.length > 0) request.parameters = mapParams(parameters, text);
+
+    const result = await axiosQuery('text', request);
+    setSessionIntent(result?.data);
+    result?.msg?.forEach(data => updateMessages({ author: 'bot', data }));
   };
 
   const queryEvent = async (event, hasText = null) => {
-    if (hasText)
-      updateMessages({
-        author: 'me',
-        msg: { text: { text: hasText } },
-      });
+    if (hasText) updateMessages({ author: 'me', text: hasText });
+
     const { contexts, action, parameters, fullInContexts } = getSessionIntent();
     const request = {
       event,
@@ -91,30 +90,33 @@ export default function Chatbot() {
       parameters,
       fullInContexts,
     };
-    if (parameters.length > 0) {
-      request.parameters = {};
-    }
-    const result = await axios.post('/api/query/event', request);
-    setSessionIntent(result?.data?.data);
-    result?.data?.msg?.forEach(data => {
-      updateMessages({
-        author: 'bot',
-        msg: data,
-      });
-    });
+    if (parameters.length > 0) request.parameters = {};
+
+    const result = await axiosQuery('event', request);
+    setSessionIntent(result?.data);
+    result?.msg?.forEach(data => updateMessages({ author: 'bot', data }));
   };
 
-  const renderMessage = (msg, index) => {
-    const isText = msg.msg?.text?.text;
-    if (isText) return <Message key={index} index={index} author={msg.author} content={msg.msg.text.text} title={msg.title} />;
+  const renderMessage = (message, index) => {
+    const isText = message.msg?.text?.text;
+    if (isText)
+      return (
+        <Message
+          key={index}
+          index={index}
+          author={message.author}
+          content={message.msg.text.text}
+          title={message.title}
+        />
+      );
 
-    switch (msg.msg?.type) {
+    switch (message.msg?.type) {
       case 'options':
         return (
           <Option
             key={index}
             index={index}
-            content={msg.msg.payload}
+            content={message.msg.payload}
             queryEvent={queryEvent}
             setMessages={setMessages}
             setDisabledInput={setDisabledInput}
@@ -122,10 +124,21 @@ export default function Chatbot() {
         );
 
       case 'image':
-        return <Message key={index} index={index} author={msg.author} content={msg.msg.payload} title={msg.title} isImage={true} />;
+        return (
+          <Message
+            key={index}
+            index={index}
+            author={message.author}
+            content={message.msg.payload}
+            title={message.title}
+            isImage={true}
+          />
+        );
 
       case 'chips':
-        return <Chips key={index} index={index} content={msg.msg.payload} inputRef={inputRef} />;
+        return (
+          <Chips key={index} index={index} content={message.msg.payload} inputRef={inputRef} />
+        );
 
       default:
         return null;
@@ -167,48 +180,46 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="card chat-bot-container mx-auto">
+    <div className='card chat-bot-container mx-auto'>
       <div
-        className="card-header text-center p-3 border-bottom-0"
+        className='card-header text-center p-3 border-bottom-0'
         style={{
           borderTopLeftRadius: '15px',
           borderTopRightRadius: '15px',
-        }}
-      >
-        <p className="mb-0 fw-bold fs-5">
-          <span className="dot"></span> Nhà hàng Thuận Phát
-          <small className="text-muted" style={{ fontSize: '0.8rem' }}>
+        }}>
+        <p className='mb-0 fw-bold fs-5'>
+          <span className='dot'></span> Nhà hàng Thuận Phát
+          <small className='text-muted' style={{ fontSize: '0.8rem' }}>
             {' '}
             (cây nhà lá vườn)
           </small>
         </p>
       </div>
 
-      <div className="card-body chat-bot">
+      <div className='card-body chat-bot'>
         {renderMessages(messages)}
         <div ref={scrollToBottom} />
       </div>
 
       <div
-        className="card-footer input-group border-top-0"
+        className='card-footer input-group border-top-0'
         style={{
           borderBottomLeftRadius: '15px',
           borderBottomRightRadius: '15px',
-        }}
-      >
+        }}>
         <input
-          type="text"
+          type='text'
           autoFocus
-          name="inputMessage"
+          name='inputMessage'
           placeholder='Nhập "quay lại" nếu không muốn tiếp tục ...  '
           ref={inputRef}
           onKeyUp={handleInputMessage}
-          className="form-control"
+          className='form-control'
           disabled={disabledInput}
         />
 
-        <button onClick={handleButtonMessage} className="input-group-text">
-          <i className="fa fa-paper-plane" style={{ color: '#9c191b' }}></i>
+        <button onClick={handleButtonMessage} className='input-group-text'>
+          <i className='fa fa-paper-plane' style={{ color: '#9c191b' }}></i>
         </button>
       </div>
     </div>
