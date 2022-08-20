@@ -11,7 +11,7 @@ export default function Message(props) {
               {props.isImage === true ? (
                 <>
                   {props.content?.map((img, index) => {
-                    return <img key={index} src={img.rawUrl} className="img-fluid" alt="message" />;
+                    return <Image img={img} index={index} />;
                   })}
                 </>
               ) : (
@@ -30,4 +30,8 @@ export default function Message(props) {
       )}
     </>
   );
+}
+
+function Image({index, img}) {
+  return <img key={index} src={img.rawUrl} className="img-fluid" alt="message" />;
 }
