@@ -9,7 +9,8 @@ class AuthController {
       const userData = req.body;
       const user = await this.authService.login(userData);
       req.session.user = user;
-      return res.send({ message: message.SUCCESS_LOGIN, code: 200, user });
+
+      return res.status(200).json({ message: message.SUCCESS_LOGIN, user });
     } catch (error) {
       next(error);
     }

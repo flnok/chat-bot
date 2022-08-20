@@ -3,7 +3,7 @@ const { isAuth } = require('../middleware');
 const { Router } = require('express');
 
 class IntentRouter {
-  path = '/intent';
+  path = '/intents';
   router = Router();
   intentController = new IntentController();
 

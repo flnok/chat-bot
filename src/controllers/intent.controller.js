@@ -21,7 +21,10 @@ class IntentController {
       const { id } = req.params;
       if (id === 'favicon.ico') throw new HttpException(400, message.EMPTY_ID);
 
-      console.log(`🚀 --> file: intent.controller.js --> line 23 --> IntentController --> getIntentById= --> id`, id);
+      console.log(
+        `🚀 --> file: intent.controller.js --> line 23 --> IntentController --> getIntentById= --> id`,
+        id,
+      );
 
       const intent = await this.intentService.findIntentById(id);
       const responses = mappingResponsesInternal(intent.responses);
@@ -37,7 +40,7 @@ class IntentController {
 
       const data = await this.intentService.createIntent(dto);
 
-      return res.status(201).json({ data: data, message: 'created' });
+      return res.status(201).json({ data, message: 'created' });
     } catch (error) {
       next(error);
     }

@@ -67,16 +67,12 @@ class QueryService {
         .lean();
       if (result) {
         result.responses = responsesFromAction?.concat(result?.responses);
-        result.contexts.forEach(
-          context => (context.parameters = data.parameters),
-        );
+        result.contexts.forEach(context => (context.parameters = data.parameters));
       }
     }
 
     if (_.isEmpty(result)) {
-      result = await Intent.findOne({ name: 'DEFAULT FALLBACK' }).populate(
-        'contexts',
-      );
+      result = await Intent.findOne({ name: 'DEFAULT FALLBACK' }).populate('contexts');
     }
 
     return result;
@@ -95,7 +91,7 @@ class QueryService {
 
     const query = { event: data.event.trim().toUpperCase() };
 
-    if (data.action) query.action = action;
+    if (data.action) query.action = data.action;
 
     if (!_.isEmpty(data.inContext)) {
       query.inContext = await Context.find({
@@ -117,9 +113,7 @@ class QueryService {
       .lean();
 
     if (_.isEmpty(result)) {
-      result = await Intent.findOne({ name: 'default fallback' }).populate(
-        'contexts',
-      );
+      result = await Intent.findOne({ name: 'default fallback' }).populate('contexts');
     }
 
     return result;
@@ -131,10 +125,7 @@ class QueryService {
     languageCode = config.defaultLanguageCode,
     userId,
   }) {
-    const sessionPath = sessionClient.projectAgentSessionPath(
-      projectId,
-      sessionId + userId,
-    );
+    const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId + userId);
     const request = {
       session: sessionPath,
       queryInput: {
@@ -158,10 +149,7 @@ class QueryService {
     languageCode = config.defaultLanguageCode,
     userId,
   }) {
-    const sessionPath = sessionClient.projectAgentSessionPath(
-      projectId,
-      sessionId + userId,
-    );
+    const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId + userId);
     const request = {
       session: sessionPath,
       queryInput: {
@@ -200,9 +188,7 @@ const addDb = async queryResult => {
           .format('DD-MM-YYYY HH:mm')
           .split(' ');
 
-        const sortDate = moment(`${date}`, 'DD-MM-YYYY')
-          .add(`${time}`, 'hours')
-          .format();
+        const sortDate = moment(`${date}`, 'DD-MM-YYYY').add(`${time}`, 'hours').format();
 
         const data = {
           person: fields.name.structValue.fields.name.stringValue,
