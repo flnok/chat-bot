@@ -1,11 +1,9 @@
 import axios from 'axios';
 
 export const fetchBookings = async () => {
-  const { data, status } = await axios
-    .get('/api/bookings', { withCredentials: true })
-    .catch(err => {
-      return { data: err.response.data, status: err.response.status };
-    });
+  const { data, status } = await axios.get('/api/bookings').catch(err => {
+    return { data: err.response.data, status: err.response.status };
+  });
   return { data, status };
 };
 
