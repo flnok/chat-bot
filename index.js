@@ -64,18 +64,18 @@ class Index {
         }),
       }),
     );
-    if (this.env === 'production') {
-      this.app.use(express.static('./frontend/build'));
-      this.app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
-      });
-    }
   }
 
   initializeRoutes(routes) {
     routes.forEach(route => {
-      this.app.use('/api', route.router);
+      this.app.use('api', route.router);
     });
+    if (this.env === 'production') {
+      this.app.use(express.static('./frontend/build'));
+      this.app.get('/*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+      });
+    }
   }
 
   initializeErrorHandling() {
