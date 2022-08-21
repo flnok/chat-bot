@@ -65,15 +65,6 @@ class Index {
     );
     this.app.use(cors({ origin: true, credentials: true }));
     this.app.use(hpp());
-    this.app.use(helmet({ crossOriginResourcePolicy: false }));
-    this.app.use(
-      helmet.contentSecurityPolicy({
-        useDefaults: true,
-        directives: {
-          'img-src': ["'self'", 'https: data:'],
-        },
-      }),
-    );
     this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
