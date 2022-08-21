@@ -14,5 +14,4 @@ class IndexRouter {
     this.router.post(`${this.path}`, this.indexController.index);
   }
 }
-
 module.exports = IndexRouter;

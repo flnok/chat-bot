@@ -49,6 +49,10 @@ class Index {
     if (this.env === 'development') {
       this.app.use(morgan('dev'));
     }
+    this.app.use(cors({ origin: true, credentials: true }));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(cookieParser());
     this.app.use(
       session({
         cookie: { maxAge: 3600000 },
@@ -60,10 +64,6 @@ class Index {
         }),
       }),
     );
-    this.app.use(cors({ origin: true, credentials: true }));
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: false }));
-    this.app.use(cookieParser());
     if (this.env === 'production') {
       this.app.use(express.static('./frontend/build'));
       this.app.get('*', (req, res) => {

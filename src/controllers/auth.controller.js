@@ -19,6 +19,7 @@ class AuthController {
   logout = async (req, res, next) => {
     try {
       req.session.destroy();
+
       return res.send({ loggedIn: false });
     } catch (error) {
       next(error);
