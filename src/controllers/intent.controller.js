@@ -68,7 +68,7 @@ class IntentController {
       const { id } = req.params;
       const result = await this.intentService.deleteIntent(id);
 
-      res.status(200).json({ data: result, message: 'deleted' });
+      return res.status(200).json({ data: result, message: 'deleted' });
     } catch (error) {
       next(error);
     }

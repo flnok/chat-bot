@@ -7,6 +7,7 @@ class BookingController {
   getBookings = async (req, res, next) => {
     try {
       const user = await this.bookingService.findAllBookings();
+
       return res.status(200).send({ message: message.GET_ALL, data: user });
     } catch (error) {
       next(error);
