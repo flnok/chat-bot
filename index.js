@@ -68,7 +68,7 @@ class Index {
 
   initializeRoutes(routes) {
     routes.forEach(route => {
-      this.app.use('api', route.router);
+      this.app.use('/api', route.router);
     });
     if (this.env === 'production') {
       this.app.use(express.static('./frontend/build'));
