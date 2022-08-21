@@ -6,9 +6,6 @@ const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const cors = require('cors');
 const { connect, set } = require('mongoose');
-const hpp = require('hpp');
-const compression = require('compression');
-const helmet = require('helmet');
 const {
   IndexRouter,
   AuthRouter,
@@ -64,8 +61,6 @@ class Index {
       }),
     );
     this.app.use(cors({ origin: true, credentials: true }));
-    this.app.use(hpp());
-    this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
