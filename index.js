@@ -65,7 +65,7 @@ class Index {
     );
     this.app.use(cors({ origin: true, credentials: true }));
     this.app.use(hpp());
-    this.app.use(helmet());
+    this.app.use(helmet({ crossOriginResourcePolicy: false }));
     this.app.use(
       helmet.contentSecurityPolicy({
         useDefaults: true,
