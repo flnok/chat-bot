@@ -4,8 +4,8 @@
   "description": "Chatbot",
   "main": "index.js",
   "engines": {
-    "node": "16.15.0",
-    "npm": "8.10.0"
+    "node": ">=16.15.0",
+    "npm": ">=8.10.0"
   },
   "scripts": {
     "server": "cross-env NODE_ENV=development nodemon index.js",
