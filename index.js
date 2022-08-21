@@ -9,7 +9,14 @@ const { connect, set } = require('mongoose');
 const hpp = require('hpp');
 const compression = require('compression');
 const helmet = require('helmet');
-const { IndexRouter, AuthRouter, BookingRouter, IntentRouter, InternalRouter, QueryRouter } = require('./src/routes');
+const {
+  IndexRouter,
+  AuthRouter,
+  BookingRouter,
+  IntentRouter,
+  InternalRouter,
+  QueryRouter,
+} = require('./src/routes');
 const { errorMiddleware } = require('./src/middleware');
 const { mongoURI, secret } = require('./src/config');
 
@@ -59,6 +66,14 @@ class Index {
     this.app.use(cors({ origin: true, credentials: true }));
     this.app.use(hpp());
     this.app.use(helmet());
+    this.app.use(
+      helmet.contentSecurityPolicy({
+        useDefaults: true,
+        directives: {
+          'img-src': ["'self'", 'https: data:'],
+        },
+      }),
+    );
     this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
@@ -83,5 +98,12 @@ class Index {
 }
 
 // Running
-const app = new Index([new IndexRouter(), new AuthRouter(), new BookingRouter(), new IntentRouter(), new InternalRouter(), new QueryRouter()]);
+const app = new Index([
+  new IndexRouter(),
+  new AuthRouter(),
+  new BookingRouter(),
+  new IntentRouter(),
+  new InternalRouter(),
+  new QueryRouter(),
+]);
 app.listen();
