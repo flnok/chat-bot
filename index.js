@@ -49,7 +49,7 @@ class Index {
     if (this.env === 'development') {
       this.app.use(morgan('dev'));
     }
-    this.app.use(cors({ origin: true, credentials: true }));
+    this.app.use(cors({ origin: '*' }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
