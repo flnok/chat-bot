@@ -49,7 +49,7 @@ class Index {
     if (this.env === 'development') {
       this.app.use(morgan('dev'));
     }
-    this.app.use(cors({ origin: '*' }));
+    this.app.use(cors({ origin: true }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
@@ -72,7 +72,7 @@ class Index {
     });
     if (this.env === 'production') {
       this.app.use(express.static('./frontend/build'));
-      this.app.get('/*', (req, res) => {
+      this.app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
       });
     }
